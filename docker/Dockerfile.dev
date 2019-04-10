@@ -1,0 +1,12 @@
+FROM node:10
+
+# used for writing .npmrc
+ARG bamboo_NPM_AUTH_TOKEN
+
+# specify the working directory
+WORKDIR /usr/app/
+
+# write npm registry auth token for private packages
+RUN echo $'registry=https://registry.npmjs.org/\n//registry.npmjs.org/:_authToken='$bamboo_NPM_AUTH_TOKEN > /usr/app/.npmrc
+
+EXPOSE 8000
