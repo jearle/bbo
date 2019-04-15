@@ -23,7 +23,7 @@ services:
       - ./../../yarn.lock:/usr/app/yarn.lock
       - ~/.bash_history:/root/.bash_history
     ports:
-      - "8000:8000"
+      - "${API_PORT}:${API_PORT}"
   
 volumes:
   yarn:

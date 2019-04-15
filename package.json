@@ -6,7 +6,7 @@
   "scripts": {
     "build": "yarn tsc",
     "dc": "docker-compose -f docker/dev/docker-compose.yml",
-    "dc:up": "yarn dc run --rm rca-api-service bash -c 'yarn && bash'",
+    "dc:up": "yarn dc run --service-ports --rm rca-api-service bash -c 'yarn && bash'",
     "dev": "yarn check --integrity && yarn ts-node-dev --respawn --transpileOnly src/start.ts",
     "format": "yarn prettier --config ./.prettierrc '{src,test}/**/*.{ts,js}' --write",
     "lint": "tslint '{test,src}/**/*.ts'",
