@@ -27,6 +27,10 @@ COPY tslint.json /usr/app/tslint.json
 
 RUN yarn build
 
+RUN yarn lint
+
+RUN yarn test
+
 CMD ["yarn", "start"]
 
 # app runs on port 8000
