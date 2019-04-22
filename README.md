@@ -54,6 +54,8 @@
   
  - `yarn precommit` this automatically restages any files that where changed and modified via format update. If you have any unstaged changes in the file it will automatically be added so you'll want to stash these.
 
+ - Most typings are referrenced in node_modules/@typings. For your IDE to pick these up you are required to perform a `yarn install` on your local machine as the project dependencies are installed within the docker container.
+
 ## Tests
  - Our goal is 100% coverage. Please don't lower it - find a way to test it.  If it's vendors code, then mark it to be ignore.
 
