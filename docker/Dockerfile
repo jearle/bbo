@@ -29,6 +29,8 @@ RUN yarn build
 
 RUN yarn lint
 
+RUN yarn format:test
+
 RUN yarn test
 
 CMD ["yarn", "start"]

@@ -5,7 +5,7 @@ export default [
 		method: 'GET',
 		options: {
 			handler: HelloController.get,
-			tags: ['api']
+			tags: ['api'],
 		},
 		path: '/hello',
 	},

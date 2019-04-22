@@ -19,9 +19,13 @@ module.exports = {
       statements: 100
     }
   },
- collectCoverageFrom: [
-    "<rootDir>/src/**/*.ts",
+  reporters: [
+    "default",
+    [ "jest-junit", { outputDirectory: "./coverage" } ]
   ],
-  testMatch: [ "<rootDir>/test/**/?(*.)+(spec|test).[jt]s?(x)" ]
+  collectCoverageFrom: [
+      "<rootDir>/src/**/*.ts",
+    ],
+    testMatch: [ "<rootDir>/test/**/?(*.)+(spec|test).[jt]s?(x)" ]
 
 };

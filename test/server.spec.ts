@@ -11,7 +11,7 @@ const HapiMocked = mocked(Hapi, true);
 describe('server', () => {
 	let start = jest.fn();
 	let route = jest.fn();
-	let register = jest.fn()
+	let register = jest.fn();
 	const info = {
 		uri: 'api.rcanalytics.com',
 	};

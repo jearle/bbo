@@ -2,23 +2,18 @@ import * as Hapi from 'hapi';
 import { init } from '../../src/server';
 
 describe('server', () => {
+	let server: Hapi.Server;
 
-    let server: Hapi.Server;
-    
 	beforeAll(async () => {
 		server = await init();
-    });
-    
-    afterAll(
-        () => {
-            server.stop();
-        }
-    )
+	});
+
+	afterAll(() => {
+		server.stop();
+	});
 
 	describe('get()', () => {
-
 		it('returns hello', async () => {
-            
 			const result = await server.inject({
 				url: '/hello',
 			});
