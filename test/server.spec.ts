@@ -11,6 +11,7 @@ const HapiMocked = mocked(Hapi, true);
 describe('server', () => {
 	let start = jest.fn();
 	let route = jest.fn();
+	let register = jest.fn();
 	const info = {
 		uri: 'api.rcanalytics.com',
 	};
@@ -18,9 +19,10 @@ describe('server', () => {
 		global.console.log = jest.fn();
 		start = jest.fn();
 		route = jest.fn();
+		register = jest.fn();
 		HapiMocked.Server.mockImplementationOnce(options => {
 			const server = new Hapi.Server(options);
-			return Object.assign(server, { start, route, info });
+			return Object.assign(server, { start, route, info, register });
 		});
 	});
 
@@ -53,6 +55,18 @@ describe('server', () => {
 			expect(global.console.log).toHaveBeenCalledWith(
 				`Server running at: ${info.uri}`
 			);
+		});
+
+		it('registers Inert', async () => {
+			await init();
+		});
+
+		it('registers Vision', async () => {
+			await init();
+		});
+
+		it('registers Swagger', async () => {
+			await init();
 		});
 	});
 });

@@ -8,7 +8,8 @@
     "dc": "docker-compose -f docker/dev/docker-compose.yml",
     "dc:up": "yarn dc run --service-ports --rm rca-api-service bash -c 'yarn && bash'",
     "dev": "yarn check --integrity && yarn ts-node-dev --respawn --transpileOnly src/start.ts",
-    "format": "yarn prettier --config ./.prettierrc '{src,test}/**/*.{ts,js}' --write",
+    "format": "yarn format:test --write",
+    "format:test": "yarn prettier --config ./.prettierrc '{src,test}/**/*.{ts,js}'",
     "lint": "tslint '{test,src}/**/*.ts'",
     "precommit": "yarn lint --fix && yarn format && git update-index --again",
     "start": "node -e \"require('./dist/src/server').init()\"",
@@ -18,20 +19,25 @@
   "license": "UNLICENSED",
   "dependencies": {
     "@types/hapi": "^18.0.1",
+    "@types/inert": "^5.1.2",
     "@types/jest": "^24.0.11",
     "@types/node": "^11.12.0",
+    "@types/vision": "^5.3.6",
     "hapi": "^18.1.0",
-    "typescript": "^3.3.4000"
+    "hapi-swagger": "^9.4.2",
+    "inert": "^5.1.3",
+    "jest": "^24.5.0",
+    "jest-junit": "^6.3.0",
+    "prettier": "1.16.4",
+    "ts-jest": "^24.0.2",
+    "tslint": "^5.14.0",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.3.4000",
+    "vision": "^5.4.4"
   },
   "devDependencies": {
     "husky": "^1.3.1",
-    "jest": "^24.5.0",
-    "lint-staged": "^8.1.5",
-    "prettier": "1.16.4",
-    "ts-jest": "^24.0.2",
-    "ts-node-dev": "^1.0.0-pre.32",
-    "tslint": "^5.14.0",
-    "tslint-config-prettier": "^1.18.0"
+    "ts-node-dev": "^1.0.0-pre.32"
   },
   "husky": {
     "hooks": {
