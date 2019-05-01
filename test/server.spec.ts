@@ -20,6 +20,7 @@ describe('server', () => {
 		start = jest.fn();
 		route = jest.fn();
 		register = jest.fn();
+
 		HapiMocked.Server.mockImplementationOnce(options => {
 			const server = new Hapi.Server(options);
 			return Object.assign(server, { start, route, info, register });
@@ -55,6 +56,10 @@ describe('server', () => {
 			expect(global.console.log).toHaveBeenCalledWith(
 				`Server running at: ${info.uri}`
 			);
+		});
+
+		it('registers Jwt', async () => {
+			await init();
 		});
 
 		it('registers Inert', async () => {

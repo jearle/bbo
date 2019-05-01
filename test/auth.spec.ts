@@ -1,9 +1,9 @@
-import { strategy } from '../src/auth';
+import { IStrategyAsync, strategy } from '../src/auth';
 import env from '../src/env';
 
 describe('auth', () => {
-	it('builds auth strategy options object', async () => {
-		const options = strategy();
+	it('configures strategy', async () => {
+		const options: IStrategyAsync = await strategy();
 		expect(options).toMatchObject({
 			complete: true,
 			verifyOptions: {
