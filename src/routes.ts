@@ -7,6 +7,7 @@ export default [
 		path: '/hello',
 		method: 'GET',
 		options: {
+			auth: false,
 			handler: HelloController.get,
 			tags: ['api'],
 		},
@@ -15,7 +16,6 @@ export default [
 		path: '/private',
 		method: 'GET',
 		options: {
-			auth: 'jwt',
 			handler: PrivateController.get,
 			tags: ['api'],
 		},

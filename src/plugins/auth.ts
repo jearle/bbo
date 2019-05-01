@@ -2,7 +2,7 @@
 import * as Hapi from 'hapi';
 import * as Jwt from 'hapi-auth-jwt2';
 import * as jwksRsa from 'jwks-rsa';
-import env from './env';
+import env from '../env';
 
 // IValidate interface
 interface IValidateAsync {
@@ -32,10 +32,10 @@ const auth = async (server: Hapi.Server): Promise<void> => {
 	try {
 		if ('auth' in server) {
 			await server.auth.strategy('jwt', 'jwt', await strategy());
+			await server.auth.default('jwt');
 		}
 	} catch (error) {
-		// @todo, error handling...
-		console.error(error);
+		server.log(['error'], error);
 	}
 };
 
@@ -81,8 +81,7 @@ const validate = async (
 		}
 		return { isValid: false };
 	} catch (error) {
-		// @todo, error handling...
-		console.error(error);
+		request.server.log(['error'], error);
 	}
 };
 

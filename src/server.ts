@@ -1,14 +1,14 @@
 /* tslint:disable:object-literal-sort-keys */
-import * as Hapi from 'hapi';
+import { Server, ServerRoute } from 'hapi';
 import * as Inert from 'inert';
 import * as Vision from 'vision';
-import { auth, Jwt } from './auth';
 import env from './env';
+import { auth, Jwt } from './plugins/auth';
 import Swagger from './plugins/swagger';
 import routes from './routes';
 
 const init = async (start = true) => {
-	const server = new Hapi.Server({
+	const server = new Server({
 		host: env.API_HOST,
 		port: env.API_PORT,
 	});
@@ -17,7 +17,7 @@ const init = async (start = true) => {
 
 	await auth(server);
 
-	server.route(routes);
+	server.route(routes as ServerRoute[]);
 
 	if (start) {
 		await server.start();

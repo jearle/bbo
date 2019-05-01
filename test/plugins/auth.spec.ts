@@ -1,5 +1,5 @@
-import { IStrategyAsync, strategy } from '../src/auth';
-import env from '../src/env';
+import env from '../../src/env';
+import { IStrategyAsync, strategy } from '../../src/plugins/auth';
 
 describe('auth', () => {
 	it('configures strategy', async () => {
