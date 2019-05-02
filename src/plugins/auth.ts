@@ -1,9 +1,7 @@
-/* tslint:disable:object-literal-sort-keys */
 import * as Hapi from 'hapi';
 import * as jwksRsa from 'jwks-rsa';
 import env from '../env';
 
-// IValidate interface
 interface IValidateAsync {
 	isValid: boolean;
 	credentials?: {};
@@ -32,9 +30,9 @@ const auth = (server: Hapi.Server) => {
 		complete: true,
 		key: jwksRsa.hapiJwt2KeyAsync({
 			cache: true,
-			rateLimit: true,
 			jwksRequestsPerMinute: 5,
 			jwksUri: `https://${env.AUTH0_DOMAIN}/.well-known/jwks.json`,
+			rateLimit: true,
 		} as IJwt2KeyAsync),
 		validate,
 		verifyOptions: {
