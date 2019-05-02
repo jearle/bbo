@@ -10,7 +10,7 @@
     "dev": "yarn check --integrity && yarn ts-node-dev --respawn --transpileOnly src/start.ts",
     "format": "yarn format:test --write",
     "format:test": "yarn prettier --config ./.prettierrc '{src,test}/**/*.{ts,js}'",
-    "lint": "tslint 'test/**/*.spec.ts'",
+    "lint": "tslint '{test,src}/**/*.ts'",
     "precommit": "yarn lint --fix && yarn format && git update-index --again",
     "start": "node -e \"require('./dist/src/server').init()\"",
     "test": "yarn jest"
