@@ -35,5 +35,5 @@ RUN yarn test
 
 CMD ["yarn", "start"]
 
-# app runs on port 8000
-EXPOSE 8000
+# app runs on port 7777
+EXPOSE 7777
