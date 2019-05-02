@@ -2,7 +2,7 @@ import Swagger from '../../src/plugins/swagger';
 import { init } from '../../src/server';
 const HapiSwagger = require('hapi-swagger');
 
-jest.mock('./../../package', () => ({
+jest.mock('package', () => ({
 	version: 200,
 }));
 
