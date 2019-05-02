@@ -1,0 +1,19 @@
+version: '2'
+services:
+  cd-product-api:
+    image: $TAG2
+    environment:
+      API_HOST: $bamboo_API_HOST
+      API_PORT: $bamboo_API_PORT
+      AUTH0_DOMAIN: $bamboo_AUTH0_DOMAIN
+      AUTH0_AUDIENCE: $bamboo_AUTH0_AUDIENCE
+    stdin_open: true
+    tty: true
+    logging:
+      driver: syslog
+      options:
+        syslog-address: tcp://0.0.0.0:5001
+        tag: $bamboo_SERVICENAME
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.scheduler.global: 'true'
