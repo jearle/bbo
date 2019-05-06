@@ -2,6 +2,7 @@ import * as Hapi from 'hapi';
 import * as Inert from 'inert';
 import * as Vision from 'vision';
 import env from './env';
+import { auth, Jwt, strategy } from './plugins/auth-cognito';
 import Swagger from './plugins/swagger';
 import routes from './routes';
 
@@ -11,7 +12,8 @@ const init = async (start = true) => {
 		port: env.API_PORT,
 	});
 
-	await server.register([Inert, Vision, Swagger] as any);
+	await server.register([Jwt, Inert, Vision, Swagger] as any);
+	server.auth.strategy('jwt', 'jwt', strategy());
 
 	server.route(routes);
 
