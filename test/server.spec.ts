@@ -1,6 +1,10 @@
 import * as Hapi from 'hapi';
+import * as Jwt from 'hapi-auth-jwt2';
+import * as Inert from 'inert';
 import { mocked } from 'ts-jest/utils';
+import * as Vision from 'vision';
 import env from '../src/env';
+import Swagger from '../src/plugins/swagger';
 import routes from '../src/routes';
 import { init } from '../src/server';
 
@@ -12,6 +16,10 @@ describe('server', () => {
 	let start = jest.fn();
 	let route = jest.fn();
 	let register = jest.fn();
+	let auth = {
+		default: jest.fn(),
+		strategy: jest.fn(),
+	};
 	const info = {
 		uri: 'api.rcanalytics.com',
 	};
@@ -20,9 +28,14 @@ describe('server', () => {
 		start = jest.fn();
 		route = jest.fn();
 		register = jest.fn();
+		auth = {
+			default: jest.fn(),
+			strategy: jest.fn(),
+		};
+
 		HapiMocked.Server.mockImplementationOnce(options => {
 			const server = new Hapi.Server(options);
-			return Object.assign(server, { start, route, info, register });
+			return Object.assign(server, { start, route, info, register, auth });
 		});
 	});
 
@@ -57,16 +70,28 @@ describe('server', () => {
 			);
 		});
 
+		it('registers Jwt', async () => {
+			await init();
+			const plugins = register.mock.calls[0][0];
+			expect(plugins).toContain(Jwt);
+		});
+
 		it('registers Inert', async () => {
 			await init();
+			const plugins = register.mock.calls[0][0];
+			expect(plugins).toContain(Inert);
 		});
 
 		it('registers Vision', async () => {
 			await init();
+			const plugins = register.mock.calls[0][0];
+			expect(plugins).toContain(Vision);
 		});
 
 		it('registers Swagger', async () => {
 			await init();
+			const plugins = register.mock.calls[0][0];
+			expect(plugins).toContain(Swagger);
 		});
 	});
 });
