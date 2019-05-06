@@ -49,16 +49,12 @@ const auth = (server: Server) => {
 	server.auth.default('jwt');
 };
 
-const validate = async (decoded: any, request: Request): Promise<any> => {
-	if (decoded && decoded.sub) {
-		return decoded.scope
-			? {
-					credentials: {
-						scope: decoded.scope.split(' '),
-					},
-					isValid: true,
-			  }
-			: { isValid: true };
+const validate = async (
+	decoded: any,
+	request: Request
+): Promise<IValidateAsync> => {
+	if (decoded) {
+		return { isValid: true };
 	}
 	return { isValid: false };
 };
