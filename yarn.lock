@@ -373,6 +373,14 @@
     "@types/express-serve-static-core" "*"
     "@types/serve-static" "*"
 
+"@types/hapi-auth-jwt2@^8.0.2":
+  version "8.0.2"
+  resolved "https://registry.yarnpkg.com/@types/hapi-auth-jwt2/-/hapi-auth-jwt2-8.0.2.tgz#bbb2adadf0b0f5512c08ad9919dd66afd8dea736"
+  integrity sha512-xoRuSKY9wF+GFLugUr7blN3qOFySWlIog6DCamxt70FvS1CuG0SxXd6f6Si1eQH8fygsWhMUa/SLrS2Ya7tvrw==
+  dependencies:
+    "@types/hapi" "*"
+    "@types/jsonwebtoken" "*"
+
 "@types/hapi@*", "@types/hapi@^18.0.1":
   version "18.0.2"
   resolved "https://registry.yarnpkg.com/@types/hapi/-/hapi-18.0.2.tgz#2c3ed843e1e7358486eccf64256e91f7918948b2"
@@ -422,6 +430,13 @@
   version "14.3.3"
   resolved "https://registry.yarnpkg.com/@types/joi/-/joi-14.3.3.tgz#f251aa8150fc0b6a7ce9feab21802a28473de335"
   integrity sha512-6gAT/UkIzYb7zZulAbcof3lFxpiD5EI6xBeTvkL1wYN12pnFQ+y/+xl9BvnVgxkmaIDN89xWhGZLD9CvuOtZ9g==
+
+"@types/jsonwebtoken@*":
+  version "8.3.2"
+  resolved "https://registry.yarnpkg.com/@types/jsonwebtoken/-/jsonwebtoken-8.3.2.tgz#e3d5245197152346fae7ee87d5541aa5a92d0362"
+  integrity sha512-Mkjljd9DTpkPlrmGfTJvcP4aBU7yO2QmW7wNVhV4/6AEUxYoacqU7FJU/N0yFEHTsIrE4da3rUrjrR5ejicFmA==
+  dependencies:
+    "@types/node" "*"
 
 "@types/mime-db@*":
   version "1.27.0"

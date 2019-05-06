@@ -19,6 +19,7 @@
   "license": "UNLICENSED",
   "dependencies": {
     "@types/hapi": "^18.0.1",
+    "@types/hapi-auth-jwt2": "^8.0.2",
     "@types/inert": "^5.1.2",
     "@types/jest": "^24.0.11",
     "@types/node": "^11.12.0",
