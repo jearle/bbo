@@ -1,21 +1,23 @@
-import * as Hapi from 'hapi';
+import { Server, ServerRoute } from 'hapi';
+import * as Jwt from 'hapi-auth-jwt2';
 import * as Inert from 'inert';
 import * as Vision from 'vision';
 import env from './env';
-import { auth, Jwt, strategy } from './plugins/auth-cognito';
+import { auth } from './plugins/auth-cognito';
 import Swagger from './plugins/swagger';
 import routes from './routes';
 
 const init = async (start = true) => {
-	const server = new Hapi.Server({
+	const server = new Server({
 		host: env.API_HOST,
 		port: env.API_PORT,
 	});
 
 	await server.register([Jwt, Inert, Vision, Swagger] as any);
-	server.auth.strategy('jwt', 'jwt', strategy());
 
-	server.route(routes);
+	auth(server);
+
+	server.route(routes as ServerRoute[]);
 
 	if (start) {
 		await server.start();

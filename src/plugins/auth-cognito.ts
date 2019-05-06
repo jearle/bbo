@@ -1,6 +1,5 @@
 import { Request, Server, ServerRoute } from 'hapi';
-import * as Jwt from 'hapi-auth-jwt2';
-import * as jwksRsa from 'jwks-rsa';
+import { hapiJwt2KeyAsync } from 'jwks-rsa';
 import env from '../env';
 
 const issuer: string = `https://cognito-idp.${
@@ -8,21 +7,47 @@ const issuer: string = `https://cognito-idp.${
 }.amazonaws.com/${env.COGNITO_USER_POOL_ID}`;
 const jwksUrl: string = `${issuer}/.well-known/jwks.json`;
 
-const strategy = () => ({
-	complete: true,
-	key: jwksRsa.hapiJwt2KeyAsync({
-		cache: true,
-		jwksRequestsPerMinute: 5,
-		jwksUri: jwksUrl,
-		rateLimit: true,
-	}),
-	validate,
+interface IValidateAsync {
+	isValid: boolean;
+	credentials?: {};
+}
+
+interface IJwt2KeyAsync {
+	cache: boolean;
+	rateLimit: boolean;
+	jwksRequestsPerMinute: number;
+	jwksUri: string;
+}
+
+interface IStrategyAsync {
+	complete: boolean;
+	key: (name: string, scheme: string, options?: any) => void;
+	validate: (decoded: any, request: Request) => Promise<IValidateAsync>;
 	verifyOptions: {
-		algorithms: ['RS256'],
-		audience: env.COGNITO_CLIENT_ID,
-		issuer,
-	},
-});
+		issuer: string;
+		audience: string;
+		algorithms: string[];
+	};
+}
+
+const auth = (server: Server) => {
+	server.auth.strategy('jwt', 'jwt', {
+		complete: true,
+		key: hapiJwt2KeyAsync({
+			cache: true,
+			jwksRequestsPerMinute: 5,
+			jwksUri: jwksUrl,
+			rateLimit: true,
+		} as IJwt2KeyAsync),
+		validate,
+		verifyOptions: {
+			algorithms: ['RS256'],
+			audience: env.COGNITO_CLIENT_ID,
+			issuer,
+		},
+	});
+	server.auth.default('jwt');
+};
 
 const validate = async (decoded: any, request: Request): Promise<any> => {
 	if (decoded && decoded.sub) {
@@ -38,15 +63,4 @@ const validate = async (decoded: any, request: Request): Promise<any> => {
 	return { isValid: false };
 };
 
-const auth = async (server: Server): Promise<void> => {
-	try {
-		if ('auth' in server) {
-			await server.auth.strategy('jwt', 'jwt', await strategy());
-			await server.auth.default('jwt');
-		}
-	} catch (error) {
-		server.log(['error'], error);
-	}
-};
-
-export { Jwt, auth, strategy };
+export { auth, validate, IStrategyAsync };
