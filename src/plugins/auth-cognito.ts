@@ -1,22 +1,11 @@
-// import Amplify, { Auth, CognitoUser } from 'aws-amplify';
 import { Request, Server, ServerRoute } from 'hapi';
 import * as Jwt from 'hapi-auth-jwt2';
 import * as jwksRsa from 'jwks-rsa';
-
-// (global as any).fetch = require('node-fetch');
-// (global as any).navigator = () => null;
-
-const config = {
-	Auth: {
-		region: 'us-east-2',
-		userPoolId: 'us-east-2_NhAst9nuH',
-		userPoolWebClientId: '522qkiff5qfif8trs44638f8ln',
-	},
-};
+import env from '../env';
 
 const issuer: string = `https://cognito-idp.${
-	config.Auth.region
-}.amazonaws.com/${config.Auth.userPoolId}`;
+	env.COGNITO_REGION
+}.amazonaws.com/${env.COGNITO_USER_POOL_ID}`;
 const jwksUrl: string = `${issuer}/.well-known/jwks.json`;
 
 const strategy = () => ({
@@ -30,7 +19,7 @@ const strategy = () => ({
 	validate,
 	verifyOptions: {
 		algorithms: ['RS256'],
-		audience: config.Auth.userPoolWebClientId,
+		audience: env.COGNITO_CLIENT_ID,
 		issuer,
 	},
 });

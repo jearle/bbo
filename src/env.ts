@@ -1,8 +1,17 @@
-const { API_HOST, API_PORT } = process.env;
+const {
+	API_HOST,
+	API_PORT,
+	COGNITO_CLIENT_ID,
+	COGNITO_REGION,
+	COGNITO_USER_POOL_ID,
+} = process.env;
 
 const env = {
 	API_HOST,
 	API_PORT,
+	COGNITO_CLIENT_ID,
+	COGNITO_REGION,
+	COGNITO_USER_POOL_ID,
 };
 
 export default env;

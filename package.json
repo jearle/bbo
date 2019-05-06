@@ -30,7 +30,6 @@
     "jest": "^24.5.0",
     "jest-junit": "^6.3.0",
     "jwks-rsa": "^1.4.0",
-    "node-fetch": "^2.5.0",
     "prettier": "1.16.4",
     "ts-jest": "^24.0.2",
     "tslint": "^5.14.0",
