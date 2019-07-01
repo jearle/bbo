@@ -1,19 +1,23 @@
-import * as Hapi from 'hapi';
+import * as Hapi from '@hapi/hapi';
+import * as Inert from '@hapi/inert';
+import * as Vision from '@hapi/vision';
 import * as Jwt from 'hapi-auth-jwt2';
-import * as Inert from 'inert';
 import { mocked } from 'ts-jest/utils';
-import * as Vision from 'vision';
+import dbs from '../src/dbs';
 import env from '../src/env';
 import Swagger from '../src/plugins/swagger';
 import routes from '../src/routes';
 import { init } from '../src/server';
 
-jest.mock('hapi');
+jest.mock('@hapi/hapi');
 
 const HapiMocked = mocked(Hapi, true);
+const dbsMocked = mocked(dbs, true);
+
+jest.mock('./../src/dbs');
 
 describe('server', () => {
-	let start = jest.fn();
+	let initialize = jest.fn();
 	let route = jest.fn();
 	let register = jest.fn();
 	let auth = {
@@ -25,7 +29,7 @@ describe('server', () => {
 	};
 	beforeEach(() => {
 		global.console.log = jest.fn();
-		start = jest.fn();
+		initialize = jest.fn();
 		route = jest.fn();
 		register = jest.fn();
 		auth = {
@@ -35,7 +39,14 @@ describe('server', () => {
 
 		HapiMocked.Server.mockImplementationOnce(options => {
 			const server = new Hapi.Server(options);
-			return Object.assign(server, { start, route, info, register, auth });
+			return Object.assign(server, {
+				app: {},
+				auth,
+				info,
+				initialize,
+				register,
+				route,
+			});
 		});
 	});
 
@@ -53,21 +64,14 @@ describe('server', () => {
 			await init();
 		});
 
-		it('calls server.start()', async () => {
+		it('calls server.initialize()', async () => {
 			await init();
-			expect(start).toHaveBeenCalled();
+			expect(initialize).toHaveBeenCalled();
 		});
 
 		it('adds routes', async () => {
 			await init();
 			expect(route).toHaveBeenCalledWith(routes);
-		});
-
-		it('logs to console', async () => {
-			await init();
-			expect(global.console.log).toHaveBeenCalledWith(
-				`Server running at: ${info.uri}`
-			);
 		});
 
 		it('registers Jwt', async () => {
@@ -92,6 +96,12 @@ describe('server', () => {
 			await init();
 			const plugins = register.mock.calls[0][0];
 			expect(plugins).toContain(Swagger);
+		});
+
+		it('initializes databses', async () => {
+			await init();
+			expect(dbsMocked.initialize).toHaveBeenCalled();
+			expect(dbsMocked.initialize.mock.calls[0][0]).toBeInstanceOf(Hapi.Server);
 		});
 	});
 });

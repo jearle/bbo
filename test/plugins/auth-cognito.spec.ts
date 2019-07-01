@@ -1,4 +1,4 @@
-import { Server } from 'hapi';
+import { Server } from '@hapi/hapi';
 import * as Jwt from 'hapi-auth-jwt2';
 import { auth, validate } from '../../src/plugins/auth-cognito';
 
@@ -8,7 +8,7 @@ describe('plugins/auth', () => {
 
 		beforeEach(() => {
 			server = new Server();
-			server.register([Jwt]);
+			server.register([Jwt] as any);
 		});
 
 		it('should register jwt auth strategy', async () => {
@@ -28,7 +28,7 @@ describe('plugins/auth', () => {
 	describe('validate()', () => {
 		describe('with decoded', () => {
 			it('it returns isValid true', async () => {
-				const result = await validate('something', null);
+				const result = await validate('something');
 				expect(result).toMatchObject({
 					isValid: true,
 				});
@@ -37,7 +37,7 @@ describe('plugins/auth', () => {
 
 		describe('without decoded', () => {
 			it('it returns isValid false', async () => {
-				const result = await validate(null, null);
+				const result = await validate(null);
 				expect(result).toMatchObject({
 					isValid: false,
 				});

@@ -1,4 +1,4 @@
-import { Request, Server, ServerRoute } from 'hapi';
+import { Request, Server } from '@hapi/hapi';
 import { hapiJwt2KeyAsync } from 'jwks-rsa';
 import env from '../env';
 
@@ -49,10 +49,7 @@ const auth = (server: Server) => {
 	server.auth.default('jwt');
 };
 
-const validate = async (
-	decoded: any,
-	request: Request
-): Promise<IValidateAsync> => {
+const validate = async (decoded: any): Promise<IValidateAsync> => {
 	if (decoded) {
 		return { isValid: true };
 	}

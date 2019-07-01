@@ -14,6 +14,7 @@ services:
       - yarn:/usr/local/share/.cache/yarn/v4
       - ./../../src:/usr/app/src
       - ./../../test:/usr/app/test
+      - ./../../typings:/usr/app/typings
       - ./../../.gitignore:/usr/app/.gitignore
       - ./../../.prettierrc:/usr/app/.prettierrc
       - ./../../jest.config.js:/usr/app/jest.config.js

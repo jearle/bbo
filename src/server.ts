@@ -1,13 +1,14 @@
-import { Server, ServerRoute } from 'hapi';
+import { Server, ServerRoute } from '@hapi/hapi';
+import * as Inert from '@hapi/inert';
+import * as Vision from '@hapi/vision';
 import * as Jwt from 'hapi-auth-jwt2';
-import * as Inert from 'inert';
-import * as Vision from 'vision';
+import dbs from './dbs';
 import env from './env';
 import { auth } from './plugins/auth-cognito';
 import Swagger from './plugins/swagger';
 import routes from './routes';
 
-const init = async (start = true) => {
+const init = async () => {
 	const server = new Server({
 		host: env.API_HOST,
 		port: env.API_PORT,
@@ -17,17 +18,11 @@ const init = async (start = true) => {
 
 	auth(server);
 
+	await dbs.initialize(server);
+
 	server.route(routes as ServerRoute[]);
 
-	if (start) {
-		await server.start();
-
-		// tslint:disable-next-line:no-console
-		console.log(`Server running at: ${server.info.uri}`);
-	} else {
-		await server.initialize();
-	}
-
+	await server.initialize();
 	return server;
 };
 
