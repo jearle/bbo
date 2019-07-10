@@ -6,7 +6,6 @@
     "module": "commonjs",
     "target": "es6",
     "allowJs": true,
-    "typeRoots": ["node_modules/@types"],
-    "noUnusedLocals": true
+    "typeRoots": ["node_modules/@types"]
   }
 }

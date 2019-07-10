@@ -5,7 +5,7 @@ describe('server', () => {
 	let server: Hapi.Server;
 
 	beforeAll(async () => {
-		server = await init(false);
+		server = await init();
 	});
 
 	afterAll(() => {
