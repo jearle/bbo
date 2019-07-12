@@ -17,3 +17,4 @@ services:
     labels:
       io.rancher.container.pull_image: always
       io.rancher.scheduler.global: 'true'
+      type: $bamboo_SERVICENAME
