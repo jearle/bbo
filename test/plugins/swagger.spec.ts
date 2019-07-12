@@ -6,6 +6,8 @@ jest.mock('./../../package', () => ({
 	version: 200,
 }));
 
+jest.mock('./../../src/dbs');
+
 describe('plugins/swagger', () => {
 	it('sets title', () => {
 		expect(Swagger.options.info.title).toEqual('RCA API Documentation');
@@ -20,12 +22,13 @@ describe('plugins/swagger', () => {
 	});
 
 	it('adds documentation route (swagger)', async () => {
-		const server = await init(false);
+		const server = await init();
 		const response = await server.inject({
 			method: 'GET',
 			url: '/documentation',
 		});
 
 		expect(response.statusCode).toEqual(200);
+		server.stop();
 	});
 });
