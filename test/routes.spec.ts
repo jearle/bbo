@@ -1,3 +1,4 @@
+import { RouteOptions } from '@hapi/hapi';
 import routes from '../src/routes';
 
 describe('routes', () => {
@@ -7,8 +8,9 @@ describe('routes', () => {
 			// swagger documentation via baseurl/documentation.  Internal
 			// tag is used indicate this route is should not be known to public
 			routes.forEach(route => {
-				const hasApi = route.options.tags.indexOf('api') !== -1;
-				const hasInternal = route.options.tags.indexOf('internal') !== -1;
+				const options = route.options as RouteOptions;
+				const hasApi = options.tags.indexOf('api') !== -1;
+				const hasInternal = options.tags.indexOf('internal') !== -1;
 				expect(hasApi || hasInternal).toBeTruthy();
 			});
 		});

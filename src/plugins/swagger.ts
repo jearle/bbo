@@ -1,6 +1,6 @@
-import * as Hapi from 'hapi';
+import * as Hapi from '@hapi/hapi';
 const HapiSwagger = require('hapi-swagger');
-const Package = require('package');
+const Package = require('./../../package');
 
 const Swagger: Hapi.ServerRegisterPluginObject<any> = {
 	options: {

@@ -1,11 +1,16 @@
-import { init } from '../src/server';
-
-jest.mock('../src/server');
+import * as server from '../src/server';
 
 describe('start', () => {
-	it('calls init', async () => {
-		expect(init).not.toHaveBeenCalled();
-		jest.requireActual('./../src/start');
-		expect(init).toHaveBeenCalled();
+	it('initializes and starts server', async () => {
+		const start = jest.fn();
+		const spy = jest.spyOn(server as any, 'init').mockImplementation(() => ({
+			info: {
+				uri: 'uri',
+			},
+			start,
+		}));
+		await jest.requireActual('./../src/start');
+		expect(spy).toHaveBeenCalled();
+		expect(start).toHaveBeenCalled();
 	});
 });

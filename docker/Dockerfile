@@ -20,6 +20,7 @@ RUN yarn install --no-cache --frozen-lockfile --production
 
 COPY src /usr/app/src
 COPY test /usr/app/test
+COPY typings /usr/app/typings
 COPY .prettierrc /usr/app/.prettierrc
 COPY jest.config.js /usr/app/jest.config.js
 COPY tsconfig.json /usr/app/tsconfig.json
@@ -35,5 +36,5 @@ RUN yarn test
 
 CMD ["yarn", "start"]
 
-# app runs on port 7777
-EXPOSE 7777
+# app runs on port 8000
+EXPOSE 8000

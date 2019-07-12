@@ -1,6 +1,11 @@
-import * as Hapi from 'hapi';
-import * as jwksRsa from 'jwks-rsa';
+import { Request, Server } from '@hapi/hapi';
+import { hapiJwt2KeyAsync } from 'jwks-rsa';
 import env from '../env';
+
+const issuer: string = `https://cognito-idp.${
+	env.COGNITO_REGION
+}.amazonaws.com/${env.COGNITO_USER_POOL_ID}`;
+const jwksUrl: string = `${issuer}/.well-known/jwks.json`;
 
 interface IValidateAsync {
 	isValid: boolean;
@@ -17,7 +22,7 @@ interface IJwt2KeyAsync {
 interface IStrategyAsync {
 	complete: boolean;
 	key: (name: string, scheme: string, options?: any) => void;
-	validate: (decoded: any, request: Hapi.Request) => Promise<IValidateAsync>;
+	validate: (decoded: any, request: Request) => Promise<IValidateAsync>;
 	verifyOptions: {
 		issuer: string;
 		audience: string;
@@ -25,29 +30,26 @@ interface IStrategyAsync {
 	};
 }
 
-const auth = (server: Hapi.Server) => {
+const auth = (server: Server) => {
 	server.auth.strategy('jwt', 'jwt', {
 		complete: true,
-		key: jwksRsa.hapiJwt2KeyAsync({
+		key: hapiJwt2KeyAsync({
 			cache: true,
 			jwksRequestsPerMinute: 5,
-			jwksUri: `https://${env.AUTH0_DOMAIN}/.well-known/jwks.json`,
+			jwksUri: jwksUrl,
 			rateLimit: true,
 		} as IJwt2KeyAsync),
 		validate,
 		verifyOptions: {
 			algorithms: ['RS256'],
-			audience: env.AUTH0_AUDIENCE,
-			issuer: `https://${env.AUTH0_DOMAIN}/`,
+			audience: env.COGNITO_CLIENT_ID,
+			issuer,
 		},
 	});
 	server.auth.default('jwt');
 };
 
-const validate = async (
-	decoded: any,
-	request: Hapi.Request
-): Promise<IValidateAsync> => {
+const validate = async (decoded: any): Promise<IValidateAsync> => {
 	if (decoded) {
 		return { isValid: true };
 	}
