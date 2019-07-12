@@ -29,13 +29,12 @@ const initialize = async ({ log }: ILogger) => {
 			max: env.DB_RCA_WEB_POOL_MAX,
 			min: env.DB_RCA_WEB_POOL_MIN,
 		},
-		// port: env.DB_RCA_WEB_PORT,
 		server: env.DB_RCA_WEB_SERVER,
 		user: env.DB_RCA_WEB_USER,
 	} as any).connect();
 
 	rcaweb.on('error', (err: SqlError) => {
-		log(['error'], `${err.name} [ ${err.code}]: ${err.message}`);
+		log(['error'], `${err.name} [${err.code}]: ${err.message}`);
 	});
 
 	dbs = {

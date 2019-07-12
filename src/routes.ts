@@ -9,9 +9,6 @@ const routes: ServerRoute[] = [
 		method: 'GET',
 		options: {
 			handler: CompanyBulletsController.get,
-			plugins: {
-				camelize: true,
-			},
 			response: {
 				modify: true,
 				schema: Joi.array()

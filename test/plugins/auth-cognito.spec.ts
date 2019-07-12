@@ -11,6 +11,10 @@ describe('plugins/auth', () => {
 			server.register([Jwt] as any);
 		});
 
+		afterEach(() => {
+			server.stop();
+		});
+
 		it('should register jwt auth strategy', async () => {
 			const spy = jest.spyOn(server.auth, 'strategy');
 			await auth(server);

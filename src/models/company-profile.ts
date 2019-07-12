@@ -31,7 +31,7 @@ export interface ICompanyProfileBullets {
 	bullet_tx: string;
 }
 
-interface IReturnPlayerDetailCompanyInfo {
+export interface IReturnPlayerDetailCompanyInfo {
 	Company_tx?: string | null;
 	CEO_tx?: string | null;
 	Website_tx?: string | null;
@@ -42,7 +42,7 @@ interface IReturnPlayerDetailCompanyInfo {
 	ExchangeName_tx?: string | null;
 }
 
-interface IReturnPlayerDetailCompanyAddress {
+export interface IReturnPlayerDetailCompanyAddress {
 	Company_id?: number | null;
 	CompanyAddress_tx?: string | null;
 	PostalCode_tx?: string | null;
@@ -56,13 +56,13 @@ interface IReturnPlayerDetailCompanyAddress {
 	Create_dt?: string | null;
 }
 
-interface IReturnPlayerDetailCompanyBullet {
+export interface IReturnPlayerDetailCompanyBullet {
 	Company_id: number;
 	Bullet_id: number;
 	Bullet_tx: string;
 }
 
-type IReturnPlayerDetail_newPTSRecordSets =
+export type IReturnPlayerDetail_newPTSRecordSets =
 	| IReturnPlayerDetailCompanyInfo[]
 	| IReturnPlayerDetailCompanyAddress[]
 	| IReturnPlayerDetailCompanyBullet[];

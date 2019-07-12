@@ -29,5 +29,6 @@ describe('plugins/swagger', () => {
 		});
 
 		expect(response.statusCode).toEqual(200);
+		server.stop();
 	});
 });
