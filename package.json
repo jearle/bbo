@@ -12,7 +12,7 @@
     "format:test": "yarn prettier --config ./.prettierrc '{src,test}/**/*.{ts,js}'",
     "lint": "tslint '{test,src}/**/*.ts'",
     "precommit": "yarn lint --fix && yarn format && git update-index --again",
-    "start": "node -e \"require('./dist/src/server').init()\"",
+    "start": "node ./dist/src/start",
     "test": "yarn jest"
   },
   "author": "Content Delivery",
