@@ -42,7 +42,6 @@ const auth = (server: Server) => {
 		validate,
 		verifyOptions: {
 			algorithms: ['RS256'],
-			audience: env.COGNITO_CLIENT_ID,
 			issuer,
 		},
 	});
