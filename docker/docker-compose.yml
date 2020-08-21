@@ -3,27 +3,27 @@ services:
   cd-product-api:
     image: $TAG2
     environment:
-      API_HOST: $bamboo_API_HOST
-      API_PORT: $bamboo_API_PORT
-      COGNITO_CLIENT_ID: $bamboo_COGNITO_CLIENT_ID
-      COGNITO_REGION: $bamboo_COGNITO_REGION
-      COGNITO_USER_POOL_ID: $bamboo_COGNITO_USER_POOL_ID
-      DB_RCA_WEB_CONNECTION_TIMEOUT: $bamboo_DB_RCA_WEB_CONNECTION_TIMEOUT
-      DB_RCA_WEB_DATABSE: $bamboo_DB_RCA_WEB_DATABSE
-      DB_RCA_WEB_PASSWORD: $bamboo_DB_RCA_WEB_PASSWORD
-      DB_RCA_WEB_POOL_IDLE_TIMEOUT_MS: $bamboo_DB_RCA_WEB_POOL_IDLE_TIMEOUT_MS
-      DB_RCA_WEB_POOL_MAX: $bamboo_DB_RCA_WEB_POOL_MAX
-      DB_RCA_WEB_POOL_MIN: $bamboo_DB_RCA_WEB_POOL_MIN
-      DB_RCA_WEB_SERVER: $bamboo_DB_RCA_WEB_SERVER
-      DB_RCA_WEB_USER: $bamboo_DB_RCA_WEB_USER
+      API_HOST: ${config.apiHost}
+      API_PORT: ${config.apiPort}
+      COGNITO_CLIENT_ID: ${config.cognitoClientId}
+      COGNITO_REGION: ${config.cognitoRegion}
+      COGNITO_USER_POOL_ID: ${config.UserPoolId}
+      DB_RCA_WEB_CONNECTION_TIMEOUT: ${config.dbRcaConnectionTimeout}
+      DB_RCA_WEB_DATABSE: ${config.dbRcaWebDatabase}
+      DB_RCA_WEB_PASSWORD: ${config.dbRcaWebPassword}
+      DB_RCA_WEB_POOL_IDLE_TIMEOUT_MS: ${config.dbRcaWebPoolIdleTimeoutMs}
+      DB_RCA_WEB_POOL_MAX: ${config.dbRcaWebPoolMax}
+      DB_RCA_WEB_POOL_MIN: ${config.dbRcaWebPoolMin}
+      DB_RCA_WEB_SERVER: ${config.dbRcaWebServer}
+      DB_RCA_WEB_USER: ${config.dbRcaWebUser}
     stdin_open: true
     tty: true
     logging:
       driver: syslog
       options:
         syslog-address: tcp://0.0.0.0:5001
-        tag: $bamboo_SERVICENAME
+        tag: ${config.serviceName}
     labels:
       io.rancher.container.pull_image: always
       io.rancher.scheduler.global: 'true'
-      type: $bamboo_SERVICENAME
+      type: ${config.serviceName}

@@ -1,0 +1,134 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - feature/*
+      - hotfix/*
+      - bugfix/*
+
+jobs:
+  setup:
+    runs-on: [self-hosted, linux]
+    outputs:
+      tagVersion: ${{ steps.tagVersion.outputs.value }}
+    steps:
+      - name: Output Tag Version
+        id: tagVersion
+        run: echo "::set-output name=value::${GITHUB_REF##*/}-${GITHUB_RUN_NUMBER}"
+
+  build:
+    needs: setup
+    runs-on: [self-hosted, linux]
+    outputs:
+      api: ${{ steps.image.outputs.api }}
+    strategy:
+      matrix:
+        app: [api]
+    steps:
+      - name: Checkout Current Repo
+        uses: actions/checkout@v2
+
+      - name: Checkout Actions Repo
+        uses: actions/checkout@v2
+        with:
+          repository: rcanalytics/github-actions
+          ref: v1
+          path: .github-actions
+          token: ${{ secrets.WORKFLOW_TOKEN }}
+
+      - name: Checkout Workflow Config
+        uses: ./.github-actions/repo/checkout
+        with:
+          repository: rcanalytics/workflow-config
+          path: .workflow-config
+          token: ${{ secrets.WORKFLOW_TOKEN }}
+
+      - name: Setup Workflow Config
+        uses: ./.github-actions/workflow/gen-config
+        with:
+          vaultToken: ${{ secrets.WORKFLOW_TOKEN }}
+
+      - name: Configure Workflow Environment
+        uses: ./.github-actions/workflow/set-env
+        with:
+          envMap: |
+            NPM_TOKEN:npmAuthToken
+      - name: Set Git Environment
+        uses: ./.github-actions/git-env
+
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 10
+
+      - name: Install Build Tools
+        run: npm install -g yarn
+
+      - name: Configure Node
+        run: npm config set //registry.npmjs.org/:_authToken=${{ env.NPM_TOKEN }}
+
+      - name: Install Modules
+        run: yarn install
+
+      - name: Build (${{ matrix.app }} Module)
+        run: yarn build
+      - name: Test (${{ matrix.app }} Module)
+        if: matrix.app == 'api'
+        run: yarn test
+      - name: Build and Push Docker Image
+        uses: ./.github-actions/tools/docker
+        with:
+          dockerfilePath: ./docker/Dockerfile
+          tagName: rcanalytics/ga-product-api
+          tagVersion: ${{ needs.setup.outputs.tagVersion }}
+
+      - name: Register Repository Image For Branch
+        uses: ./.github-actions/repo/image
+        with:
+          command: createImage
+          branch: ${{ env.BRANCH_NAME }}
+          group: ${{ matrix.app }}
+          image: rcanalytics/ga-product-api:${{ needs.setup.outputs.tagVersion }}
+
+      - name: Output Image
+        id: image
+        run: echo "::set-output name=${{ matrix.app }}::rcanalytics/ga-product-api:${{ needs.setup.outputs.tagVersion }}"
+
+  deploy:
+    needs: build
+    runs-on: [self-hosted, linux]
+    steps:
+      - name: Checkout Actions Repo
+        uses: actions/checkout@v2
+        with:
+          repository: rcanalytics/github-actions
+          ref: v1
+          path: .github-actions
+          token: ${{ secrets.WORKFLOW_TOKEN }}
+
+      - name: Checkout Workflow Config
+        uses: ./.github-actions/repo/checkout
+        with:
+          repository: rcanalytics/workflow-config
+          path: .workflow-config
+          token: ${{ secrets.WORKFLOW_TOKEN }}
+
+      - name: Setup Workflow Config
+        uses: ./.github-actions/workflow/gen-config
+        with:
+          vaultToken: ${{ secrets.WORKFLOW_TOKEN }}
+
+      - name: Set Git Environment
+        uses: ./.github-actions/git-env
+
+      - name: Prepare Deployments
+        if: startsWith(env.BRANCH_NAME, 'feature/') == false
+        uses: ./.github-actions/repo/dispatch
+        with:
+          token: ${{ secrets.WORKFLOW_TOKEN }}
+          payload: |
+              branch:${{ env.BRANCH_NAME }}
+              apiImage:${{ needs.build.outputs.api }}
