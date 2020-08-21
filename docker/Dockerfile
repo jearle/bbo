@@ -8,15 +8,11 @@ RUN apk add bash
 # specify the working directory
 WORKDIR /usr/app/
 
+# copy global node resources
+COPY node_modules/ ./node_modules
 COPY package.json yarn.lock ./
 
-COPY src /usr/app/src
-COPY test /usr/app/test
-COPY typings /usr/app/typings
-COPY .prettierrc /usr/app/.prettierrc
-COPY jest.config.js /usr/app/jest.config.js
-COPY tsconfig.json /usr/app/tsconfig.json
-COPY tslint.json /usr/app/tslint.json
+COPY dist/ ./dist
 
 CMD ["yarn", "start"]
 
