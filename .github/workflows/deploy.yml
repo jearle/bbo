@@ -40,7 +40,7 @@ jobs:
       - name: Setup Docker Compose Values
         uses: ./.github-actions/workflow/eval
         with:
-          inputPaths: docker-compose.yml
+          inputPaths: ./docker/docker-compose.yml
           params: |
             apiImage:${{ github.event.deployment.payload.apiImage }}
       - name: Rancher Deploy
