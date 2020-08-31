@@ -7,15 +7,15 @@ services:
       API_PORT: ${config.apiPort}
       COGNITO_CLIENT_ID: ${config.cognitoClientId}
       COGNITO_REGION: ${config.cognitoRegion}
-      COGNITO_USER_POOL_ID: ${config.UserPoolId}
-      DB_RCA_WEB_CONNECTION_TIMEOUT: ${config.dbRcaConnectionTimeout}
-      DB_RCA_WEB_DATABSE: ${config.dbRcaWebDatabase}
-      DB_RCA_WEB_PASSWORD: ${config.dbRcaWebPassword}
-      DB_RCA_WEB_POOL_IDLE_TIMEOUT_MS: ${config.dbRcaWebPoolIdleTimeoutMs}
-      DB_RCA_WEB_POOL_MAX: ${config.dbRcaWebPoolMax}
-      DB_RCA_WEB_POOL_MIN: ${config.dbRcaWebPoolMin}
-      DB_RCA_WEB_SERVER: ${config.dbRcaWebServer}
-      DB_RCA_WEB_USER: ${config.dbRcaWebUser}
+      COGNITO_USER_POOL_ID: ${config.cognitoUserPoolId}
+      DB_RCA_WEB_CONNECTION_TIMEOUT: ${config.sqlDbConnectionTimeout}
+      DB_RCA_WEB_DATABSE: ${config.sqlDb}
+      DB_RCA_WEB_PASSWORD: ${config.sqlPassword}
+      DB_RCA_WEB_POOL_IDLE_TIMEOUT_MS: ${config.sqlDbPoolIdleTimeoutMs}
+      DB_RCA_WEB_POOL_MAX: ${config.sqlDbPoolMax}
+      DB_RCA_WEB_POOL_MIN: ${config.sqlDbPoolMin}
+      DB_RCA_WEB_SERVER: ${config.sqlServer}
+      DB_RCA_WEB_USER: ${config.sqlUser}
     stdin_open: true
     tty: true
     logging:

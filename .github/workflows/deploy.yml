@@ -46,7 +46,7 @@ jobs:
       - name: Rancher Deploy
         uses: ./.github-actions/tools/rancher
         with:
-          rancherStack: ${{ github.event.deployment.stackName }}
+          rancherStack: ${{ github.event.deployment.rancherStack }}
           composeFile: docker-compose.yml
 
       - name: Record Environment Deployment
