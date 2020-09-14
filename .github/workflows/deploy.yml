@@ -35,6 +35,7 @@ jobs:
         with:
           vaultToken: ${{ secrets.WORKFLOW_TOKEN }}
           paths: |
+            shared/services/${{ github.event.deployment.environment }}
             cd/shared/${{ github.event.deployment.environment }}
             cd/product-api/${{ github.event.deployment.environment }}
       - name: Setup Docker Compose Values
