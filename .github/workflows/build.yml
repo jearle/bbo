@@ -82,7 +82,7 @@ jobs:
         uses: ./.github-actions/tools/docker
         with:
           dockerfilePath: ./docker/Dockerfile
-          tagName: rcanalytics/ga-product-api
+          tagName: rcanalytics/cd-product-api
           tagVersion: ${{ needs.setup.outputs.tagVersion }}
 
       - name: Register Repository Image For Branch
@@ -91,11 +91,11 @@ jobs:
           command: createImage
           branch: ${{ env.BRANCH_NAME }}
           group: ${{ matrix.app }}
-          image: rcanalytics/ga-product-api:${{ needs.setup.outputs.tagVersion }}
+          image: rcanalytics/cd-product-api:${{ needs.setup.outputs.tagVersion }}
 
       - name: Output Image
         id: image
-        run: echo "::set-output name=${{ matrix.app }}::rcanalytics/ga-product-api:${{ needs.setup.outputs.tagVersion }}"
+        run: echo "::set-output name=${{ matrix.app }}::rcanalytics/cd-product-api:${{ needs.setup.outputs.tagVersion }}"
 
   deploy:
     needs: build
