@@ -43,7 +43,7 @@ jobs:
         with:
           inputPaths: ./docker/docker-compose.yml
           params: |
-            apiImage:${{ github.event.deployment.payload.apiImage }}
+            apiImage:${{ github.event.deployment.payload.image }}
       - name: Rancher Deploy
         uses: ./.github-actions/tools/rancher
         with:
@@ -56,7 +56,7 @@ jobs:
           environment: ${{ github.event.deployment.environment }}
           deploymentMap: |
             branch:${{ github.event.deployment.ref }}
-            apiImage:${{ github.event.deployment.payload.apiImage }}
+            apiImage:${{ github.event.deployment.payload.image }}
       - name: Slack
         if: always()
         uses: ./.github-actions/slack

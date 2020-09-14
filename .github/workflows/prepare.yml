@@ -65,4 +65,4 @@ jobs:
           environment: ${{ env.ENV_NAME }}
           token: ${{ secrets.WORKFLOW_TOKEN }}
           payload: |
-            apiImage:${{ env.IMAGE_NAME }}
+            image:${{ env.IMAGE_NAME }}
