@@ -43,7 +43,7 @@ jobs:
         with:
           inputPaths: ./docker/docker-compose.yml
           params: |
-            apiImage:${{ github.event.deployment.payload.image }}
+            image:${{ github.event.deployment.payload.image }}
       - name: Rancher Deploy
         uses: ./.github-actions/tools/rancher
         with:

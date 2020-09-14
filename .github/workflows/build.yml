@@ -10,23 +10,8 @@ on:
       - bugfix/*
 
 jobs:
-  setup:
-    runs-on: [self-hosted, linux]
-    outputs:
-      tagVersion: ${{ steps.tagVersion.outputs.value }}
-    steps:
-      - name: Output Tag Version
-        id: tagVersion
-        run: echo "::set-output name=value::${GITHUB_REF##*/}-${GITHUB_RUN_NUMBER}"
-
   build:
-    needs: setup
     runs-on: [self-hosted, linux]
-    outputs:
-      api: ${{ steps.image.outputs.api }}
-    strategy:
-      matrix:
-        app: [api]
     steps:
       - name: Checkout Current Repo
         uses: actions/checkout@v2
@@ -51,11 +36,15 @@ jobs:
         with:
           vaultToken: ${{ secrets.WORKFLOW_TOKEN }}
 
+      - name: Set Tag Version
+        run: echo "::set-env name=tag_version::${GITHUB_REF##*/}-${GITHUB_RUN_NUMBER}"
+
       - name: Configure Workflow Environment
         uses: ./.github-actions/workflow/set-env
         with:
           envMap: |
             NPM_TOKEN:npmAuthToken
+
       - name: Set Git Environment
         uses: ./.github-actions/git-env
 
@@ -73,29 +62,25 @@ jobs:
       - name: Install Modules
         run: yarn install
 
-      - name: Build (${{ matrix.app }} Module)
+      - name: Build Module
         run: yarn build
-      - name: Test (${{ matrix.app }} Module)
-        if: matrix.app == 'api'
+
+      - name: Test Module
         run: yarn test
+
       - name: Build and Push Docker Image
         uses: ./.github-actions/tools/docker
         with:
           dockerfilePath: ./docker/Dockerfile
           tagName: rcanalytics/cd-product-api
-          tagVersion: ${{ needs.setup.outputs.tagVersion }}
+          tagVersion: ${{ env.tag_version }}
 
       - name: Register Repository Image For Branch
         uses: ./.github-actions/repo/image
         with:
           command: createImage
           branch: ${{ env.BRANCH_NAME }}
-          group: ${{ matrix.app }}
-          image: rcanalytics/cd-product-api:${{ needs.setup.outputs.tagVersion }}
-
-      - name: Output Image
-        id: image
-        run: echo "::set-output name=${{ matrix.app }}::rcanalytics/cd-product-api:${{ needs.setup.outputs.tagVersion }}"
+          image: rcanalytics/cd-product-api:${{ env.tag_version }}
 
   deploy:
     needs: build
@@ -131,4 +116,4 @@ jobs:
           token: ${{ secrets.WORKFLOW_TOKEN }}
           payload: |
               branch:${{ env.BRANCH_NAME }}
-              apiImage:${{ needs.build.outputs.api }}
+              image: rcanalytics/cd-product-api:${{ env.tag_version }}
