@@ -1,0 +1,65 @@
+name: Deploy
+
+on: deployment
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, linux]
+
+    steps:
+      - name: Deployment Event
+        run: echo "${{ toJSON(github.event) }}"
+
+      - name: Checkout Current Repo
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.deployment.ref }}
+
+      - name: Checkout Actions Repo
+        uses: actions/checkout@v2
+        with:
+          repository: rcanalytics/github-actions
+          ref: v1
+          path: .github-actions
+          token: ${{ secrets.WORKFLOW_TOKEN }}
+
+      - name: Checkout Workflow Config
+        uses: ./.github-actions/repo/checkout
+        with:
+          repository: rcanalytics/workflow-config
+          path: .workflow-config
+          token: ${{ secrets.WORKFLOW_TOKEN }}
+
+      - name: Setup Workflow Config
+        uses: ./.github-actions/workflow/gen-config
+        with:
+          vaultToken: ${{ secrets.WORKFLOW_TOKEN }}
+          paths: |
+            shared/services/${{ github.event.deployment.environment }}
+            cd/shared/${{ github.event.deployment.environment }}
+            cd/product-api/${{ github.event.deployment.environment }}
+      - name: Setup Docker Compose Values
+        uses: ./.github-actions/workflow/eval
+        with:
+          inputPaths: ./docker/docker-compose.yml
+          params: |
+            image:${{ github.event.deployment.payload.image }}
+      - name: Rancher Deploy
+        uses: ./.github-actions/tools/rancher
+        with:
+          rancherStack: cd-product-api
+          composeFile: docker/docker-compose.yml
+
+      - name: Record Environment Deployment
+        uses: ./.github-actions/repo/environment
+        with:
+          environment: ${{ github.event.deployment.environment }}
+          deploymentMap: |
+            branch:${{ github.event.deployment.ref }}
+            apiImage:${{ github.event.deployment.payload.image }}
+      - name: Slack
+        if: always()
+        uses: ./.github-actions/slack
+        with:
+          channel: prs-cd-product-api
+          message: cd-product-api deployment to the ${{ github.event.deployment.environment }} environment from branch ${{ github.event.deployment.ref }} finished with status - ${{ job.status }}

@@ -44,7 +44,7 @@ jobs:
         with:
           gitRef: ${{ github.event.client_payload.branch }}
           gitMap: |
-            master:prime
+            master:test
             hotfix/*:dev
             develop:dev
             
