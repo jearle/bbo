@@ -48,7 +48,7 @@ jobs:
         uses: ./.github-actions/tools/rancher
         with:
           rancherStack: cd-product-api
-          composeFile: docker-compose.yml
+          composeFile: docker/docker-compose.yml
 
       - name: Record Environment Deployment
         uses: ./.github-actions/repo/environment
