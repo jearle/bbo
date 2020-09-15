@@ -1,7 +1,7 @@
 version: '2'
 services:
   cd-product-api:
-    image: ${params.apiImage}
+    image: ${params.image}
     environment:
       API_HOST: ${config.apiHost}
       API_PORT: ${config.apiPort}
