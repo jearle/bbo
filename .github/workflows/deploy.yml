@@ -38,12 +38,14 @@ jobs:
             shared/services/${{ github.event.deployment.environment }}
             cd/shared/${{ github.event.deployment.environment }}
             cd/product-api/${{ github.event.deployment.environment }}
+
       - name: Setup Docker Compose Values
         uses: ./.github-actions/workflow/eval
         with:
           inputPaths: ./docker/docker-compose.yml
           params: |
             image:${{ github.event.deployment.payload.image }}
+            
       - name: Rancher Deploy
         uses: ./.github-actions/tools/rancher
         with:
@@ -56,7 +58,6 @@ jobs:
           environment: ${{ github.event.deployment.environment }}
           deploymentMap: |
             branch:${{ github.event.deployment.ref }}
-            apiImage:${{ github.event.deployment.payload.image }}
       - name: Slack
         if: always()
         uses: ./.github-actions/slack
