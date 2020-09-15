@@ -36,7 +36,10 @@ jobs:
 
       - name: Set Environment From Payload
         if: github.event.client_payload.environment != null
-        run: echo "::set-env name=ENV_NAME::${{ github.event.client_payload.environment }}"
+        uses: ./.github-actions/git-env
+        with:
+          gitRef: ${{ github.event.client_payload.branch }}
+          gitEnv: ${{ github.event.client_payload.environment }}
 
       - name: Set Environment From Branch
         if: github.event.client_payload.environment == null
@@ -47,6 +50,7 @@ jobs:
             master:test
             hotfix/*:dev
             develop:dev
+            bugfix/*:dev
             
       - name: Set Image Env From Payload
         if: github.event.client_payload.image != null
