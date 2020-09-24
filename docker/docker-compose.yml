@@ -27,3 +27,12 @@ services:
       io.rancher.container.pull_image: always
       io.rancher.scheduler.global: 'true'
       type: ${config.serviceName}
+  cd-product-api-lb:
+    image: rancher/lb-service-haproxy:v0.9.1
+    ports:
+    - 7777:7777/tcp
+    labels:
+      io.rancher.container.agent.role: environmentAdmin,agent
+      io.rancher.container.agent_service.drain_provider: 'true'
+      io.rancher.container.create_agent: 'true'
+      io.rancher.scheduler.global: 'true'
