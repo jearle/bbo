@@ -81,34 +81,7 @@ jobs:
           command: createImage
           branch: ${{ env.BRANCH_NAME }}
           image: rcanalytics/cd-product-api:${{ env.tag_version }}
-
-  deploy:
-    needs: build
-    runs-on: [self-hosted, linux]
-    steps:
-      - name: Checkout Actions Repo
-        uses: actions/checkout@v2
-        with:
-          repository: rcanalytics/github-actions
-          ref: v1
-          path: .github-actions
-          token: ${{ secrets.WORKFLOW_TOKEN }}
-
-      - name: Checkout Workflow Config
-        uses: ./.github-actions/repo/checkout
-        with:
-          repository: rcanalytics/workflow-config
-          path: .workflow-config
-          token: ${{ secrets.WORKFLOW_TOKEN }}
-
-      - name: Setup Workflow Config
-        uses: ./.github-actions/workflow/gen-config
-        with:
-          vaultToken: ${{ secrets.WORKFLOW_TOKEN }}
-
-      - name: Set Git Environment
-        uses: ./.github-actions/git-env
-
+      
       - name: Prepare Deployments
         if: startsWith(env.BRANCH_NAME, 'feature/') == false
         uses: ./.github-actions/repo/dispatch
