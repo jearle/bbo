@@ -4,6 +4,7 @@
 ```sh
 git clone git@github.com:rcanalytics/cd-product-api.git
 cd cd-product-api
+git checkout develop
 nvm use
 yarn install
 cd packages/server
