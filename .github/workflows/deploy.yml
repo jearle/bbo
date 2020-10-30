@@ -50,7 +50,7 @@ jobs:
             image:${{ github.event.deployment.payload.image }}
 
       - name: Helm Install
-        uses: ./tools/helm
+        uses: ./.github-actions/tools/helm
         with:
           command: install
           release: cd-product-api-${{ github.event.deployment.environment }}
