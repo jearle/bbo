@@ -1,0 +1,3 @@
+image: ${params.image}
+certificateId: ${config.certificateId}
+apiHostname: ${config.apiHostname}

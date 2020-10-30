@@ -1,0 +1,74 @@
+name: Deploy
+
+on: deployment
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, linux]
+
+    steps:
+      - name: Deployment Event
+        run: echo "${{ toJSON(github.event) }}"
+
+      - name: Checkout Current Repo
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.deployment.ref }}
+
+      - name: Checkout Actions Repo
+        uses: actions/checkout@v2
+        with:
+          repository: rcanalytics/github-actions
+          ref: v1
+          path: .github-actions
+          token: ${{ secrets.WORKFLOW_TOKEN }}
+
+      - name: Checkout Workflow Config
+        uses: ./.github-actions/repo/checkout
+        with:
+          repository: rcanalytics/workflow-config
+          path: .workflow-config
+          token: ${{ secrets.WORKFLOW_TOKEN }}
+
+      - name: Setup Workflow Config
+        uses: ./.github-actions/workflow/gen-config
+        with:
+          vaultToken: ${{ secrets.WORKFLOW_TOKEN }}
+          paths: |
+            shared/services/${{ github.event.deployment.environment }}
+            cd/shared/${{ github.event.deployment.environment }}
+            cd/product-api/${{ github.event.deployment.environment }}
+
+      - name: Configure AWS Auth
+        uses: ./aws/auth
+
+      - name: Setup Helm Values
+        uses: ./.github-actions/workflow/eval
+        with:
+          inputPaths: helm/helm-values.yaml
+          params: |
+            image:${{ github.event.deployment.payload.image }}
+
+      - name: Helm Install
+        uses: ./tools/helm
+        with:
+          command: install
+          release: cd-product-api-${{ github.event.deployment.environment }}
+          cluster: eks-default
+          namespace: cd-${{ github.event.deployment.environment }}
+          chart: helm/chart
+          values: helm/helm-values.yaml
+
+      - name: Record Environment Deployment
+        uses: ./.github-actions/repo/environment
+        with:
+          environment: ${{ github.event.deployment.environment }}
+          deploymentMap: |
+            branch:${{ github.event.deployment.ref }}
+
+      - name: Slack
+        if: always()
+        uses: ./.github-actions/slack
+        with:
+          channel: prs-cd-product-api
+          message: cd-product-api deployment to the ${{ github.event.deployment.environment }} environment from branch ${{ github.event.deployment.ref }} finished with status - ${{ job.status }}

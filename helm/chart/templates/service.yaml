@@ -1,0 +1,18 @@
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    k8s-app: cd-product-api
+  name: cd-product-api
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: {{ .Values.hostname }}
+    service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: {{ .Values.certificateId }}
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 443
+      targetPort: 80
+      targetPort: 80
+  selector:
+    k8s-app: cd-product-api
