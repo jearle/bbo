@@ -4,6 +4,7 @@ metadata:
   labels:
     k8s-app: cd-product-api
   name: cd-product-api
+  namespace: cd-{{ .Values.environment }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -11,6 +12,7 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: cd-product-api
+    namespace: cd-{{ .Values.environment }}
 
 ---
 
@@ -25,3 +27,4 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: cd-product-api
+    namespace: cd-{{ .Values.environment }}

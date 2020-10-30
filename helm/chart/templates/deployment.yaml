@@ -4,6 +4,7 @@ metadata:
   labels:
     k8s-app: cd-product-api
   name: cd-product-api
+  namespace: cd-{{ .Values.environment }}
 spec:
   replicas: 1
   revisionHistoryLimit: 10

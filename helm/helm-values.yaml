@@ -1,3 +1,4 @@
 image: ${params.image}
+environment: ${config.environment}
 certificateId: ${config.certificateId}
 apiHostname: ${config.apiHostname}
