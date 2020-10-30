@@ -1,7 +1,7 @@
 {
   "include": ["src"],
   "compilerOptions": {
-    "outDir": "lib",
+    "outDir": "dist",
     "target": "ESNext",
     "module": "CommonJS",
     "sourceMap": true

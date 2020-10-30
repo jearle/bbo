@@ -2,7 +2,7 @@
   "name": "cd-product-api",
   "version": "0.0.0",
   "description": "Server for RCA Product API",
-  "main": "./lib/index.js",
+  "main": "./dist/index.js",
   "author": "Jesse Earle",
   "devDependencies": {
     "concurrently": "^5.3.0",
@@ -11,7 +11,7 @@
   },
   "scripts": {
     "start": "concurrently -c \"cyan.bold,magenta.bold\" -n node,compile \"yarn node:development\" \"yarn compile:development\"",
-    "node:development": "NODE_ENV=development LOG_LEVEL=debug PORT=39000 nodemon lib/index",
+    "node:development": "NODE_ENV=development LOG_LEVEL=debug PORT=39000 nodemon dist/index",
     "compile:development": "tsc -w",
     "build:production": "tsc -p ."
   },
