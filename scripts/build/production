@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+yarn install
+cd packages/server
+yarn build:production
