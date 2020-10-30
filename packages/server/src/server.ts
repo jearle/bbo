@@ -1,4 +1,5 @@
 import * as express from 'express';
+import { createServer } from 'http';
 import { AddressInfo } from 'net';
 import { createApp, VERSION } from './app';
 import logger, {
@@ -25,8 +26,10 @@ export const startServer = async ({
   mounts.use(`/api/${VERSION}`, app);
   mounts.use(loggerErrorMiddleware());
 
-  mounts.listen(port, host, () => {
-    const addressInfo = mounts.address() as AddressInfo;
+  const server = createServer(mounts);
+
+  server.listen(port, host, () => {
+    const addressInfo = server.address() as AddressInfo;
 
     const host = addressInfo.address;
 
