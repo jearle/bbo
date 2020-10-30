@@ -1,0 +1,9 @@
+{
+  "include": ["src"],
+  "compilerOptions": {
+    "outDir": "lib",
+    "target": "ESNext",
+    "module": "CommonJS",
+    "sourceMap": true
+  }
+}
