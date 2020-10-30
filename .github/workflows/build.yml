@@ -1,0 +1,80 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - feature/*
+      - hotfix/*
+      - bugfix/*
+
+jobs:
+  build:
+    runs-on: [self-hosted, linux]
+    steps:
+      - name: Checkout Current Repo
+        uses: actions/checkout@v2
+
+      - name: Checkout Actions Repo
+        uses: actions/checkout@v2
+        with:
+          repository: rcanalytics/github-actions
+          ref: v1
+          path: .github-actions
+          token: ${{ secrets.WORKFLOW_TOKEN }}
+
+      - name: Checkout Workflow Config
+        uses: ./.github-actions/repo/checkout
+        with:
+          repository: rcanalytics/workflow-config
+          path: .workflow-config
+          token: ${{ secrets.WORKFLOW_TOKEN }}
+
+      - name: Setup Workflow Config
+        uses: ./.github-actions/workflow/gen-config
+        with:
+          vaultToken: ${{ secrets.WORKFLOW_TOKEN }}
+
+      - name: Set Git Environment
+        uses: ./.github-actions/git-env
+
+      - name: Set Docker Environment
+        uses: ./.github-actions/docker-env
+
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 15
+
+      - name: Install Build Tools
+        run: npm install -g yarn
+
+      - name: Install Modules
+        run: yarn install
+
+      - name: Build Module
+        run: yarn build:server:production
+
+      - name: Build and Push Docker Image
+        uses: ./.github-actions/tools/docker
+        with:
+          dockerfilePath: Dockerfile
+          tagName: rcanalytics/cd-product-api
+          tagVersion: ${{ env.TAG_VERSION }}
+
+      - name: Register Repository Image For Branch
+        uses: ./.github-actions/repo/image
+        with:
+          command: createImage
+          branch: ${{ env.BRANCH_NAME }}
+          image: rcanalytics/cd-product-api:${{ env.TAG_VERSION }}
+
+      - name: Prepare Deployments
+        if: startsWith(env.BRANCH_NAME, 'feature/') == false
+        uses: ./.github-actions/repo/dispatch
+        with:
+          token: ${{ secrets.WORKFLOW_TOKEN }}
+          payload: |
+            branch:${{ env.BRANCH_NAME }}
+            image: rcanalytics/cd-product-api:${{ env.TAG_VERSION }}
