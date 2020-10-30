@@ -2,4 +2,4 @@
 
 ## packages/
 
-+ [server](https://github.com/rcanalytics/cd-product-api/tree/develop/packages/server)
++ [server/](https://github.com/rcanalytics/cd-product-api/tree/develop/packages/server)
