@@ -40,7 +40,7 @@ jobs:
             cd/product-api/${{ github.event.deployment.environment }}
 
       - name: Configure AWS Auth
-        uses: ./aws/auth
+        uses: ./.github-actions/aws/auth
 
       - name: Setup Helm Values
         uses: ./.github-actions/workflow/eval
