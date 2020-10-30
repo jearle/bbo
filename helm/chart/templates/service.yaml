@@ -5,7 +5,7 @@ metadata:
     k8s-app: cd-product-api
   name: cd-product-api
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: {{ .Values.hostname }}
+    external-dns.alpha.kubernetes.io/hostname: {{ .Values.apiHostname }}
     service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
     service.beta.kubernetes.io/aws-load-balancer-ssl-cert: {{ .Values.certificateId }}
 spec:
