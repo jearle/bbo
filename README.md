@@ -15,10 +15,7 @@ yarn start
 
 ## Build Production
 ```sh
-nvm use
-yarn install
-cd packages/server
-yarn build:production
+yarn build:server:production
 ```
 
 ## packages/
