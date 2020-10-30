@@ -1,7 +1,7 @@
 import { RequestListener } from 'http';
 import * as express from 'express';
 
-export const VERSION = `0.0.0`;
+export const VERSION = `0.0.1`;
 
 export const createApp = (): RequestListener => {
   const app = express();
