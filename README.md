@@ -1,6 +1,8 @@
 # cd-product-api
 
-## Quick Start
+## MacOS Local Development Quick Start
+Copy and paste the following into Terminal:
+
 ```sh
 git clone git@github.com:rcanalytics/cd-product-api.git
 cd cd-product-api
