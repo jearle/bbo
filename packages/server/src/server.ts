@@ -1,7 +1,7 @@
 import * as express from 'express';
 import { createServer } from 'http';
 import { AddressInfo } from 'net';
-import { createApp, VERSION } from './app';
+import { createCompanyApp, VERSION } from './apps/company';
 import logger, {
   loggerIdMiddlewware,
   loggerMiddleware,
@@ -15,15 +15,15 @@ interface ServerOptions {
 
 export const startServer = async ({
   port = 0,
-  host = `127.0.0.1`
+  host = `127.0.0.1`,
 }: ServerOptions) => {
   const mounts = express();
 
-  const app = createApp();
+  const companyApp = createCompanyApp();
 
   mounts.use(loggerIdMiddlewware());
   mounts.use(loggerMiddleware());
-  mounts.use(`/api/${VERSION}`, app);
+  mounts.use(`/api/company/${VERSION}`, companyApp);
   mounts.use(loggerErrorMiddleware());
 
   const server = createServer(mounts);
@@ -33,6 +33,6 @@ export const startServer = async ({
 
     const host = addressInfo.address;
 
-    logger.log(`info`, `listening: https://${host}:${addressInfo.port}`);
+    logger.log(`info`, `listening: http://${host}:${addressInfo.port}`);
   });
 };

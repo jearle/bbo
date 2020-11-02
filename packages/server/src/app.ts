@@ -10,12 +10,5 @@ export const createApp = (): RequestListener => {
     res.json({ health: `ok`, version: VERSION })
   );
 
-  app.get(`/error`, (req, res) => {
-    console.log(`/ERROR API CALLED`);
-    res.status(501);
-    throw new Error(`hello`);
-    res.json({ health: `not ok`, version: VERSION });
-  });
-
   return app;
 };
