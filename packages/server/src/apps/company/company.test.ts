@@ -1,5 +1,5 @@
 import { Application } from 'express';
-import { createCompanyApp } from './';
+import { createApp } from './';
 import fetch from 'node-fetch';
 
 const waitListen = (app: any): Promise<Application> => {
@@ -13,13 +13,13 @@ const waitListen = (app: any): Promise<Application> => {
 };
 
 test(`creates company app`, () => {
-  const app = createCompanyApp();
+  const app = createApp();
 
   expect.any(app);
 });
 
 test(`fetches health endpoint`, async () => {
-  const app = createCompanyApp();
+  const app = createApp();
 
   const server = await waitListen(app);
   const { port } = server.address();

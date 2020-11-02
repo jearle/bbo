@@ -1,12 +1,19 @@
 import * as express from 'express';
 import { createServer } from 'http';
 import { AddressInfo } from 'net';
-import { createCompanyApp, VERSION } from './apps/company';
+
+import {
+  createApp as createCompanyApp,
+  BASE_PATH as companyBasePath,
+  DESCRIPTION as companyDescription,
+} from './apps/company';
 import logger, {
   loggerIdMiddlewware,
   loggerMiddleware,
   loggerErrorMiddleware,
 } from './logger';
+
+import { useSwaggerDocumentation } from './helpers/swagger/express-mount';
 
 interface ServerOptions {
   port?: number;
@@ -23,7 +30,15 @@ export const startServer = async ({
 
   mounts.use(loggerIdMiddlewware());
   mounts.use(loggerMiddleware());
-  mounts.use(`/api/company/${VERSION}`, companyApp);
+
+  mounts.use(companyBasePath, companyApp);
+  useSwaggerDocumentation(mounts, {
+    host,
+    port,
+    basePath: companyBasePath,
+    description: companyDescription,
+  });
+
   mounts.use(loggerErrorMiddleware());
 
   const server = createServer(mounts);

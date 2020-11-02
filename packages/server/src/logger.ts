@@ -20,7 +20,7 @@ const printfFormat = () => {
 
     const coloredLevel = colorFunction ? colorFunction(level) : level;
 
-    return `${blue(timestamp)} ${coloredLevel} ${message}`;
+    return `${red(timestamp)} ${coloredLevel} ${message}`;
   });
 };
 
