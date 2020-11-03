@@ -1,16 +1,8 @@
-import { Application } from 'express';
-import { createApp } from './';
 import fetch from 'node-fetch';
 
-const waitListen = (app: any): Promise<Application> => {
-  const promise = new Promise((resolve) => {
-    const server = app.listen(0, () => {
-      resolve(server);
-    });
-  }) as Promise<Application>;
+import { createApp } from './';
 
-  return promise;
-};
+import { portListen } from '../../helpers/express/port-listen';
 
 test(`creates company app`, () => {
   const app = createApp();
@@ -21,7 +13,7 @@ test(`creates company app`, () => {
 test(`fetches health endpoint`, async () => {
   const app = createApp();
 
-  const server = await waitListen(app);
+  const server = await portListen(app);
   const { port } = server.address();
 
   const response = await fetch(`http://localhost:${port}/health`);

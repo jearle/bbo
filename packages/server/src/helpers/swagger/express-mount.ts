@@ -43,7 +43,7 @@ export const useSwaggerDocumentation = (
   { host, port, basePath, description }: SwaggerDocumentationOptions
 ) =>
   app.use(
-    `${basePath}/documentation`,
+    `${basePath === `/` ? `` : basePath}/documentation`,
     serve,
     setup(
       getSpec({
