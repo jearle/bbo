@@ -1,6 +1,6 @@
 import * as express from 'express';
 
-export const VERSION = `0.0.0`;
+export const VERSION = `0.0.1`;
 export const DESCRIPTION = `Company API`;
 export const BASE_PATH = `/api/company/${VERSION}`;
 
@@ -10,7 +10,7 @@ export const createApp = () => {
   /**
    * @swagger
    *
-   * /health:
+   * /healthcheck:
    *   get:
    *     description: Gets health of app
    *     produces:
@@ -19,7 +19,7 @@ export const createApp = () => {
    *       200:
    *         description: health
    */
-  app.get(`/health`, (req, res) =>
+  app.get(`/healthcheck`, (req, res) =>
     res.json({ title: `Company API`, health: `ok`, version: VERSION })
   );
 
