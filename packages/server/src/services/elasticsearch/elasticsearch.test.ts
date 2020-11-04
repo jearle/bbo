@@ -1,4 +1,4 @@
-import { createElasticsearchClient } from './';
+import { createElasticsearchClient } from '.';
 
 const {
   ELASTICSEARCH_NODE,

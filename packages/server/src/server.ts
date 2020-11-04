@@ -15,7 +15,7 @@ import { useSwaggerDocumentation } from './helpers/swagger/express-mount';
 import {
   ElasticsearchOptions,
   createElasticsearchClient,
-} from './services/elasticsearch2';
+} from './services/elasticsearch';
 import { createTransactionsService } from './apps/transactions-search/services/transactions';
 
 // Apps

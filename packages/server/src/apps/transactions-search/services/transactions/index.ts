@@ -8,6 +8,18 @@ export interface TransactionsService {
   search: Function;
 }
 
+export interface TransactionSearchParams {
+  limit: Number;
+}
+
+export const cleanTransactionSearchParams = (
+  searchParams
+): TransactionSearchParams => {
+  const { limit = 10 } = searchParams;
+
+  return { limit: parseInt(limit.toString()) };
+};
+
 export const createTransactionsService = ({ client }: TransactionsOptions) => {
   return {
     async search() {

@@ -1,4 +1,4 @@
-import { createElasticsearchClient } from '../../../../services/elasticsearch2';
+import { createElasticsearchClient } from '../../../../services/elasticsearch';
 import { createTransactionsService } from '.';
 
 const {
