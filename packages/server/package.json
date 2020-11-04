@@ -24,11 +24,12 @@
     "start": "concurrently -c \"cyan.bold,magenta.bold,green.bold\" -n node,compile,test \"yarn node:development\" \"yarn compile:development\" \"yarn test:development\"",
     "node:development": "nodemon -r dotenv/config dist/index",
     "compile:development": "tsc -w",
-    "test:development": "jest --coverage --watchAll",
+    "test:development": "jest --setupFiles dotenv/config --coverage --watchAll",
     "build:production": "yarn clean && tsc -p .",
     "clean": "rimraf ./dist"
   },
   "dependencies": {
+    "@elastic/elasticsearch": "^7.9.1",
     "chalk": "^4.1.0",
     "express": "^4.17.1",
     "morgan": "^1.10.0",

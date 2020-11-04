@@ -34,13 +34,13 @@ const getSpec = ({ host, port, basePath, description }) =>
 interface SwaggerDocumentationOptions {
   host: string;
   port: number;
-  basePath: string;
+  basePath?: string;
   description: string;
 }
 
 export const useSwaggerDocumentation = (
   app: Application,
-  { host, port, basePath, description }: SwaggerDocumentationOptions
+  { host, port, basePath = `/`, description }: SwaggerDocumentationOptions
 ) =>
   app.use(
     `${basePath === `/` ? `` : basePath}/documentation`,

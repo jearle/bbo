@@ -1,18 +1,8 @@
 import fetch from 'node-fetch';
 
-import { createApp } from './';
+import { portListen } from '../express/port-listen';
 
-import { portListen } from '../../helpers/express/port-listen';
-
-test(`creates company app`, () => {
-  const app = createApp();
-
-  expect.any(app);
-});
-
-test(`fetches health endpoint`, async () => {
-  const app = createApp();
-
+export const testHealthcheck = async (app) => {
   const server = await portListen(app);
   const { port } = server.address();
 
@@ -22,4 +12,4 @@ test(`fetches health endpoint`, async () => {
   expect(json.health).toBe(`ok`);
 
   server.close();
-});
+};
