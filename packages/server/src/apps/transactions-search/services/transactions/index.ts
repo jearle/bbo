@@ -9,7 +9,7 @@ export interface TransactionsService {
 }
 
 export interface TransactionSearchParams {
-  limit: Number;
+  limit: number;
 }
 
 export const cleanTransactionSearchParams = (
@@ -22,15 +22,21 @@ export const cleanTransactionSearchParams = (
 
 export const createTransactionsService = ({ client }: TransactionsOptions) => {
   return {
-    async search() {
-      const result = await client.index({
+    async search(params: TransactionSearchParams) {
+      const result = await client.search({
         index: 'test7_multi_pst',
+        from: 0,
+        size: <any>params.limit,
         body: {
-          foo: 'bar',
+          query: {
+            match_all: {},
+          },
         },
       });
 
-      return result;
+      return result.body.hits.hits.map(({ _source }) => {
+        return _source;
+      });
     },
   };
 };

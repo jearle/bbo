@@ -55,17 +55,9 @@ export const createApp = ({ transactionsService }: Options) => {
   app.get(`/transactions`, async (req, res) => {
     const transactionSearchParams = cleanTransactionSearchParams(req.query);
 
-    try {
-      const data = await transactionsService.search(transactionSearchParams);
+    const data = await transactionsService.search(transactionSearchParams);
 
-      res.json({ data });
-    } catch (e) {
-      res.status(500).json({
-        data: {
-          error: `Internal Server Error`,
-        },
-      });
-    }
+    res.json({ data });
   });
 
   return app;
