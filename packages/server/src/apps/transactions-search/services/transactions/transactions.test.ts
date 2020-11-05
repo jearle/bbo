@@ -26,14 +26,14 @@ describe(`transactions service`, () => {
 
   test('search transactions', async () => {
     const params = cleanTransactionSearchParams({});
-    const { hits } = (await transactionsService.search(params)).body.hits;
+    const hits = await transactionsService.search(params);
 
     expect(hits.length).toBeGreaterThanOrEqual(1);
   });
 
   test('search transactions with limit should not return more than set limit', async () => {
     const params = cleanTransactionSearchParams({ limit: 5 });
-    const { hits } = (await transactionsService.search(params)).body.hits;
+    const hits = await transactionsService.search(params);
 
     expect(hits.length).toBeLessThanOrEqual(params.limit);
   });

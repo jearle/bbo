@@ -34,7 +34,9 @@ export const createTransactionsService = ({ client }: TransactionsOptions) => {
         },
       });
 
-      return result;
+      return result.body.hits.hits.map(({ _source }) => {
+        return _source;
+      });
     },
   };
 };
