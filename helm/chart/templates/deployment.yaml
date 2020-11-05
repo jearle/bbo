@@ -30,6 +30,12 @@ spec:
               value: "0.0.0.0"
             - name: PORT
               value: "8080"
+            - name: ELASTICSEARCH_USERNAME
+              value: "{{ .Values.esUsername }}"
+            - name: ELASTICSEARCH_PASSWORD
+              value: "{{ .Values.esPassword }}"
+            - name: ELASTICSEARCH_NODE
+              value: "{{ .Values.esUrl }}"
       imagePullSecrets:
         - name: dockerhub
       serviceAccountName: cd-product-api
