@@ -25,7 +25,15 @@ test('search transactions', async () => {
   var params = cleanTransactionSearchParams({});
   const result = await transactionsService.search(params);
 
-  expect(result.body['hits'].total.value).toBeGreaterThanOrEqual(1);
+  expect(result.body.hits.hits.length).toBeGreaterThanOrEqual(1);
+
+})
+
+test('search transactions with limit should not return more than set limit', async () => {
+  var params = cleanTransactionSearchParams({limit: 5});
+  const result = await transactionsService.search(params);
+
+  expect(result.body.hits.hits.length).toBeLessThanOrEqual(<any>params.limit);
 
 })
 
