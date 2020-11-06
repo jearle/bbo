@@ -9,10 +9,8 @@ export const checkUserPermissionModel = (rCAWebDBClient, redisClient) => {
         let key = `${userid}_${sp}`;
 
         const userPermissionModel = await redisClient.get(key);
-        if(typeof userPermissionModel !== 'undefined' || userPermissionModel !== null) {
-            next();
-        }
-        else {
+
+        if(typeof userPermissionModel === 'undefined' || userPermissionModel === null) {
             rCAWebDBClient.then((pool) => {
                 pool.request()
                 .input('AccountUser_id', sql.Int, userid)
@@ -24,13 +22,14 @@ export const checkUserPermissionModel = (rCAWebDBClient, redisClient) => {
                       }
                       const permissionsModel = result.recordsets[0];
                       await redisClient.set(key, JSON.stringify(permissionsModel));
-                    next();
                 })
             }).catch(err => {
                 console.log('error:', err);
                 next();
             })
         }
-        
+
+        next();
+    
     }
   }
