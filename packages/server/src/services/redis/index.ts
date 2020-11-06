@@ -5,7 +5,7 @@ export interface RedisOptions {
 }
 
 export const createRedisService = ({ uri }: RedisOptions): Redis => {
-  const client = new Redis(uri);
+  const redisService = new Redis(uri);
 
-  return client;
+  return redisService;
 };

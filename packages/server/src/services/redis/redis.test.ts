@@ -4,15 +4,15 @@ import { createRedisService } from '.';
 const { REDIS_URI } = process.env;
 
 test(`createRedisService`, async () => {
-  const redisClient = createRedisService({ uri: REDIS_URI });
+  const redisService = createRedisService({ uri: REDIS_URI });
   const id = uuid();
 
-  await redisClient.set(id, `bar`);
+  await redisService.set(id, `bar`);
 
-  const result = await redisClient.get(id);
+  const result = await redisService.get(id);
   expect(result).toBe(`bar`);
 
-  await redisClient.del(id);
+  await redisService.del(id);
 
-  redisClient.end();
+  redisService.end();
 });
