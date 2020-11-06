@@ -6,7 +6,7 @@ const {
   ELASTICSEARCH_USERNAME,
   ELASTICSEARCH_PASSWORD,
   ELASTICSEARCH_NODE,
-  RCA_WEB_USER,
+  RCA_WEB_USERNAME,
   RCA_WEB_PASSWORD,
   RCA_WEB_SERVER,
   REDIS_URI,
@@ -25,10 +25,12 @@ const redisOptions = {
 };
 
 const rcaWebOptions = {
-  user: RCA_WEB_USER,
+  username: RCA_WEB_USERNAME,
   password: RCA_WEB_PASSWORD,
   server: RCA_WEB_SERVER,
 };
+
+console.log(rcaWebOptions);
 
 startServer({
   port,

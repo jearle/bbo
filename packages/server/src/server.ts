@@ -12,7 +12,7 @@ import logger, {
 import { useSwaggerDocumentation } from './helpers/swagger/express-mount';
 
 // Middleware
-import { checkUserPermissionModel as authorizationMiddleware } from './middlewares/authorization/index';
+import { checkUserPermissionModel as authorizationMiddleware } from './middlewares/authorization';
 
 // Services
 import {
@@ -20,8 +20,8 @@ import {
   createElasticsearchClient,
 } from './services/elasticsearch';
 import { createTransactionsService } from './apps/transactions-search/services/transactions';
-import { createRCAWebDB, SqlOptions } from './services/databases/rcaweb/';
-import { createRedisClient, Options as RedisOptions } from './services/redis/index';
+import { createRCAWebService, RCAWebOptions } from './services/rcaweb';
+import { createRedisService, RedisOptions } from './services/redis';
 
 // Apps
 import {
@@ -40,16 +40,16 @@ interface ServerOptions {
   port?: number;
   host?: string;
   elasticsearchOptions: ElasticsearchOptions;
-  rcaWebDbOptions: SqlOptions,
-  redisOptions: RedisOptions
+  redisOptions: RedisOptions;
+  rcaWebOptions: RCAWebOptions;
 }
 
 export const startServer = async ({
   port = 0,
   host = `127.0.0.1`,
   elasticsearchOptions,
-  rcaWebDbOptions,
-  redisOptions
+  rcaWebOptions,
+  redisOptions,
 }: ServerOptions) => {
   const elasticSearchClient = createElasticsearchClient(elasticsearchOptions);
 
@@ -57,9 +57,9 @@ export const startServer = async ({
     client: elasticSearchClient,
   });
 
-  const rcaWebDbClient = createRCAWebDB(rcaWebDbOptions);
+  const rcaWebService = createRCAWebService(rcaWebOptions);
 
-  const redisClient = createRedisClient(redisOptions);
+  const redisClient = createRedisService(redisOptions);
 
   const mounts = express();
 
@@ -70,7 +70,7 @@ export const startServer = async ({
 
   mounts.use(loggerIdMiddlewware());
   mounts.use(loggerMiddleware());
-  mounts.use(authorizationMiddleware(rcaWebDbClient, redisClient))
+  mounts.use(authorizationMiddleware(rcaWebDbClient, redisClient));
   mounts.use(companyBasePath, companyApp);
   useSwaggerDocumentation(mounts, {
     host,
