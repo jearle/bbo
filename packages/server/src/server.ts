@@ -21,6 +21,7 @@ import {
 } from './services/elasticsearch';
 import { createTransactionsService } from './apps/transactions-search/services/transactions';
 import { createRCAWebDB, SqlOptions } from './services/databases/rcaweb/';
+import { createRedisClient, Options as RedisOptions } from './services/redis/index';
 
 // Apps
 import {
@@ -39,14 +40,16 @@ interface ServerOptions {
   port?: number;
   host?: string;
   elasticsearchOptions: ElasticsearchOptions;
-  rcaWebDbOptions: SqlOptions
+  rcaWebDbOptions: SqlOptions,
+  redisOptions: RedisOptions
 }
 
 export const startServer = async ({
   port = 0,
   host = `127.0.0.1`,
   elasticsearchOptions,
-  rcaWebDbOptions
+  rcaWebDbOptions,
+  redisOptions
 }: ServerOptions) => {
   const elasticSearchClient = createElasticsearchClient(elasticsearchOptions);
 
@@ -55,6 +58,8 @@ export const startServer = async ({
   });
 
   const rcaWebDbClient = createRCAWebDB(rcaWebDbOptions);
+
+  const redisClient = createRedisClient(redisOptions);
 
   const mounts = express();
 
@@ -65,7 +70,7 @@ export const startServer = async ({
 
   mounts.use(loggerIdMiddlewware());
   mounts.use(loggerMiddleware());
-  mounts.use(authorizationMiddleware(rcaWebDbClient))
+  mounts.use(authorizationMiddleware(rcaWebDbClient, redisClient))
   mounts.use(companyBasePath, companyApp);
   useSwaggerDocumentation(mounts, {
     host,

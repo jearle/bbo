@@ -1,21 +1,36 @@
-export const checkUserPermissionModel = (rCAWebDBClient) => {
-    
-    const dbClient = rCAWebDBClient;
+const sql = require('mssql')
 
-    return (req, res, next) => {
-        // Check redis
-        // const request = new dbClient.Request();
-        // request.input('AccountUser_id', dbClient.Int, 125);
-        // request.execute('ReturnStateProvAndCountryPTsByUser_New_PTSMenu', function (err: any, recordsets: any) {
-        //   if (err) {
-        //     console.log('Sql.Request Error for Permissions Model ' + 125);
-        //     console.log(err);
-        //   }
-        //   const permissionsModel = recordsets[0];
-        //   console.log(permissionsModel)
-        //   //Update redis
-        //   next();
-        // });
-        console.log("test")
+export const checkUserPermissionModel = (rCAWebDBClient, redisClient) => {
+    
+    return async (req, res, next) => {
+        // Mocked values, we need to get the id from the req object and the type of search params decides what sp to use
+        let userid = 130436;
+        let sp = 'ReturnStateProvAndCountryPTsByUser_New_PTSMenu';
+        let key = `${userid}_${sp}`;
+
+        const userPermissionModel = await redisClient.get(key);
+        if(typeof userPermissionModel !== 'undefined' || userPermissionModel !== null) {
+            next();
+        }
+        else {
+            rCAWebDBClient.then((pool) => {
+                pool.request()
+                .input('AccountUser_id', sql.Int, userid)
+                .execute(sp, async (err, result) => {
+                    if (err) {
+                        console.log('Sql.Request Error for Permissions Model ', userid);
+                        console.log(err);
+                        next();
+                      }
+                      const permissionsModel = result.recordsets[0];
+                      await redisClient.set(key, JSON.stringify(permissionsModel));
+                    next();
+                })
+            }).catch(err => {
+                console.log('error:', err);
+                next();
+            })
+        }
+        
     }
   }

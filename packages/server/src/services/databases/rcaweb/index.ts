@@ -15,10 +15,8 @@ export interface SqlOptions {
   }
 }
 
-export const createRCAWebDB = (config : SqlOptions) => {
-  sql.connect(config, function (err) {
-        if (err) throw Error(err)
-        
-        return sql;
-    });
+export const createRCAWebDB = async (config : SqlOptions) => {
+    let pool = await sql.connect(config.dbRcaWebAccounts);
+    
+    return pool;
 };

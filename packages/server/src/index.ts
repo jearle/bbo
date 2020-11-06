@@ -13,7 +13,8 @@ const {
   RCA_WEB_SQL_CONNECTIONTIMEOUT,
   RCA_WEB_SQL_MAX,
   RCA_WEB_SQL_MIN,
-  RCA_WEB_SQL_IDLETIMEOUTMILLIS
+  RCA_WEB_SQL_IDLETIMEOUTMILLIS,
+  REDIS_CONNECTION
 } = process.env;
 
 const port = parseInt(PORT);
@@ -22,6 +23,9 @@ const elasticsearchOptions = {
   password: ELASTICSEARCH_PASSWORD,
   node: ELASTICSEARCH_NODE,
 };
+const redisOptions = {
+  uri: Number(REDIS_CONNECTION)
+}
 const rcaWebDbOptions = {
   dbRcaWebAccounts: {
     user: RCA_WEB_SQL_USER,
@@ -37,4 +41,4 @@ const rcaWebDbOptions = {
   }
 }
 
-startServer({ port, host, elasticsearchOptions, rcaWebDbOptions });
+startServer({ port, host, elasticsearchOptions, rcaWebDbOptions, redisOptions });
