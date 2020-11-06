@@ -1,7 +1,23 @@
-import { createRCAWebDB } from './';
+import mssql from 'mssql';
+import { createRCAWebService } from '.';
 
-test(`creates rcaWebDB`, () => {
-  // const rcaWebDB = createRCAWebDB();
+const { RCA_WEB_URI: uri } = process.env;
 
-  // expect(typeof rcaWebDB).toBe(`object`);
+describe(`rca web service`, () => {
+  let rcaWebService = null;
+
+  beforeAll(async () => {
+    rcaWebService = await createRCAWebService({
+      uri,
+    });
+  });
+
+  afterAll(async () => {
+    await rcaWebService.close();
+  });
+
+  test(`returns types`, () => {
+    expect(rcaWebService.types().Int).not.toBeUndefined();
+    // expect(rcaWebService.types().Int).not.toBeNull();
+  });
 });

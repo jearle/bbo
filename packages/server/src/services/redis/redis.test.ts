@@ -14,5 +14,5 @@ test(`createRedisService`, async () => {
 
   await redisService.del(id);
 
-  redisService.end();
+  redisService.close();
 });

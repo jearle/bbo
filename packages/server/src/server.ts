@@ -12,7 +12,7 @@ import logger, {
 import { useSwaggerDocumentation } from './helpers/swagger/express-mount';
 
 // Middleware
-import { checkUserPermissionModel as authorizationMiddleware } from './middlewares/authorization';
+import { permissionsMiddleware } from './middlewares/permissions';
 
 // Services
 import {
@@ -20,8 +20,9 @@ import {
   createElasticsearchClient,
 } from './services/elasticsearch';
 import { createTransactionsService } from './apps/transactions-search/services/transactions';
-import { createRCAWebService, RCAWebOptions } from './services/rcaweb';
+import { createRCAWebService, RCAWebOptions } from './services/rca-web';
 import { createRedisService, RedisOptions } from './services/redis';
+import { createPermissionsService } from './services/permissions';
 
 // Apps
 import {
@@ -57,9 +58,12 @@ export const startServer = async ({
     client: elasticSearchClient,
   });
 
+  const redisService = createRedisService(redisOptions);
   const rcaWebService = createRCAWebService(rcaWebOptions);
-
-  const redisClient = createRedisService(redisOptions);
+  const permissionsService = createPermissionsService({
+    redisService,
+    rcaWebService,
+  });
 
   const mounts = express();
 
@@ -68,9 +72,12 @@ export const startServer = async ({
     transactionsService,
   });
 
+  // Pre Middleware
   mounts.use(loggerIdMiddlewware());
   mounts.use(loggerMiddleware());
-  mounts.use(authorizationMiddleware(rcaWebDbClient, redisClient));
+  mounts.use(permissionsMiddleware({ permissionsService }));
+
+  // Apps
   mounts.use(companyBasePath, companyApp);
   useSwaggerDocumentation(mounts, {
     host,
@@ -87,10 +94,11 @@ export const startServer = async ({
     description: transactionsSearchDescription,
   });
 
+  // Post Middleware
   mounts.use(loggerErrorMiddleware());
 
+  // Start Server
   const server = createServer(mounts);
-
   server.listen(port, host, () => {
     const addressInfo = server.address() as AddressInfo;
 
