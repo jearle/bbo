@@ -1,4 +1,9 @@
-const createMatchObjects = (permissionModel, mappings) => {
+import { PermissionModel } from './permission-model';
+
+const createMatchObjects = (
+  permissionModel: PermissionModel,
+  mappings: { permissionModelProperty: string; elasticSearchId: string }[]
+) => {
   const matchObjects = mappings.reduce(
     (acc, { permissionModelProperty, elasticSearchId }) => {
       return [
@@ -16,7 +21,11 @@ const createMatchObjects = (permissionModel, mappings) => {
   return matchObjects;
 };
 
-export const createPermissionFilter = ({ permissionModel }) => {
+export const createPermissionFilter = ({
+  permissionModel,
+}: {
+  permissionModel: PermissionModel;
+}) => {
   const must = createMatchObjects(permissionModel, [
     {
       permissionModelProperty: `stateProvidence`,

@@ -1,74 +1,38 @@
+import {
+  PermissionModel,
+  RawPermissionModel,
+  createPermissionModelFromListOfRaw,
+} from './permission-model';
+
 import { RCAWebService } from '../rca-web';
 
 interface PermissionsServiceOptions {
-  redisService: any;
-  rcaWebService: RCAWebService;
+  readonly redisService: any;
+  readonly rcaWebService: RCAWebService;
 }
 
 export interface PermissionsService {
-  fetchPermissionModel: Function;
-  clearPermissionModel: Function;
-  close: Function;
+  fetchPermissionModel(options: { userId: number }): Promise<any>;
+  clearPermissionModel(options: { userId: number }): Promise<void>;
+  close(): Promise<any>;
 }
 
-const storedProcedure = `ReturnStateProvAndCountryPTsByUser_New_PTSMenu`;
+const STORED_PROCEDURE = `ReturnStateProvAndCountryPTsByUser_New_PTSMenu`;
 
-const createPermissionModelRow = (permissionModelRow) => {
-  const {
-    StateProv_csv,
-    Country_csv,
-    MarketTier_csv,
-    Metro_csv,
-    TransType_csv,
-    PtsMenu_csv,
-  } = permissionModelRow;
+const fetchRawPermissionModels = async (
+  rcaWebService: RCAWebService,
+  userId: number
+): Promise<RawPermissionModel[]> => {
+  const connectionPool = await rcaWebService.connectionPool();
 
-  return {
-    stateProvidence: StateProv_csv ? StateProv_csv.split(`,`) : [],
-    country: Country_csv ? Country_csv.split(`,`) : [],
-    marketTier: MarketTier_csv ? MarketTier_csv.split(`,`) : [],
-    metro: Metro_csv ? Metro_csv.split(`,`) : [],
-    transType: TransType_csv ? TransType_csv.split(`,`) : [],
-    propertyTypeSearch: PtsMenu_csv ? PtsMenu_csv.split(`,`) : [],
-  };
-};
+  const result = await connectionPool
+    .request()
+    .input(`AccountUser_id`, rcaWebService.types().Int, userId)
+    .execute(STORED_PROCEDURE);
 
-const cleanPermissionModel = (permissionModel) => {
-  const cleanedPermissionModel = permissionModel.reduce(
-    (acc, rawPermissionModelRow) => {
-      const {
-        stateProvidence,
-        country,
-        marketTier,
-        metro,
-        transType,
-        propertyTypeSearch,
-      } = createPermissionModelRow(rawPermissionModelRow);
+  const [rawPermissionModels]: [RawPermissionModel[]] = result.recordsets;
 
-      return {
-        stateProvidence: [
-          ...new Set([...stateProvidence, ...acc.stateProvidence]),
-        ],
-        country: [...new Set([...country, ...acc.country])],
-        marketTier: [...new Set([...marketTier, ...acc.marketTier])],
-        metro: [...new Set([...metro, ...acc.metro])],
-        transType: [...new Set([...transType, ...acc.transType])],
-        propertyTypeSearch: [
-          ...new Set([...propertyTypeSearch, ...acc.propertyTypeSearch]),
-        ],
-      };
-    },
-    {
-      stateProvidence: [],
-      country: [],
-      marketTier: [],
-      metro: [],
-      transType: [],
-      propertyTypeSearch: [],
-    }
-  );
-
-  return cleanedPermissionModel;
+  return rawPermissionModels;
 };
 
 export const createPermissionsService = ({
@@ -78,23 +42,20 @@ export const createPermissionsService = ({
   return {
     async fetchPermissionModel({ userId }) {
       const cachedPermissionModel = await redisService.get(userId);
-
       if (cachedPermissionModel) return JSON.parse(cachedPermissionModel);
 
-      const connectionPool = await rcaWebService.connectionPool();
+      const rawPermissionModels = await fetchRawPermissionModels(
+        rcaWebService,
+        userId
+      );
 
-      const result = await connectionPool
-        .request()
-        .input(`AccountUser_id`, rcaWebService.types().Int, userId)
-        .execute(storedProcedure);
+      const permissionModel = createPermissionModelFromListOfRaw(
+        rawPermissionModels
+      );
 
-      const [permissionModel] = result.recordsets;
+      await redisService.set(userId, JSON.stringify(permissionModel));
 
-      const cleanedPermissionModel = cleanPermissionModel(permissionModel);
-
-      await redisService.set(userId, JSON.stringify(cleanedPermissionModel));
-
-      return cleanedPermissionModel;
+      return permissionModel;
     },
 
     async clearPermissionModel({ userId }) {
