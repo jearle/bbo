@@ -12,9 +12,9 @@ export interface TransactionSearchParams {
   limit: number;
 }
 
-export const cleanTransactionSearchParams = (
-  searchParams
-): TransactionSearchParams => {
+export const cleanTransactionSearchParams = (searchParams: {
+  limit: number;
+}): TransactionSearchParams => {
   const { limit = 10 } = searchParams;
 
   return { limit: parseInt(limit.toString()) };
