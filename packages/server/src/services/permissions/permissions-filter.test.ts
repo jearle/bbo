@@ -1,5 +1,5 @@
 import { createPermissionsService } from '.';
-
+import { createPermissionFilter } from './permissions-filter';
 import { createRedisService } from '../redis';
 import { createRCAWebService } from '../rca-web';
 
@@ -32,23 +32,13 @@ describe(`permissions service`, () => {
     await permissionsService.close();
   });
 
-  test(`fetchPermissionModel`, async () => {
-    const {
-      stateProvidence,
-      country,
-      marketTier,
-      metro,
-      transType,
-      propertyTypeSearch,
-    } = await permissionsService.fetchPermissionModel({
+  test(`createPermissionsFilter`, async () => {
+    const permissionModel = await permissionsService.fetchPermissionModel({
       userId: USER_ID,
     });
 
-    expect(Array.isArray(stateProvidence)).toBe(true);
-    expect(Array.isArray(country)).toBe(true);
-    expect(Array.isArray(marketTier)).toBe(true);
-    expect(Array.isArray(metro)).toBe(true);
-    expect(Array.isArray(transType)).toBe(true);
-    expect(Array.isArray(propertyTypeSearch)).toBe(true);
+    const permissionFilter = createPermissionFilter({ permissionModel });
+
+    expect(Array.isArray(permissionFilter.bool.must)).toBe(true);
   });
 });
