@@ -1,4 +1,5 @@
 import { PermissionsService } from '../../services/permissions';
+import { createPermissionFilter } from '../../services/permissions/permission-filter';
 
 interface PermissionsMiddlewareOptions {
   permissionsService: PermissionsService;
@@ -13,8 +14,10 @@ export const permissionsMiddleware = ({
     const permissionModel = await permissionsService.fetchPermissionModel({
       userId,
     });
+    const permissionFilter = createPermissionFilter({ permissionModel });
 
     req.permissionModel = permissionModel;
+    req.permissionFilter = permissionFilter;
 
     next();
   };

@@ -1,5 +1,5 @@
 import { createPermissionsService } from '.';
-import { createPermissionFilter } from './permissions-filter';
+import { createPermissionFilter } from './permission-filter';
 import { createRedisService } from '../redis';
 import { createRCAWebService } from '../rca-web';
 

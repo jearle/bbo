@@ -11,11 +11,13 @@ import { createRCAWebService } from '../../services/rca-web';
 
 const { RCA_WEB_URI, REDIS_URI } = process.env;
 
+const USER_ID = 130435;
+
 describe(`permissions service`, () => {
   jest.setTimeout(20000);
 
   let permissionsService = null;
-  let permissionsMiddleware = null;
+  let app = null;
 
   beforeAll(async () => {
     const redisService = createRedisService({ uri: REDIS_URI });
@@ -25,21 +27,26 @@ describe(`permissions service`, () => {
       redisService,
       rcaWebService,
     });
+  });
 
-    permissionsMiddleware = createPermissionsMiddleware({ permissionsService });
+  beforeEach(() => {
+    const permissionsMiddleware = createPermissionsMiddleware({
+      permissionsService,
+    });
+
+    app = express();
+    app.use((req, res, next) => {
+      req.userId = USER_ID;
+      next();
+    });
+    app.use(permissionsMiddleware);
   });
 
   afterAll(async () => {
     await permissionsService.close();
   });
 
-  test(`fetchPermissionModel`, async () => {
-    const app = express();
-    app.use((req, res, next) => {
-      req.userId = 130436;
-      next();
-    });
-    app.use(permissionsMiddleware);
+  test(`permissionModel`, async () => {
     app.get(`/`, (req, res) => {
       const { permissionModel } = req;
 
@@ -51,7 +58,23 @@ describe(`permissions service`, () => {
 
     const response = await fetch(`http://localhost:${port}`);
     const { permissionModel } = await response.json();
-    expect(Array.isArray(permissionModel)).toBe(true);
+    expect(typeof permissionModel).toBe(`object`);
+    server.close();
+  });
+
+  test(`permissionModel`, async () => {
+    app.get(`/`, (req, res) => {
+      const { permissionFilter } = req;
+
+      res.send({ permissionFilter });
+    });
+
+    const server = await portListen(app);
+    const { port } = server.address();
+
+    const response = await fetch(`http://localhost:${port}`);
+    const { permissionFilter } = await response.json();
+    expect(typeof permissionFilter).toBe(`object`);
     server.close();
   });
 });
