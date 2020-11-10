@@ -1,11 +1,13 @@
 import * as Redis from 'ioredis';
 
-interface Options {
+export interface RedisOptions {
   uri: string;
 }
 
-export const createRedisClient = ({ uri }: Options): Redis => {
-  const client = new Redis(uri);
+export const createRedisService = ({ uri }: RedisOptions): Redis => {
+  const redisService = new Redis(uri);
 
-  return client;
+  redisService.close = redisService.end;
+
+  return redisService;
 };

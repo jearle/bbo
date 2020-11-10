@@ -1,18 +1,18 @@
 import { v4 as uuid } from 'uuid';
-import { createRedisClient } from '.';
+import { createRedisService } from '.';
 
 const { REDIS_URI } = process.env;
 
-test(`createRedisClient`, async () => {
-  const redisClient = createRedisClient({ uri: REDIS_URI });
+test(`createRedisService`, async () => {
+  const redisService = createRedisService({ uri: REDIS_URI });
   const id = uuid();
 
-  await redisClient.set(id, `bar`);
+  await redisService.set(id, `bar`);
 
-  const result = await redisClient.get(id);
+  const result = await redisService.get(id);
   expect(result).toBe(`bar`);
 
-  await redisClient.del(id);
+  await redisService.del(id);
 
-  redisClient.end();
+  redisService.close();
 });
