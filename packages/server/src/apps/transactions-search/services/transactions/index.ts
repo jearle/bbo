@@ -13,7 +13,7 @@ export interface TransactionSearchParams {
 }
 
 export const cleanTransactionSearchParams = (searchParams: {
-  limit: number;
+  limit?: number;
 }): TransactionSearchParams => {
   const { limit = 10 } = searchParams;
 
