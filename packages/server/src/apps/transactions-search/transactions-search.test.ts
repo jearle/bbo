@@ -1,6 +1,7 @@
 import { createApp } from './';
 import { TransactionsService } from './services/transactions';
 import { testHealthcheck } from '../../helpers/unit/healthcheck';
+import MockLDClient from '../../services/launchdarkly/launchdarkly.mock';
 
 const transactionsService: TransactionsService = {
   search() {
@@ -8,6 +9,7 @@ const transactionsService: TransactionsService = {
   },
 };
 
+const launchDarklyClient = new MockLDClient();
 test(`healthcheck`, async () => {
-  await testHealthcheck(createApp({ transactionsService }));
+  await testHealthcheck(createApp({ transactionsService, launchDarklyClient }));
 });

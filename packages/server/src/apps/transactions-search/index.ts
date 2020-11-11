@@ -1,4 +1,6 @@
 import * as express from 'express';
+import { LDClient } from 'launchdarkly-node-server-sdk';
+import { createLaunchDarklyClient, fetchLaunchDarklyFlag, LDClientType } from '../../services/launchdarkly';
 
 import {
   TransactionSearchParams,
@@ -12,9 +14,10 @@ export const BASE_PATH = `/api/transactions-search/${VERSION}`;
 
 interface Options {
   transactionsService: TransactionsService;
+  launchDarklyClient: LDClientType;
 }
 
-export const createApp = ({ transactionsService }: Options) => {
+export const createApp = ({ transactionsService, launchDarklyClient }: Options) => {
   const app = express();
 
   /**
@@ -29,8 +32,9 @@ export const createApp = ({ transactionsService }: Options) => {
    *       200:
    *         description: health
    */
-  app.get(`/healthcheck`, (req, res) =>
-    res.json({ description: DESCRIPTION, health: `ok`, version: VERSION })
+  app.get(`/healthcheck`, async (req, res) => {
+    res.json({ description: DESCRIPTION, health: `ok`, version: VERSION });
+  }
   );
 
   /**

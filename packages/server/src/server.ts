@@ -17,6 +17,8 @@ import {
   createElasticsearchClient,
 } from './services/elasticsearch';
 import { createTransactionsService } from './apps/transactions-search/services/transactions';
+import { createLaunchDarklyClient, fetchLaunchDarklyFlag } from './services/launchdarkly';
+import { LDClient } from 'launchdarkly-node-server-sdk';
 
 // Apps
 import {
@@ -48,11 +50,14 @@ export const startServer = async ({
     client: elasticSearchClient,
   });
 
+  const launchDarklyClient = await createLaunchDarklyClient({ sdkKey: 'sdk-54855bab-e987-4fa5-a97c-4b950234decd' });
+
   const mounts = express();
 
   const companyApp = createCompanyApp();
   const transactionsSearchApp = createTransactionsSearchApp({
     transactionsService,
+    launchDarklyClient
   });
 
   mounts.use(loggerIdMiddlewware());
