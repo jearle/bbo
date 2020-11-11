@@ -1,6 +1,7 @@
 # cd-product-api
 
 ## MacOS Local Development Quick Start
+
 Copy and paste the following into Terminal:
 
 ```sh
@@ -14,10 +15,15 @@ yarn start
 ```
 
 ## Build Production
+
 ```sh
 yarn build:server:production
 ```
 
 ## packages/
 
-+ [server/](https://github.com/rcanalytics/cd-product-api/tree/develop/packages/server)
+- [server/](https://github.com/rcanalytics/cd-product-api/tree/develop/packages/server)
+
+## Updating Environment Variables
+
+- https://github.com/rcanalytics/cd-product-api/blob/develop/helm/chart/templates/deployment.yaml#L26

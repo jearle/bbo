@@ -11,14 +11,20 @@ import logger, {
 // Helpers
 import { useSwaggerDocumentation } from './helpers/swagger/express-mount';
 
+// Middleware
+import { permissionsMiddleware } from './middlewares/permissions';
+
 // Services
 import {
   ElasticsearchOptions,
   createElasticsearchClient,
 } from './services/elasticsearch';
 import { createTransactionsService } from './apps/transactions-search/services/transactions';
+import { createRCAWebService, RCAWebOptions } from './services/rca-web';
+import { createRedisService, RedisOptions } from './services/redis';
+import { createPermissionsService } from './services/permissions';
 import { createLaunchDarklyClient, fetchLaunchDarklyFlag } from './services/launchdarkly';
-import { LDClient } from 'launchdarkly-node-server-sdk';
+import { createLaunchDarklyClient, fetchLaunchDarklyFlag } from './services/launchdarkly';
 
 // Apps
 import {
@@ -37,12 +43,16 @@ interface ServerOptions {
   port?: number;
   host?: string;
   elasticsearchOptions: ElasticsearchOptions;
+  redisOptions: RedisOptions;
+  rcaWebOptions: RCAWebOptions;
 }
 
 export const startServer = async ({
   port = 0,
   host = `127.0.0.1`,
   elasticsearchOptions,
+  rcaWebOptions,
+  redisOptions,
 }: ServerOptions) => {
   const elasticSearchClient = createElasticsearchClient(elasticsearchOptions);
 
@@ -50,6 +60,12 @@ export const startServer = async ({
     client: elasticSearchClient,
   });
 
+  const redisService = createRedisService(redisOptions);
+  const rcaWebService = createRCAWebService(rcaWebOptions);
+  const permissionsService = createPermissionsService({
+    redisService,
+    rcaWebService,
+  });
   const launchDarklyClient = await createLaunchDarklyClient({ sdkKey: 'sdk-54855bab-e987-4fa5-a97c-4b950234decd' });
 
   const mounts = express();
@@ -60,9 +76,12 @@ export const startServer = async ({
     launchDarklyClient
   });
 
+  // Pre Middleware
   mounts.use(loggerIdMiddlewware());
   mounts.use(loggerMiddleware());
+  mounts.use(permissionsMiddleware({ permissionsService }));
 
+  // Apps
   mounts.use(companyBasePath, companyApp);
   useSwaggerDocumentation(mounts, {
     host,
@@ -79,10 +98,11 @@ export const startServer = async ({
     description: transactionsSearchDescription,
   });
 
+  // Post Middleware
   mounts.use(loggerErrorMiddleware());
 
+  // Start Server
   const server = createServer(mounts);
-
   server.listen(port, host, () => {
     const addressInfo = server.address() as AddressInfo;
 

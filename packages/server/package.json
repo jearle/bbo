@@ -20,18 +20,23 @@
     "typescript": "^4.0.2"
   },
   "scripts": {
-    "prestart": "yarn clean && tsc",
+    "prestart": "yarn run:elasticsearch && yarn run:redis && yarn clean && tsc",
     "start": "concurrently -c \"cyan.bold,magenta.bold,green.bold\" -n node,compile,test \"yarn node:development\" \"yarn compile:development\" \"yarn test:development\"",
     "node:development": "nodemon -r dotenv/config dist/index",
     "compile:development": "tsc -w",
     "test:development": "jest --setupFiles dotenv/config --coverage --watchAll",
     "build:production": "yarn clean && tsc -p .",
+    "run:redis": "yarn destroy:redis && docker run --name product-api-redis -p 6379:6379 -d redis",
+    "destroy:redis": "docker stop product-api-redis && docker rm product-api-redis || exit 0",
+    "run:elasticsearch": "yarn destroy:elasticsearch && docker run -d -p 9200:9200 -p 9300:9300 --name product-api-elasticsearch -e \"discovery.type=single-node\" elasticsearch:7.9.3",
+    "destroy:elasticsearch": "docker stop product-api-elasticsearch && docker rm product-api-elasticsearch || exit 0",
     "clean": "rimraf ./dist"
   },
   "dependencies": {
     "@elastic/elasticsearch": "^7.9.1",
     "chalk": "^4.1.0",
     "express": "^4.17.1",
+    "ioredis": "^4.19.2",
     "launchdarkly-node-server-sdk": "^5.13.4",
     "morgan": "^1.10.0",
     "mssql": "^6.2.3",
