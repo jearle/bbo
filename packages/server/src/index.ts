@@ -1,5 +1,3 @@
-global.crypto = require('crypto');
-
 import { startServer } from './server';
 
 const {

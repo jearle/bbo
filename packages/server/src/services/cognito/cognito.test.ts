@@ -1,4 +1,3 @@
-// global.crypto = require('crypto');
 import { createCognitoService } from '.';
 
 const {
