@@ -774,10 +774,10 @@ ajv@^6.12.3:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-amazon-cognito-identity-js@^4.5.3:
-  version "4.5.3"
-  resolved "https://registry.yarnpkg.com/amazon-cognito-identity-js/-/amazon-cognito-identity-js-4.5.3.tgz#1e7fb6bd2a7b7bf43addf428be80e2ec2f14fbfb"
-  integrity sha512-BqVEb1kNPzgmpy/pcTmBVcRjLRbSE8521urbpfJUwFteoOF/T8Zq7RF27vAiGW4TjKwi4PKtMTs85i6u99kSqg==
+amazon-cognito-identity-js@4.5.4-unstable.3:
+  version "4.5.4-unstable.3"
+  resolved "https://registry.yarnpkg.com/amazon-cognito-identity-js/-/amazon-cognito-identity-js-4.5.4-unstable.3.tgz#4ac3c9cca4364669819c2f9de0a4e4cdef669309"
+  integrity sha512-vudQSZxHLbeNQEuCkThhGuMt38GqeGwEQknjbIm4uL1UfT/YPNFFH5ja13eajjhVKA8LjHUL/R4EMpuEL/OsMw==
   dependencies:
     buffer "4.9.1"
     crypto-js "^3.3.0"
@@ -991,9 +991,9 @@ balanced-match@^1.0.0:
   integrity sha1-ibTRmasr7kneFk6gK4nORi1xt2c=
 
 base64-js@^1.0.2:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.0.tgz#2d03045876d9e2b68a7a0f87d6bd163595e3b6af"
-  integrity sha512-Jrdy04F2EKcNggUDfubMUPNAZg2vMquLQSm8sKLYJvz40ClFL1S8GKyDshGkNsbNNE5Z+fQavzU7nSK1I9JUGA==
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
+  integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
 
 base@^0.11.1:
   version "0.11.2"
@@ -1491,7 +1491,7 @@ cross-spawn@^7.0.0:
     shebang-command "^2.0.0"
     which "^2.0.1"
 
-crypto-js@^3.3.0:
+crypto-js@^3.2.1, crypto-js@^3.3.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-3.3.0.tgz#846dd1cce2f68aacfa156c8578f926a609b7976b"
   integrity sha512-DIT51nX0dCfKltpRiXV+/TVZq+Qq2NgF4644+K7Ttnla7zEzqc+kjJyiB96BHNyUTBxyjzRcZYpUdZa+QAqi6Q==

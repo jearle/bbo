@@ -34,8 +34,9 @@
   },
   "dependencies": {
     "@elastic/elasticsearch": "^7.9.1",
-    "amazon-cognito-identity-js": "^4.5.3",
+    "amazon-cognito-identity-js": "4.5.4-unstable.3",
     "chalk": "^4.1.0",
+    "crypto-js": "^3.2.1",
     "express": "^4.17.1",
     "ioredis": "^4.19.2",
     "morgan": "^1.10.0",
