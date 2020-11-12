@@ -28,7 +28,7 @@ const getSpec = ({ host, port, basePath, description }) =>
         description: `Product API`,
       },
     },
-    apis: [`./dist/apps/company/index.js`],
+    apis: [`./dist/apps/company/index.js`, `./dist/apps/transactions-search/index.js`],
   });
 
 interface SwaggerDocumentationOptions {

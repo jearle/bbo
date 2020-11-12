@@ -76,7 +76,8 @@ export const createApp = ({ transactionsService, launchDarklyClient }: Options) 
    *     parameters:
    *     - name: flagName
    *       in: path
-   *       description: name of the flag in launchdarkly, ex: ff-release-api-27-set-up-launch-darkly
+   *       description: name of the flag in launchdarkly
+   *       example: ff-release-api-27-set-up-launch-darkly
    *       required: true
    *     - name: defaultValue
    *       in: query
