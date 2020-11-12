@@ -64,5 +64,27 @@ export const createApp = ({ transactionsService, launchDarklyClient }: Options) 
     res.json({ data });
   });
 
+  // TODO remove sample route and archive flag in LD
+  /**
+   * @swagger
+   *
+   * /test-launchdarkly:
+   *   get:
+   *     description: hits launch darkly to fetch our sample flag
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: flag value
+   */
+  app.get(`/test-launchdarkly`, async (req, res) => {
+    const value = await fetchLaunchDarklyFlag({ client: launchDarklyClient, flagName: 'ff-release-api-17-set-up-launch-darkly' });
+    if (!value) {
+      res.status(404).send('Not Found');
+    } else {
+      res.json({ description: 'Test ff-release-api-17-set-up-launch-darkly', flagValue: value, version: VERSION });
+    }
+  });
+
   return app;
 };

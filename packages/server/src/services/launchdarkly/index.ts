@@ -1,7 +1,7 @@
 import * as LaunchDarkly from 'launchdarkly-node-server-sdk';
 import logger from '../../logger';
 
-interface LDClientOptions {
+export interface LaunchDarklyOptions {
   sdkKey: string;
 };
 
@@ -20,7 +20,7 @@ interface FetchLaunchDarklyFlagOptions {
 
 export const createLaunchDarklyClient = async ({
   sdkKey
-}: LDClientOptions): Promise<LaunchDarkly.LDClient> => {
+}: LaunchDarklyOptions): Promise<LaunchDarkly.LDClient> => {
   const client = LaunchDarkly.init(sdkKey);
   try {
     await client.waitForInitialization();
