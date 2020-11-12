@@ -7,5 +7,5 @@ workflow-config/API-27 branch merged/deployed
 ## Side-effects of Deploy
 none
 # Feature flags
-- ff-release-api-17-set-up-launch-darkly
+- ff-release-api-27-set-up-launch-darkly
   - enabled /test-launchdarkly returns, disabled will send 404
