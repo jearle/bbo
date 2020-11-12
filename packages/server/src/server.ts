@@ -24,7 +24,6 @@ import { createRCAWebService, RCAWebOptions } from './services/rca-web';
 import { createRedisService, RedisOptions } from './services/redis';
 import { createPermissionsService } from './services/permissions';
 import { createLaunchDarklyClient, fetchLaunchDarklyFlag } from './services/launchdarkly';
-import { createLaunchDarklyClient, fetchLaunchDarklyFlag } from './services/launchdarkly';
 
 // Apps
 import {

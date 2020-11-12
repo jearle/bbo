@@ -1,5 +1,5 @@
 import * as LaunchDarkly from 'launchdarkly-node-server-sdk';
-import MockLDClient from './launchdarkly.mock';
+import logger from '../../logger';
 
 interface LDClientOptions {
   sdkKey: string;
@@ -24,10 +24,10 @@ export const createLaunchDarklyClient = async ({
   const client = LaunchDarkly.init(sdkKey);
   try {
     await client.waitForInitialization();
-    console.log('LD Client ready');
+    logger.info('LD Client ready');
     return client;
   } catch (err) {
-    console.error(`LD Client initialization failed: ${err}`);
+    logger.error(`LD Client initialization failed: ${err}`);
     return null; //todo: throw err or return null?
   }
 };
@@ -42,13 +42,23 @@ export const fetchLaunchDarklyFlag = async ({
     const value = await client.variation(flagName, user, defaultValue);
     return value;
   } catch (err) {
-    console.error(err);
+    logger.error('error', `error fetching flag ${flagName}: ${err}`);
     return defaultValue;
   }
 };
 
-// export const createLDUser = ({ }) => {
-
-// }
+// todo once integrated with auth user / decide which fields we want for each user
+/* export const createLDUser = ({ jwt or rcaUser }) => {
+  // todo parse jwt or get user
+  // cd's launchdarkly user below 
+   return {
+          key: user.AccountUser_id.toString(),
+          firstName: user.FirstName_tx,
+          lastName: user.LastName_tx,
+          custom: {
+            accountId: user.Account_id.toString(),
+          }
+ }
+ */
 
 const _anonUser: LaunchDarkly.LDUser = { 'key': 'anonymous', 'anonymous': true };

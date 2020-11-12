@@ -1,38 +1,38 @@
 import * as LaunchDarkly from 'launchdarkly-node-server-sdk';
-import MockLDClient from './launchdarkly.mock';
+import { mockLDClient } from './launchdarkly.mock';
 
 jest.mock('launchdarkly-node-server-sdk', () => {
   return {
-    LDClient: jest.fn(),
     init: jest.fn()
   };
 });
 import { init } from 'launchdarkly-node-server-sdk';
 import { createLaunchDarklyClient, fetchLaunchDarklyFlag } from './index';
+import logger from '../../logger';
 
 const mockedInit = init as jest.Mock;
 
 describe('LaunchDarkly Service', () => {
-  let consoleErrorSpy, consoleLogSpy;
+  let logErrorSpy, infoLogSpy;
   beforeEach(() => {
-    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { }); // silence errors and can confirm when it's called
-    consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => { }); // silence logs
-  })
+    logErrorSpy = jest.spyOn(logger, 'error').mockImplementation(() => null); // silence errors and can confirm when it's called
+    infoLogSpy = jest.spyOn(logger, 'info').mockImplementation(() => null); // silence logs
+  });
   afterEach(() => {
     jest.resetAllMocks();
   });
 
   describe('createLaunchDarklyClient', () => {
     it('should fail to create a client', async () => {
-      mockedInit.mockImplementationOnce(() => new MockLDClient(true));
+      mockedInit.mockImplementationOnce(() => mockLDClient({ shouldFailInitialization: true }));
       const client = await createLaunchDarklyClient({ sdkKey: 'test' });
       expect(client).toBeNull();
-      expect(consoleErrorSpy).toBeCalledTimes(1);
+      expect(logErrorSpy).toBeCalledTimes(1);
       expect(mockedInit).toBeCalledTimes(1);
     });
 
     it('should create a client', async () => {
-      mockedInit.mockImplementationOnce(() => new MockLDClient());
+      mockedInit.mockImplementationOnce(() => mockLDClient({}));
       const client = await createLaunchDarklyClient({ sdkKey: 'test' });
       expect(client).not.toBeNull();
       expect(mockedInit).toBeCalledTimes(1);
@@ -41,15 +41,15 @@ describe('LaunchDarkly Service', () => {
 
   describe('fetchLaunchDarklyFlag', () => {
     it('fetches a flag', async () => {
-      const mockClient = new MockLDClient();
+      const mockClient = mockLDClient({});
       const value = await fetchLaunchDarklyFlag({ client: mockClient, flagName: 'foo', defaultValue: 'bar' });
       expect(value).toBe('bar');
     });
 
     it('catches error and returns default value', async () => {
-      const mockClient = new MockLDClient(false, true);
+      const mockClient = mockLDClient({ shouldFailInitialization: false, shouldFailVariation: true });
       const value = await fetchLaunchDarklyFlag({ client: mockClient, flagName: 'foo' });
-      expect(consoleErrorSpy).toBeCalledTimes(1);
+      expect(logErrorSpy).toBeCalledTimes(1);
       expect(value).toBe(false);
     });
   });

@@ -4,7 +4,7 @@ import { createTransactionsService } from './services/transactions';
 import { createElasticsearchClient } from '../../services/elasticsearch';
 import { testHealthcheck } from '../../helpers/unit/healthcheck';
 import { portListen } from '../../helpers/express/port-listen';
-import MockLDClient from '../../services/launchdarkly/launchdarkly.mock';
+import { mockLDClient } from '../../services/launchdarkly/launchdarkly.mock';
 
 const {
   ELASTICSEARCH_NODE,
@@ -26,7 +26,7 @@ describe(`transactions app`, () => {
       }),
     });
 
-    const launchDarklyClient = new MockLDClient();
+    const launchDarklyClient = mockLDClient({});
 
     app = createApp({ transactionsService, launchDarklyClient });
     server = await portListen(app);
