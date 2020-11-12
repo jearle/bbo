@@ -68,7 +68,7 @@ export const createApp = ({ transactionsService, launchDarklyClient }: Options) 
   /**
    * @swagger
    *
-   * /test-launchdarkly:
+   * /launchdarkly/{flagName}:
    *   get:
    *     description: hits launch darkly to fetch our sample flag
    *     produces:
