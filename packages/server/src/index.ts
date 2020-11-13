@@ -3,6 +3,10 @@ import { startServer } from './server';
 const {
   PORT,
   HOST: host,
+  COGNITO_REGION,
+  COGNITO_USER_POOL_ID,
+  COGNITO_APP_CLIENT_ID,
+  COGNITO_APP_CLIENT_SECRET,
   ELASTICSEARCH_USERNAME,
   ELASTICSEARCH_PASSWORD,
   ELASTICSEARCH_NODE,
@@ -11,6 +15,13 @@ const {
 } = process.env;
 
 const port = parseInt(PORT);
+
+const cognitoOptions = {
+  region: COGNITO_REGION,
+  userPoolId: COGNITO_USER_POOL_ID,
+  appClientId: COGNITO_APP_CLIENT_ID,
+  appClientSecret: COGNITO_APP_CLIENT_SECRET,
+};
 
 const elasticsearchOptions = {
   username: ELASTICSEARCH_USERNAME,
@@ -32,4 +43,5 @@ startServer({
   elasticsearchOptions,
   redisOptions,
   rcaWebOptions,
+  cognitoOptions,
 });

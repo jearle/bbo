@@ -12,6 +12,7 @@ import logger, {
 import { useSwaggerDocumentation } from './helpers/swagger/express-mount';
 
 // Middleware
+import { authenticationMiddleware } from './middlewares/authentication';
 import { permissionsMiddleware } from './middlewares/permissions';
 
 // Services
@@ -22,7 +23,12 @@ import {
 import { createTransactionsService } from './apps/transactions-search/services/transactions';
 import { createRCAWebService, RCAWebOptions } from './services/rca-web';
 import { createRedisService, RedisOptions } from './services/redis';
+import { CognitoOptions, createCognitoService } from './services/cognito';
 import { createPermissionsService } from './services/permissions';
+import {
+  createAuthenticationService,
+  AuthenticationService,
+} from './services/authentication';
 
 // Apps
 import {
@@ -40,6 +46,7 @@ import {
 interface ServerOptions {
   port?: number;
   host?: string;
+  cognitoOptions: CognitoOptions;
   elasticsearchOptions: ElasticsearchOptions;
   redisOptions: RedisOptions;
   rcaWebOptions: RCAWebOptions;
@@ -48,6 +55,7 @@ interface ServerOptions {
 export const startServer = async ({
   port = 0,
   host = `127.0.0.1`,
+  cognitoOptions,
   elasticsearchOptions,
   rcaWebOptions,
   redisOptions,
@@ -58,6 +66,8 @@ export const startServer = async ({
     client: elasticSearchClient,
   });
 
+  const cognitoService = await createCognitoService(cognitoOptions);
+  const authenticationService = createAuthenticationService({ cognitoService });
   const redisService = createRedisService(redisOptions);
   const rcaWebService = createRCAWebService(rcaWebOptions);
   const permissionsService = createPermissionsService({
@@ -75,6 +85,7 @@ export const startServer = async ({
   // Pre Middleware
   mounts.use(loggerIdMiddlewware());
   mounts.use(loggerMiddleware());
+  mounts.use(authenticationMiddleware({ authenticationService }));
   mounts.use(permissionsMiddleware({ permissionsService }));
 
   // Apps

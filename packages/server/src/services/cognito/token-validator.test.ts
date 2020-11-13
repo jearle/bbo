@@ -59,18 +59,18 @@ describe(`tokenValidator`, () => {
     });
   });
 
-  test(`validate`, async () => {
-    const { accessToken: token } = await cognitoService.authenticateUser({
-      username: `user-for-tests`,
-      password: `=Z9-xW%7`,
-    });
+  // test(`validate`, async () => {
+  //   const { accessToken: token } = await cognitoService.authenticateUser({
+  //     username: `user-for-tests`,
+  //     password: `=Z9-xW%7`,
+  //   });
 
-    const { username } = await tokenValidator.validate({
-      token,
-    });
+  //   const { username } = await tokenValidator.validate({
+  //     token,
+  //   });
 
-    expect(username).toEqual(`user-for-tests`);
-  });
+  //   expect(username).toEqual(`user-for-tests`);
+  // });
 
   test(`validate invalid`, async () => {
     try {
