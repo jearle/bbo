@@ -30,12 +30,12 @@ type SignUpOutput = {
   deliveryMedium: string;
 };
 
-type ConfirmRegistrationInput = {
+type ConfirmSignUpInput = {
   username: string;
   code: string;
 };
 
-type ConfirmRegistrationResult = {
+type ConfirmSignUpResult = {
   status: string;
 };
 
@@ -80,12 +80,6 @@ type AuthenticateUserResult = {
   tokenType: string;
 };
 
-type HashSecretInput = {
-  username: string;
-  appClientId: string;
-  appClientSecret: string;
-};
-
 type ValidateInput = {
   token: string;
 };
@@ -93,6 +87,12 @@ type ValidateInput = {
 type ValidateResult = {
   username: string;
   [key: string]: any;
+};
+
+type HashSecretInput = {
+  username: string;
+  appClientId: string;
+  appClientSecret: string;
 };
 
 const hashSecret = ({
@@ -147,7 +147,7 @@ const cognitoService = ({
   async confirmSignUp({
     username,
     code,
-  }: ConfirmRegistrationInput): Promise<ConfirmRegistrationResult> {
+  }: ConfirmSignUpInput): Promise<ConfirmSignUpResult> {
     await cognitoIdentity
       .confirmSignUp({
         ClientId: appClientId,
@@ -198,7 +198,11 @@ const cognitoService = ({
     return { destination, deliveryMedium };
   },
 
-  async confirmNewPassword({ username, password, code }) {
+  async confirmNewPassword({
+    username,
+    password,
+    code,
+  }: ConfirmNewPasswordInput): Promise<ConfirmNewPasswordResult> {
     await cognitoIdentity
       .confirmForgotPassword({
         ClientId: appClientId,

@@ -22,7 +22,7 @@ describe(`cognitoService`, () => {
   test.skip(`signUp`, async () => {
     const result = await cognitoService.signUp({
       email: `jearle@rcanalytics.com`,
-      username: `user-for-tests1`,
+      username: `user-for-tests`,
       password: `=Z9-xW%7`,
     });
 
@@ -31,7 +31,7 @@ describe(`cognitoService`, () => {
 
   test.skip(`authenticateUser`, async () => {
     const result = await cognitoService.authenticateUser({
-      username: `user-for-tests1`,
+      username: `user-for-tests`,
       password: `=Z9-xW%7`,
     });
 
