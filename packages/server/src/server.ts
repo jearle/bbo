@@ -1,4 +1,5 @@
 import * as express from 'express';
+import { json } from 'body-parser';
 import { createServer } from 'http';
 import { AddressInfo } from 'net';
 
@@ -25,23 +26,20 @@ import { createRCAWebService, RCAWebOptions } from './services/rca-web';
 import { createRedisService, RedisOptions } from './services/redis';
 import { CognitoOptions, createCognitoService } from './services/cognito';
 import { createPermissionsService } from './services/permissions';
-import {
-  createAuthenticationService,
-  AuthenticationService,
-} from './services/authentication';
+import { createAuthenticationService } from './services/authentication';
 
 // Apps
-import {
-  createApp as createCompanyApp,
-  BASE_PATH as companyBasePath,
-  DESCRIPTION as companyDescription,
-} from './apps/company';
-
 import {
   createApp as createTransactionsSearchApp,
   BASE_PATH as transactionsSearchBasePath,
   DESCRIPTION as transactionsSearchDescription,
 } from './apps/transactions-search';
+
+import {
+  createApp as createAuthenticationApp,
+  BASE_PATH as authenticationBasePath,
+  DESCRIPTION as authenticationDescription,
+} from './apps/authentication';
 
 interface ServerOptions {
   port?: number;
@@ -76,8 +74,9 @@ export const startServer = async ({
   });
 
   const mounts = express();
-
-  const companyApp = createCompanyApp();
+  const authenticationApp = createAuthenticationApp({
+    authenticationService,
+  });
   const transactionsSearchApp = createTransactionsSearchApp({
     transactionsService,
   });
@@ -85,18 +84,14 @@ export const startServer = async ({
   // Pre Middleware
   mounts.use(loggerIdMiddlewware());
   mounts.use(loggerMiddleware());
+  mounts.use(json());
+
+  mounts.use(authenticationBasePath, authenticationApp);
+
   mounts.use(authenticationMiddleware({ authenticationService }));
   mounts.use(permissionsMiddleware({ permissionsService }));
 
   // Apps
-  mounts.use(companyBasePath, companyApp);
-  useSwaggerDocumentation(mounts, {
-    host,
-    port,
-    basePath: companyBasePath,
-    description: companyDescription,
-  });
-
   mounts.use(transactionsSearchBasePath, transactionsSearchApp);
   useSwaggerDocumentation(mounts, {
     host,

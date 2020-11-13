@@ -1,20 +1,15 @@
 import * as express from 'express';
 
-import {
-  TransactionSearchParams,
-  TransactionsService,
-  cleanTransactionSearchParams,
-} from './services/transactions';
-
+import { AuthenticationService } from '../../services/authentication';
 export const VERSION = `v0`;
-export const DESCRIPTION = `Transactions Search API`;
-export const BASE_PATH = `/api/transactions-search/${VERSION}`;
+export const DESCRIPTION = `Authentication Search API`;
+export const BASE_PATH = `/api/authentication/${VERSION}`;
 
 interface Options {
-  transactionsService: TransactionsService;
+  authenticationService: AuthenticationService;
 }
 
-export const createApp = ({ transactionsService }: Options) => {
+export const createApp = ({ authenticationService }: Options) => {
   const app = express();
 
   /**
@@ -52,12 +47,23 @@ export const createApp = ({ transactionsService }: Options) => {
    *       200:
    *         description: PropertyTransactionSearchResponse
    */
-  app.get(`/transactions`, async (req, res) => {
-    const transactionSearchParams = cleanTransactionSearchParams(req.query);
+  app.post(`/login`, async (req, res) => {
+    const { username, password } = req.body;
 
-    const data = await transactionsService.search(transactionSearchParams);
+    try {
+      const result = await authenticationService.authenticateUser({
+        username,
+        password,
+      });
 
-    res.json({ data });
+      res.json(result);
+    } catch (e) {
+      res.status(401).json({
+        data: {
+          error: e.message,
+        },
+      });
+    }
   });
 
   return app;
