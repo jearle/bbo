@@ -1,5 +1,4 @@
 import { promisify } from 'util';
-import { Request, Response } from 'express';
 import * as jwkToPem from 'jwk-to-pem';
 import { decode, verify as verifyCallback } from 'jsonwebtoken';
 import fetch from 'node-fetch';

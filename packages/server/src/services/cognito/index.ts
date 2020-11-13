@@ -1,6 +1,8 @@
+/* istanbul ignore file */
+
 import { CognitoIdentityServiceProvider } from 'aws-sdk';
-import * as CognitoExpress from 'cognito-express';
 import { createHmac } from 'crypto';
+import { createTokenValidator, TokenValidator } from './token-validator';
 
 type CreateCognitoServiceInput = {
   userPoolId: string;
@@ -10,10 +12,10 @@ type CreateCognitoServiceInput = {
 };
 
 type CognitoServiceInput = {
-  userPoolId: string;
   appClientId: string;
   appClientSecret: string;
   cognitoIdentity: CognitoIdentityServiceProvider;
+  tokenValidator: TokenValidator;
 };
 
 type SignUpInput = {
@@ -84,6 +86,15 @@ type HashSecretInput = {
   appClientSecret: string;
 };
 
+type ValidateInput = {
+  token: string;
+};
+
+type ValidateResult = {
+  username: string;
+  [key: string]: any;
+};
+
 const hashSecret = ({
   username,
   appClientId,
@@ -95,10 +106,10 @@ const hashSecret = ({
 };
 
 const cognitoService = ({
-  userPoolId,
   appClientId,
   appClientSecret,
   cognitoIdentity,
+  tokenValidator,
 }: CognitoServiceInput) => ({
   async signUp({
     email,
@@ -227,9 +238,17 @@ const cognitoService = ({
 
     return { accessToken, refreshToken, idToken, expiresIn, tokenType };
   },
+
+  async validate({ token }: ValidateInput): Promise<ValidateResult> {
+    const result = await tokenValidator.validate({ token });
+
+    return result;
+  },
 });
 
-export const createCognitoService = ({
+export type CognitoService = ReturnType<typeof cognitoService>;
+
+export const createCognitoService = async ({
   region,
   userPoolId,
   appClientId,
@@ -239,12 +258,17 @@ export const createCognitoService = ({
     region,
   });
 
-  const cognitoExpress = new CognitoExpress({});
+  const tokenValidator = await createTokenValidator({
+    region,
+    userPoolId,
+    tokenUse: `access`,
+    maxAge: 3600,
+  });
 
   return cognitoService({
-    userPoolId,
     appClientId,
     appClientSecret,
     cognitoIdentity,
+    tokenValidator,
   });
 };

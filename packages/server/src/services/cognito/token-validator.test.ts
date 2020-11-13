@@ -1,4 +1,4 @@
-import { createCognitoService } from './cognito';
+import { createCognitoService, CognitoService } from '.';
 import { createTokenValidator, TokenValidator } from './token-validator';
 
 const {
@@ -8,7 +8,14 @@ const {
   COGNITO_APP_CLIENT_SECRET,
 } = process.env;
 
-const params = {
+const createCognitoServiceInput = {
+  region: COGNITO_REGION,
+  userPoolId: COGNITO_USER_POOL_ID,
+  appClientId: COGNITO_APP_CLIENT_ID,
+  appClientSecret: COGNITO_APP_CLIENT_SECRET,
+};
+
+const createTokenValidatorInput = {
   region: COGNITO_REGION,
   userPoolId: COGNITO_USER_POOL_ID,
   tokenUse: `access`,
@@ -20,17 +27,12 @@ const INVALID_KID_TOKEN = `eyJraWQiOiJiYWQiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJhMjc5
 const BAD_ISSUER = `eyJraWQiOiJaeWxiRk1FNml2dmxUa2JmcUJtV0paeTYxN1IxTm82bG1vQXREa24reVdFPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJhMjc5MTg2YS0wZGQ4LTQ3NjUtYmU5Ny0zYzJlMWZjMTE1YWEiLCJkZXZpY2Vfa2V5IjoidXMtZWFzdC0xXzM3Mjk5ZjI2LTAzOGQtNGJiNC1iMzBkLWE5ZTAzOTMwMjcxMSIsImV2ZW50X2lkIjoiNmUwZjNlNDAtMjcxMy00NGI1LTk4ZjItZWZhMTU5OTk5ZGY5IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTYwNTE5NDgwNCwiaXNzIjoiaHR0cHM6Ly9iYWQuY29tL3VzLWVhc3QtMV9ScE1OZmhsRmciLCJleHAiOjE2MDUxOTg0MDQsImlhdCI6MTYwNTE5NDgwNSwianRpIjoiOWQ3Yjc4YTQtNGEyZi00OWIxLWJjZTUtYWRjMDg5ZDRiNTlhIiwiY2xpZW50X2lkIjoibXVtdGNiNWFucm5sZW1pb25wcWVqcWY0aCIsInVzZXJuYW1lIjoiamVhcmxlQHJjYW5hbHl0aWNzLmNvbSJ9.BBpDtsJAnUdxBtzxw7IfmAFXZQeY3VQmhUo434mLMb-cGvPOYTJMDyjmi_Fd3oz0PSvfQzQp1X4CxD75dCvxLEBHlX4uMop9W2KOrQxjB0mbZLaaIzt8gDvsTvVD5_VTCnNMtz_B8FHxhWLxGAxiSpX8GsyarpczN8aQnT2jkxYkgr1tXfSZfVGyoxe4bXZ44KMeYndi8tJ44bUcTzeUC_UDmRR5zleFIvlYtjOwmY4JOADN27zlG45IoIDH-3mJktXFr61HG3gGdMLBu-rSsxz8jjT7wGzqX_wVYehD82uIANCsu6lZw9yTtH_YBRopG1aWHtmg6IG8XDqSMp1ARw`;
 
 describe(`tokenValidator`, () => {
-  const cognitoService = createCognitoService({
-    region: COGNITO_REGION,
-    userPoolId: COGNITO_USER_POOL_ID,
-    appClientId: COGNITO_APP_CLIENT_ID,
-    appClientSecret: COGNITO_APP_CLIENT_SECRET,
-  });
-
+  let cognitoService: CognitoService;
   let tokenValidator: TokenValidator;
 
   beforeAll(async () => {
-    tokenValidator = await createTokenValidator(params);
+    cognitoService = await createCognitoService(createCognitoServiceInput);
+    tokenValidator = await createTokenValidator(createTokenValidatorInput);
   });
 
   test(`createCognitoService bad config`, () => {
@@ -45,7 +47,7 @@ describe(`tokenValidator`, () => {
       const [key] = Object.keys(config);
 
       const badConfig = {
-        ...params,
+        ...createTokenValidatorInput,
         ...config,
       };
 
@@ -92,7 +94,7 @@ describe(`tokenValidator`, () => {
 
   test(`validate bad token use`, async () => {
     const tokenValidatorBadTokenUse = await createTokenValidator({
-      ...params,
+      ...createTokenValidatorInput,
       tokenUse: `broken`,
     });
 

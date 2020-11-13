@@ -1,4 +1,4 @@
-import { createCognitoService } from './cognito';
+import { createCognitoService, CognitoService } from '.';
 
 const {
   COGNITO_REGION,
@@ -8,11 +8,15 @@ const {
 } = process.env;
 
 describe(`cognitoService`, () => {
-  const cognitoService = createCognitoService({
-    region: COGNITO_REGION,
-    userPoolId: COGNITO_USER_POOL_ID,
-    appClientId: COGNITO_APP_CLIENT_ID,
-    appClientSecret: COGNITO_APP_CLIENT_SECRET,
+  let cognitoService: CognitoService;
+
+  beforeAll(async () => {
+    cognitoService = await createCognitoService({
+      region: COGNITO_REGION,
+      userPoolId: COGNITO_USER_POOL_ID,
+      appClientId: COGNITO_APP_CLIENT_ID,
+      appClientSecret: COGNITO_APP_CLIENT_SECRET,
+    });
   });
 
   test.skip(`signUp`, async () => {
@@ -67,5 +71,16 @@ describe(`cognitoService`, () => {
     });
 
     console.log(result);
+  });
+
+  test(`validate`, async () => {
+    const { accessToken } = await cognitoService.authenticateUser({
+      username: `user-for-tests`,
+      password: `=Z9-xW%7`,
+    });
+
+    const { username } = await cognitoService.validate({ token: accessToken });
+
+    expect(username).toBe(`user-for-tests`);
   });
 });
