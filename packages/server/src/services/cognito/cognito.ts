@@ -1,5 +1,4 @@
 import { CognitoIdentityServiceProvider } from 'aws-sdk';
-import * as CognitoExpress from 'cognito-express';
 import { createHmac } from 'crypto';
 
 type CreateCognitoServiceInput = {
@@ -238,8 +237,6 @@ export const createCognitoService = ({
   const cognitoIdentity = new CognitoIdentityServiceProvider({
     region,
   });
-
-  const cognitoExpress = new CognitoExpress({});
 
   return cognitoService({
     userPoolId,
