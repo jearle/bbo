@@ -1,0 +1,28 @@
+name: Pull Request
+
+on:
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+  pull_request:
+    runs-on: [self-hosted, linux]
+    steps:
+      - name: Checkout Actions Repo
+        uses: actions/checkout@v2
+        with:
+          repository: rcanalytics/github-actions
+          ref: v1
+          path: .github-actions
+          token: ${{ secrets.WORKFLOW_TOKEN }}
+
+      - name: Apply PR Comments
+        uses: ./.github-actions/pr/comments
+        with:
+          branchCheckEnabled: true
+          branchCheckMap: |
+            develop:main
+            hotfix/*:main
+          deployRecordsEnabled: true
+          deployRecordsDir: .deploy-records
+          token: ${{ secrets.WORKFLOW_TOKEN }}

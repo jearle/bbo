@@ -23,6 +23,7 @@ import { createTransactionsService } from './apps/transactions-search/services/t
 import { createRCAWebService, RCAWebOptions } from './services/rca-web';
 import { createRedisService, RedisOptions } from './services/redis';
 import { createPermissionsService } from './services/permissions';
+import { createLaunchDarklyClient, LaunchDarklyOptions } from './services/launchdarkly';
 
 // Apps
 import {
@@ -43,6 +44,7 @@ interface ServerOptions {
   elasticsearchOptions: ElasticsearchOptions;
   redisOptions: RedisOptions;
   rcaWebOptions: RCAWebOptions;
+  launchDarklyOptions: LaunchDarklyOptions;
 }
 
 export const startServer = async ({
@@ -51,6 +53,7 @@ export const startServer = async ({
   elasticsearchOptions,
   rcaWebOptions,
   redisOptions,
+  launchDarklyOptions
 }: ServerOptions) => {
   const elasticSearchClient = createElasticsearchClient(elasticsearchOptions);
 
@@ -64,12 +67,19 @@ export const startServer = async ({
     redisService,
     rcaWebService,
   });
+  let launchDarklyClient;
+  try {
+    launchDarklyClient = await createLaunchDarklyClient(launchDarklyOptions);
+  } catch (error) {
+    launchDarklyClient = null;
+  }
 
   const mounts = express();
 
   const companyApp = createCompanyApp();
   const transactionsSearchApp = createTransactionsSearchApp({
     transactionsService,
+    launchDarklyClient
   });
 
   // Pre Middleware
