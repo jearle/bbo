@@ -2,7 +2,7 @@ import { Application } from 'express';
 import * as swaggerJSDoc from 'swagger-jsdoc';
 import { serve, setup } from 'swagger-ui-express';
 
-const getSpec = ({ host, port, basePath, description }) =>
+const getSpec = ({ host, port, name, basePath, description }) =>
   swaggerJSDoc({
     definition: {
       openapi: `3.0.0`,
@@ -28,19 +28,20 @@ const getSpec = ({ host, port, basePath, description }) =>
         description: `Product API`,
       },
     },
-    apis: [`./dist/apps/company/index.js`],
+    apis: [`./dist/apps/${name}/**/*.js`],
   });
 
-interface SwaggerDocumentationOptions {
+type SwaggerDocumentationInput = {
   host: string;
   port: number;
+  name: string;
   basePath?: string;
   description: string;
-}
+};
 
 export const useSwaggerDocumentation = (
   app: Application,
-  { host, port, basePath = `/`, description }: SwaggerDocumentationOptions
+  { host, port, name, basePath = `/`, description }: SwaggerDocumentationInput
 ) =>
   app.use(
     `${basePath === `/` ? `` : basePath}/documentation`,
@@ -49,6 +50,7 @@ export const useSwaggerDocumentation = (
       getSpec({
         host,
         port,
+        name,
         basePath,
         description,
       })

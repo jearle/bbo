@@ -11,6 +11,7 @@ const createSwaggerServer = async ({ basePath = null } = {}) => {
 
   useSwaggerDocumentation(app, {
     port,
+    name: `test`,
     host: `127.0.0.1`,
     description: `test`,
     ...(basePath === null ? {} : { basePath }),

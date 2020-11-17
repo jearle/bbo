@@ -29,23 +29,47 @@ export const createApp = ({ authenticationService }: Options) => {
   );
 
   /**
+
+  paths:
+    /login:
+      post:
+        summary: Retrieves access token
+        requestBody:
+          content:
+            application/json:
+              schema:     
+                type: object
+                properties:
+                  username:
+                    type: string
+                  password:
+                    type: string
+                example:
+                  username: foo
+                  password: bar
+      responses:
+        '200':
+          description: OK
+   */
+  /**
    * @swagger
    *
-   * /transactions:
-   *   get:
-   *     description: Search property transactions
-   *     produces:
-   *       - application/json
-   *     parameters:
-   *     - name: limit
-   *       in: query
-   *       description: The response item limit
-   *       required: true
-   *       schema:
-   *         type: number
+   * /login:
+   *   post:
+   *     summary: Retrieves access token
+   *     requestBody:
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               username:
+   *                 type: string
+   *               password:
+   *                 type: string
    *     responses:
    *       200:
-   *         description: PropertyTransactionSearchResponse
+   *         description: health
    */
   app.post(`/login`, async (req, res) => {
     const { username, password } = req.body;

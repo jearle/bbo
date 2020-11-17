@@ -88,14 +88,29 @@ export const startServer = async ({
 
   mounts.use(authenticationBasePath, authenticationApp);
 
-  mounts.use(authenticationMiddleware({ authenticationService }));
-  mounts.use(permissionsMiddleware({ permissionsService }));
+  useSwaggerDocumentation(mounts, {
+    host,
+    port,
+    name: `authentication`,
+    basePath: authenticationBasePath,
+    description: authenticationDescription,
+  });
+
+  mounts.use(
+    transactionsSearchBasePath,
+    authenticationMiddleware({ authenticationService })
+  );
+  mounts.use(
+    transactionsSearchBasePath,
+    permissionsMiddleware({ permissionsService })
+  );
 
   // Apps
   mounts.use(transactionsSearchBasePath, transactionsSearchApp);
   useSwaggerDocumentation(mounts, {
     host,
     port,
+    name: `transactions-search`,
     basePath: transactionsSearchBasePath,
     description: transactionsSearchDescription,
   });

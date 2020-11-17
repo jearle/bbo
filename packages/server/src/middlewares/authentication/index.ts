@@ -31,7 +31,6 @@ export const authenticationMiddleware = ({
 
   try {
     await authenticationService.validate({ token });
-    next();
   } catch (e) {
     return res.status(401).json({
       data: {
@@ -39,4 +38,6 @@ export const authenticationMiddleware = ({
       },
     });
   }
+
+  next();
 };
