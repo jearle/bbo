@@ -27,6 +27,10 @@ import { createRedisService, RedisOptions } from './services/redis';
 import { CognitoOptions, createCognitoService } from './services/cognito';
 import { createPermissionsService } from './services/permissions';
 import { createAuthenticationService } from './services/authentication';
+import {
+  createLaunchDarklyClient,
+  LaunchDarklyOptions,
+} from './services/launchdarkly';
 
 // Apps
 import {
@@ -48,6 +52,7 @@ interface ServerOptions {
   elasticsearchOptions: ElasticsearchOptions;
   redisOptions: RedisOptions;
   rcaWebOptions: RCAWebOptions;
+  launchDarklyOptions: LaunchDarklyOptions;
 }
 
 export const startServer = async ({
@@ -57,6 +62,7 @@ export const startServer = async ({
   elasticsearchOptions,
   rcaWebOptions,
   redisOptions,
+  launchDarklyOptions,
 }: ServerOptions) => {
   const elasticSearchClient = createElasticsearchClient(elasticsearchOptions);
 
@@ -72,6 +78,12 @@ export const startServer = async ({
     redisService,
     rcaWebService,
   });
+  let launchDarklyClient;
+  try {
+    launchDarklyClient = await createLaunchDarklyClient(launchDarklyOptions);
+  } catch (error) {
+    launchDarklyClient = null;
+  }
 
   const mounts = express();
   const authenticationApp = createAuthenticationApp({
@@ -79,6 +91,7 @@ export const startServer = async ({
   });
   const transactionsSearchApp = createTransactionsSearchApp({
     transactionsService,
+    launchDarklyClient,
   });
 
   // Pre Middleware
