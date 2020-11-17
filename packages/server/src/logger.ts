@@ -34,7 +34,7 @@ const logger = createLogger({
   ],
 });
 
-logger.log(`debug`, `logger using log level: ${LOG_LEVEL}`);
+// logger.log(`debug`, `logger using log level: ${LOG_LEVEL}`);
 
 export default logger;
 

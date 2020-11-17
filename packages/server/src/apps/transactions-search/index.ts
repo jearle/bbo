@@ -9,7 +9,7 @@ import {
   cleanTransactionSearchParams,
 } from './services/transactions';
 
-export const VERSION = `0.0.0`;
+export const VERSION = `v0`;
 export const DESCRIPTION = `Transactions Search API`;
 export const BASE_PATH = `/api/transactions-search/${VERSION}`;
 

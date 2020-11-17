@@ -1,4 +1,5 @@
 import * as express from 'express';
+import { json } from 'body-parser';
 import { createServer } from 'http';
 import { AddressInfo } from 'net';
 
@@ -12,6 +13,7 @@ import logger, {
 import { useSwaggerDocumentation } from './helpers/swagger/express-mount';
 
 // Middleware
+import { authenticationMiddleware } from './middlewares/authentication';
 import { permissionsMiddleware } from './middlewares/permissions';
 
 // Services
@@ -22,25 +24,31 @@ import {
 import { createTransactionsService } from './apps/transactions-search/services/transactions';
 import { createRCAWebService, RCAWebOptions } from './services/rca-web';
 import { createRedisService, RedisOptions } from './services/redis';
+import { CognitoOptions, createCognitoService } from './services/cognito';
 import { createPermissionsService } from './services/permissions';
-import { createLaunchDarklyClient, LaunchDarklyOptions } from './services/launchdarkly';
+import { createAuthenticationService } from './services/authentication';
+import {
+  createLaunchDarklyClient,
+  LaunchDarklyOptions,
+} from './services/launchdarkly';
 
 // Apps
-import {
-  createApp as createCompanyApp,
-  BASE_PATH as companyBasePath,
-  DESCRIPTION as companyDescription,
-} from './apps/company';
-
 import {
   createApp as createTransactionsSearchApp,
   BASE_PATH as transactionsSearchBasePath,
   DESCRIPTION as transactionsSearchDescription,
 } from './apps/transactions-search';
 
+import {
+  createApp as createAuthenticationApp,
+  BASE_PATH as authenticationBasePath,
+  DESCRIPTION as authenticationDescription,
+} from './apps/authentication';
+
 interface ServerOptions {
   port?: number;
   host?: string;
+  cognitoOptions: CognitoOptions;
   elasticsearchOptions: ElasticsearchOptions;
   redisOptions: RedisOptions;
   rcaWebOptions: RCAWebOptions;
@@ -50,10 +58,11 @@ interface ServerOptions {
 export const startServer = async ({
   port = 0,
   host = `127.0.0.1`,
+  cognitoOptions,
   elasticsearchOptions,
   rcaWebOptions,
   redisOptions,
-  launchDarklyOptions
+  launchDarklyOptions,
 }: ServerOptions) => {
   const elasticSearchClient = createElasticsearchClient(elasticsearchOptions);
 
@@ -61,6 +70,8 @@ export const startServer = async ({
     client: elasticSearchClient,
   });
 
+  const cognitoService = await createCognitoService(cognitoOptions);
+  const authenticationService = createAuthenticationService({ cognitoService });
   const redisService = createRedisService(redisOptions);
   const rcaWebService = createRCAWebService(rcaWebOptions);
   const permissionsService = createPermissionsService({
@@ -75,31 +86,44 @@ export const startServer = async ({
   }
 
   const mounts = express();
-
-  const companyApp = createCompanyApp();
+  const authenticationApp = createAuthenticationApp({
+    authenticationService,
+  });
   const transactionsSearchApp = createTransactionsSearchApp({
     transactionsService,
-    launchDarklyClient
+    launchDarklyClient,
   });
 
   // Pre Middleware
   mounts.use(loggerIdMiddlewware());
   mounts.use(loggerMiddleware());
-  mounts.use(permissionsMiddleware({ permissionsService }));
+  mounts.use(json());
 
-  // Apps
-  mounts.use(companyBasePath, companyApp);
+  mounts.use(authenticationBasePath, authenticationApp);
+
   useSwaggerDocumentation(mounts, {
     host,
     port,
-    basePath: companyBasePath,
-    description: companyDescription,
+    name: `authentication`,
+    basePath: authenticationBasePath,
+    description: authenticationDescription,
   });
 
+  mounts.use(
+    transactionsSearchBasePath,
+    authenticationMiddleware({ authenticationService })
+  );
+  mounts.use(
+    transactionsSearchBasePath,
+    permissionsMiddleware({ permissionsService })
+  );
+
+  // Apps
   mounts.use(transactionsSearchBasePath, transactionsSearchApp);
   useSwaggerDocumentation(mounts, {
     host,
     port,
+    name: `transactions-search`,
     basePath: transactionsSearchBasePath,
     description: transactionsSearchDescription,
   });
