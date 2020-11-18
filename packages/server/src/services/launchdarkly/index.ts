@@ -1,9 +1,9 @@
 import * as LaunchDarkly from 'launchdarkly-node-server-sdk';
-import logger from '../../logger';
+import logger from '../../features/logger';
 
 export interface LaunchDarklyOptions {
   sdkKey: string;
-};
+}
 
 export type LDClientType = {
   waitForInitialization();
@@ -16,10 +16,10 @@ interface FetchLaunchDarklyFlagOptions {
   flagName: string;
   user?: LaunchDarkly.LDUser;
   defaultValue?: any;
-};
+}
 
 export const createLaunchDarklyClient = async ({
-  sdkKey
+  sdkKey,
 }: LaunchDarklyOptions): Promise<LaunchDarkly.LDClient> => {
   const client = LaunchDarkly.init(sdkKey);
   try {
@@ -36,7 +36,7 @@ export const fetchLaunchDarklyFlag = async ({
   client,
   flagName,
   user = _anonUser,
-  defaultValue = false
+  defaultValue = false,
 }: FetchLaunchDarklyFlagOptions): Promise<any> => {
   try {
     const value = await client.variation(flagName, user, defaultValue);
@@ -61,4 +61,4 @@ export const fetchLaunchDarklyFlag = async ({
  }
  */
 
-const _anonUser: LaunchDarkly.LDUser = { 'key': 'anonymous', 'anonymous': true };
+const _anonUser: LaunchDarkly.LDUser = { key: 'anonymous', anonymous: true };

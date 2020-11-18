@@ -3,16 +3,15 @@ import { json } from 'body-parser';
 import { createServer } from 'http';
 import { AddressInfo } from 'net';
 
-import logger, {
-  loggerIdMiddlewware,
-  loggerMiddleware,
-  loggerErrorMiddleware,
-} from './logger';
+import logger from './features/logger';
 
 // Helpers
 import { useSwaggerDocumentation } from './helpers/swagger/express-mount';
 
 // Middleware
+import { loggerMiddleware } from './features/logger/middlewares/logger';
+import { loggerIdMiddleware } from './features/logger/middlewares/logger-id';
+import { loggerErrorMiddleware } from './features/logger/middlewares/logger-error';
 import { authenticationMiddleware } from './middlewares/authentication';
 import { permissionsMiddleware } from './middlewares/permissions';
 
@@ -95,8 +94,8 @@ export const startServer = async ({
   });
 
   // Pre Middleware
-  mounts.use(loggerIdMiddlewware());
-  mounts.use(loggerMiddleware());
+  mounts.use(loggerIdMiddleware());
+  mounts.use(loggerMiddleware({ logger }));
   mounts.use(json());
 
   mounts.use(authenticationBasePath, authenticationApp);
@@ -129,7 +128,7 @@ export const startServer = async ({
   });
 
   // Post Middleware
-  mounts.use(loggerErrorMiddleware());
+  mounts.use(loggerErrorMiddleware({ logger, env: process.env.NODE_ENV }));
 
   // Start Server
   const server = createServer(mounts);
