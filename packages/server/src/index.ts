@@ -10,7 +10,7 @@ const {
   ELASTICSEARCH_USERNAME,
   ELASTICSEARCH_PASSWORD,
   ELASTICSEARCH_NODE,
-  RCA_WEB_URI,
+  RCA_WEB_ACCOUNTS_URI,
   REDIS_URI,
   LAUNCH_DARKLY_SDK
 } = process.env;
@@ -35,7 +35,7 @@ const redisOptions = {
 };
 
 const rcaWebOptions = {
-  uri: RCA_WEB_URI,
+  uri: RCA_WEB_ACCOUNTS_URI,
 };
 
 const launchDarklyOptions = {

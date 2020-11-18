@@ -1,7 +1,7 @@
 import mssql from 'mssql';
 import { createRCAWebService } from '.';
 
-const { RCA_WEB_URI: uri } = process.env;
+const { RCA_WEB_ACCOUNTS_URI: uri } = process.env;
 
 describe(`rca web service`, () => {
   let rcaWebService = null;
