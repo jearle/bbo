@@ -8,7 +8,8 @@ services:
       - 1433:1433
   
   elasticsearch:
-    image: elasticsearch:7.9.3 
+    build: ./es/
+    image: product-api-es
     ports:
       - 9200:9200
       - 9300:9300
