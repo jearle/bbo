@@ -7,7 +7,7 @@ import { portListen } from '../../helpers/express/port-listen';
 
 import { createPermissionsService } from '../../services/permissions';
 import { createRedisService } from '../../services/redis';
-import { createRCAWebService } from '../../services/rca-web';
+import { createRcaWebAccountsService } from '../../services/rca-web-accounts';
 
 const { RCA_WEB_ACCOUNTS_URI, REDIS_URI } = process.env;
 
@@ -19,11 +19,11 @@ describe(`permissions service`, () => {
 
   beforeAll(async () => {
     const redisService = createRedisService({ uri: REDIS_URI });
-    const rcaWebService = createRCAWebService({ uri: RCA_WEB_ACCOUNTS_URI });
+    const rcaWebAccountsService = createRcaWebAccountsService({ uri: RCA_WEB_ACCOUNTS_URI });
 
     permissionsService = createPermissionsService({
       redisService,
-      rcaWebService,
+      rcaWebAccountsService,
     });
   });
 

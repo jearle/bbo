@@ -21,7 +21,7 @@ import {
   createElasticsearchClient,
 } from './services/elasticsearch';
 import { createTransactionsService } from './apps/transactions-search/services/transactions';
-import { createRCAWebService, RCAWebOptions } from './services/rca-web';
+import { createRcaWebAccountsService, RcaWebAccountsOptions } from './services/rca-web-accounts';
 import { createRedisService, RedisOptions } from './services/redis';
 import { CognitoOptions, createCognitoService } from './services/cognito';
 import { createPermissionsService } from './services/permissions';
@@ -50,7 +50,7 @@ interface ServerOptions {
   cognitoOptions: CognitoOptions;
   elasticsearchOptions: ElasticsearchOptions;
   redisOptions: RedisOptions;
-  rcaWebOptions: RCAWebOptions;
+  rcaWebAccountsOptions: RcaWebAccountsOptions;
   launchDarklyOptions: LaunchDarklyOptions;
 }
 
@@ -59,7 +59,7 @@ export const startServer = async ({
   host = `127.0.0.1`,
   cognitoOptions,
   elasticsearchOptions,
-  rcaWebOptions,
+  rcaWebAccountsOptions,
   redisOptions,
   launchDarklyOptions,
 }: ServerOptions) => {
@@ -72,10 +72,10 @@ export const startServer = async ({
   const cognitoService = await createCognitoService(cognitoOptions);
   const authenticationService = createAuthenticationService({ cognitoService });
   const redisService = createRedisService(redisOptions);
-  const rcaWebService = createRCAWebService(rcaWebOptions);
+  const rcaWebAccountsService = createRcaWebAccountsService(rcaWebAccountsOptions);
   const permissionsService = createPermissionsService({
     redisService,
-    rcaWebService,
+    rcaWebAccountsService,
   });
   let launchDarklyClient;
   try {

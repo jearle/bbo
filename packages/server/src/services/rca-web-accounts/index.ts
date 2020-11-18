@@ -1,11 +1,11 @@
 import * as mssql from 'mssql';
 import { resolve as resolveConnectionString } from 'mssql/lib/connectionstring';
 
-export interface RCAWebOptions {
+export interface RcaWebAccountsOptions {
   uri: string;
 }
 
-const createMSSqlOptions = ({ uri }: RCAWebOptions) => {
+const createMSSqlOptions = ({ uri }: RcaWebAccountsOptions) => {
   const { user, password, server } = resolveConnectionString(uri);
 
   return {
@@ -27,13 +27,13 @@ const createMSSqlOptions = ({ uri }: RCAWebOptions) => {
   };
 };
 
-export interface RCAWebService {
+export interface RcaWebAccountsService {
   connectionPool: Function;
   types: Function;
   close: Function;
 }
 
-export const createRCAWebService = (options: RCAWebOptions): RCAWebService => {
+export const createRcaWebAccountsService = (options: RcaWebAccountsOptions): RcaWebAccountsService => {
   const mssqlOptions = createMSSqlOptions(options);
 
   const connectionPoolPromise = mssql.connect(mssqlOptions);

@@ -34,7 +34,7 @@ const redisOptions = {
   uri: REDIS_URI,
 };
 
-const rcaWebOptions = {
+const rcaWebAccountsOptions = {
   uri: RCA_WEB_ACCOUNTS_URI,
 };
 
@@ -48,6 +48,6 @@ startServer({
   cognitoOptions,
   elasticsearchOptions,
   redisOptions,
-  rcaWebOptions,
+  rcaWebAccountsOptions,
   launchDarklyOptions
 });

@@ -4,11 +4,11 @@ import {
   createPermissionModelFromListOfRaw,
 } from './permission-model';
 
-import { RCAWebService } from '../rca-web';
+import { RcaWebAccountsService } from '../rca-web-accounts';
 
 interface PermissionsServiceOptions {
   readonly redisService: any;
-  readonly rcaWebService: RCAWebService;
+  readonly rcaWebAccountsService: RcaWebAccountsService;
 }
 
 export interface PermissionsService {
@@ -20,14 +20,14 @@ export interface PermissionsService {
 const STORED_PROCEDURE = `ReturnStateProvAndCountryPTsByUser_New_PTSMenu`;
 
 const fetchRawPermissionModels = async (
-  rcaWebService: RCAWebService,
+  rcaWebAccountsService: RcaWebAccountsService,
   userId: number
 ): Promise<RawPermissionModel[]> => {
-  const connectionPool = await rcaWebService.connectionPool();
+  const connectionPool = await rcaWebAccountsService.connectionPool();
 
   const result = await connectionPool
     .request()
-    .input(`AccountUser_id`, rcaWebService.types().Int, userId)
+    .input(`AccountUser_id`, rcaWebAccountsService.types().Int, userId)
     .execute(STORED_PROCEDURE);
 
   const [rawPermissionModels]: [RawPermissionModel[]] = result.recordsets;
@@ -37,7 +37,7 @@ const fetchRawPermissionModels = async (
 
 export const createPermissionsService = ({
   redisService,
-  rcaWebService,
+  rcaWebAccountsService,
 }: PermissionsServiceOptions): PermissionsService => {
   return {
     async fetchPermissionModel({ userId }) {
@@ -45,7 +45,7 @@ export const createPermissionsService = ({
       if (cachedPermissionModel) return JSON.parse(cachedPermissionModel);
 
       const rawPermissionModels = await fetchRawPermissionModels(
-        rcaWebService,
+        rcaWebAccountsService,
         userId
       );
 
@@ -63,7 +63,7 @@ export const createPermissionsService = ({
     },
 
     async close() {
-      await rcaWebService.close();
+      await rcaWebAccountsService.close();
       await redisService.close();
     },
   };
