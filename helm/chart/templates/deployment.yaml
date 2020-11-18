@@ -38,6 +38,8 @@ spec:
               value: "{{ .Values.esUrl }}"
             - name: RCA_WEB_URI
               value: "{{ .Values.rcaWebUri }}"
+            - name: LAUNCH_DARKLY_SDK
+              value: "{{ .Values.launchDarklySdk }}"
       imagePullSecrets:
         - name: dockerhub
       serviceAccountName: cd-product-api
