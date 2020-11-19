@@ -11,7 +11,7 @@
 - Connect to VPN
 - Mount the network drive
   - MacOS
-    - osascript -e 'mount volume "smb://rca-file-server/RCA/product-api"'
+    - `osascript -e 'mount volume "smb://rca-file-server/RCA/product-api"'`
 - Run
   - MacOS/Linux
     - `./docker/mssql-rca-web-accounts/build.sh /Volumes/product-api dbRCAWebAccounts_min.bak`
