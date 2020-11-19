@@ -10,7 +10,7 @@ const {
   ELASTICSEARCH_USERNAME,
   ELASTICSEARCH_PASSWORD,
   ELASTICSEARCH_NODE,
-  RCA_WEB_URI,
+  RCA_WEB_ACCOUNTS_URI,
   REDIS_URI,
   LAUNCH_DARKLY_SDK
 } = process.env;
@@ -34,8 +34,8 @@ const redisOptions = {
   uri: REDIS_URI,
 };
 
-const rcaWebOptions = {
-  uri: RCA_WEB_URI,
+const rcaWebAccountsOptions = {
+  uri: RCA_WEB_ACCOUNTS_URI,
 };
 
 const launchDarklyOptions = {
@@ -48,6 +48,6 @@ startServer({
   cognitoOptions,
   elasticsearchOptions,
   redisOptions,
-  rcaWebOptions,
+  rcaWebAccountsOptions,
   launchDarklyOptions
 });

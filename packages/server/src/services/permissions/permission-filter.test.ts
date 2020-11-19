@@ -1,9 +1,9 @@
 import { createPermissionsService } from '.';
 import { createPermissionFilter } from './permission-filter';
 import { createRedisService } from '../redis';
-import { createRCAWebService } from '../rca-web';
+import { createRcaWebAccountsService } from '../rca-web-accounts';
 
-const { RCA_WEB_URI, REDIS_URI } = process.env;
+const { RCA_WEB_ACCOUNTS_URI, REDIS_URI } = process.env;
 
 const USER_ID = 130435;
 
@@ -14,11 +14,11 @@ describe(`permissions service`, () => {
 
   beforeAll(async () => {
     const redisService = createRedisService({ uri: REDIS_URI });
-    const rcaWebService = createRCAWebService({ uri: RCA_WEB_URI });
+    const rcaWebAccountsService = createRcaWebAccountsService({ uri: RCA_WEB_ACCOUNTS_URI });
 
     permissionsService = createPermissionsService({
       redisService,
-      rcaWebService,
+      rcaWebAccountsService,
     });
 
     // fetch once to ensure caching via test coverage
