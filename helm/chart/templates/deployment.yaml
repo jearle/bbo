@@ -41,13 +41,13 @@ spec:
             - name: LAUNCH_DARKLY_SDK
               value: "{{ .Values.launchDarklySdk }}"
             - name: COGNITO_REGION
-            value: "{{ .Values.cognitoRegion }}"
+              value: "{{ .Values.cognitoRegion }}"
             - name: COGNITO_USER_POOL_ID
-            value: "{{ .Values.cognitoUserPoolId }}"
+              value: "{{ .Values.cognitoUserPoolId }}"
             - name: COGNITO_APP_CLIENT_ID
-            value: "{{ .Values.cognitoAppClientId }}"
+              value: "{{ .Values.cognitoAppClientId }}"
             - name: COGNITO_APP_CLIENT_SECRET
-            value: "{{ .Values.cognitoAppClientSecret }}"
+              value: "{{ .Values.cognitoAppClientSecret }}"
       imagePullSecrets:
         - name: dockerhub
       serviceAccountName: cd-product-api
