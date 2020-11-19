@@ -5,4 +5,5 @@ apiHostname: ${config.apiHostname}
 esUsername: ${config.esUsername}
 esPassword: ${config.esPassword}
 esUrl: ${config.esUrl}
+rcaWebUri: ${config.rcaWebUri}
 launchDarklySdk: ${config.launchDarklySdk}

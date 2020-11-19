@@ -14,8 +14,6 @@ const { RCA_WEB_URI, REDIS_URI } = process.env;
 const USER_ID = 130435;
 
 describe(`permissions service`, () => {
-  jest.setTimeout(20000);
-
   let permissionsService = null;
   let app = null;
 

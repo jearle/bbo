@@ -57,13 +57,17 @@ describe(`transactions app`, () => {
 
   describe('/launchdarkly', () => {
     it('returns value when flag enabled', async () => {
-      const result = await fetch(`${url}/launchdarkly/ff-this-is-a-feature-flag?defaultValue=foo`);
+      const result = await fetch(
+        `${url}/launchdarkly/ff-this-is-a-feature-flag?defaultValue=foo`
+      );
       const { flagValue } = await result.json();
 
       expect(flagValue).toBe('foo');
     });
     it('returns 404 when flag disabled', async () => {
-      const result = await fetch(`${url}/launchdarkly/ff-this-is-a-feature-flag?defaultValue=false`);
+      const result = await fetch(
+        `${url}/launchdarkly/ff-this-is-a-feature-flag?defaultValue=false`
+      );
       expect(result.status).toBe(404);
     });
   });
