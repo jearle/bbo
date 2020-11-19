@@ -1,12 +1,12 @@
 # server/
 
-# Publishing Docker Builds
+## Publishing Docker Builds
 
-## Prerequisites
+### Prerequisites
 
 - You must be added to https://hub.docker.com/orgs/rcanalytics and have push permissions.
 
-## MSSQL RCA Web Accounts
+### MSSQL RCA Web Accounts
 
 - Connect to VPN
 - Mount the network drive
