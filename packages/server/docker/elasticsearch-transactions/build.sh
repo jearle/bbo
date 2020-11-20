@@ -13,7 +13,7 @@ die () {
 [ -f "$1" ] || die "$1 does not exist"
 
 BACKUP_SOURCE=$1
-LOCAL_SOURCE=$DIR/dba-rca-web-accounts.bak
+LOCAL_SOURCE=$DIR/transactions.ndjson
 
 echo "Copying..."
 echo ""
@@ -22,8 +22,8 @@ echo " Local Source: $LOCAL_SOURCE"
 echo ""
 rsync --human-readable --progress $BACKUP_SOURCE $LOCAL_SOURCE
 
-docker build --no-cache -t rcanalytics/product-api-mssql-rca-web-accounts:latest .
+docker build --no-cache -t rcanalytics/product-api-elasticsearch-transactions:latest .
 
-# docker push rcanalytics/mssql-rca-web-accounts:latest
+# docker push rcanalytics/elasticsearch-transactions:latest
 
 rm -rf $LOCAL_SOURCE

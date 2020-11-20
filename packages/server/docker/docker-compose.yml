@@ -2,14 +2,14 @@ version: '3'
 
 services:
   mssql:
-    build: ./db/
-    image: product-api-sql
+    build: ./mssql-rca-web-accounts/
+    image: rcanalytics/product-api-mssql-rca-web-accounts:latest
     ports:
       - 1433:1433
-  
+
   elasticsearch:
-    build: ./es/
-    image: product-api-es
+    build: ./elasticsearch-transactions/
+    image: rcanalytics/product-api-elasticsearch-transactions:latest
     ports:
       - 9200:9200
       - 9300:9300
