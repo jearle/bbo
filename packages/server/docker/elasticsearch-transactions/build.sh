@@ -9,7 +9,7 @@ die () {
     exit 1
 }
 
-[ "$#" -eq 1 ] || die "path to dbRCAWebAccounts.bak required"
+[ "$#" -eq 1 ] || die "path to transactions.ndjson required"
 [ -f "$1" ] || die "$1 does not exist"
 
 BACKUP_SOURCE=$1
@@ -24,6 +24,6 @@ rsync --human-readable --progress $BACKUP_SOURCE $LOCAL_SOURCE
 
 docker build --no-cache -t rcanalytics/product-api-elasticsearch-transactions:latest .
 
-# docker push rcanalytics/elasticsearch-transactions:latest
+docker push rcanalytics/product-api-elasticsearch-transactions:latest
 
 rm -rf $LOCAL_SOURCE

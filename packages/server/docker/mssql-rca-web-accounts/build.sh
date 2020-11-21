@@ -24,6 +24,6 @@ rsync --human-readable --progress $BACKUP_SOURCE $LOCAL_SOURCE
 
 docker build --no-cache -t rcanalytics/product-api-mssql-rca-web-accounts:latest .
 
-# docker push rcanalytics/mssql-rca-web-accounts:latest
+docker push rcanalytics/product-api-mssql-rca-web-accounts:latest
 
 rm -rf $LOCAL_SOURCE
