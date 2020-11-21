@@ -1,4 +1,9 @@
-export const loggerErrorMiddleware = ({ logger, env }) => (err, req, res) => {
+export const loggerErrorMiddleware = ({ logger, env }) => (
+  err,
+  req,
+  res,
+  next
+) => {
   logger.log(`error`, `[${req.id}] ${err.stack}`);
 
   const { id } = req;
@@ -13,4 +18,6 @@ export const loggerErrorMiddleware = ({ logger, env }) => (err, req, res) => {
       stack,
     },
   });
+
+  next();
 };
