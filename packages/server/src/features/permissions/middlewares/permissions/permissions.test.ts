@@ -3,11 +3,12 @@ import * as fetch from 'node-fetch';
 
 import { permissionsMiddleware as createPermissionsMiddleware } from '.';
 
-import { portListen } from '../../helpers/express/port-listen';
+import { portListen } from '../../../../helpers/express/port-listen';
 
 import { createPermissionsService } from '../../services/permissions';
-import { createRedisService } from '../../services/redis';
-import { createRcaWebAccountsService } from '../../services/rca-web-accounts';
+import { createRedisProvider } from '../../providers/redis';
+import { createMSSQLProvider } from '../../providers/mssql';
+import { createRCAWebAccountsService } from '../../services/rca-web-accounts';
 
 const { MSSQL_URI, REDIS_URI } = process.env;
 
@@ -18,13 +19,15 @@ describe(`permissions service`, () => {
   let app = null;
 
   beforeAll(async () => {
-    const redisService = createRedisService({ uri: REDIS_URI });
-    const rcaWebAccountsService = createRcaWebAccountsService({
-      uri: MSSQL_URI,
+    const mssqlProvider = await createMSSQLProvider({ uri: MSSQL_URI });
+    const redisProvider = createRedisProvider({ uri: REDIS_URI });
+
+    const rcaWebAccountsService = await createRCAWebAccountsService({
+      mssqlProvider,
     });
 
     permissionsService = createPermissionsService({
-      redisService,
+      redisProvider,
       rcaWebAccountsService,
     });
   });
@@ -48,33 +51,33 @@ describe(`permissions service`, () => {
 
   test(`permissionModel`, async () => {
     app.get(`/`, (req, res) => {
-      const { permissionModel } = req;
+      const { permissionsModel } = req;
 
-      res.send({ permissionModel });
+      res.send({ permissionsModel });
     });
 
     const server = await portListen(app);
     const { port } = server.address();
 
     const response = await fetch(`http://localhost:${port}`);
-    const { permissionModel } = await response.json();
-    expect(typeof permissionModel).toBe(`object`);
+    const { permissionsModel } = await response.json();
+    expect(typeof permissionsModel).toBe(`object`);
     server.close();
   });
 
   test(`permissionModel`, async () => {
     app.get(`/`, (req, res) => {
-      const { permissionFilter } = req;
+      const { permissionsFilter } = req;
 
-      res.send({ permissionFilter });
+      res.send({ permissionsFilter });
     });
 
     const server = await portListen(app);
     const { port } = server.address();
 
     const response = await fetch(`http://localhost:${port}`);
-    const { permissionFilter } = await response.json();
-    expect(typeof permissionFilter).toBe(`object`);
+    const { permissionsFilter } = await response.json();
+    expect(typeof permissionsFilter).toBe(`object`);
     server.close();
   });
 });

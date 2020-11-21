@@ -3,7 +3,7 @@ import { createPermissionFilter } from './permission-filter';
 import { createRedisService } from '../redis';
 import { createRcaWebAccountsService } from '../rca-web-accounts';
 
-const { RCA_WEB_ACCOUNTS_URI, REDIS_URI } = process.env;
+const { MSSQL_URI, REDIS_URI } = process.env;
 
 const USER_ID = 130435;
 
@@ -14,7 +14,9 @@ describe(`permissions service`, () => {
 
   beforeAll(async () => {
     const redisService = createRedisService({ uri: REDIS_URI });
-    const rcaWebAccountsService = createRcaWebAccountsService({ uri: RCA_WEB_ACCOUNTS_URI });
+    const rcaWebAccountsService = createRcaWebAccountsService({
+      uri: MSSQL_URI,
+    });
 
     permissionsService = createPermissionsService({
       redisService,
