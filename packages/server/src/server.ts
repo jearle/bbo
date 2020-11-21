@@ -13,7 +13,7 @@ import { loggerMiddleware } from './features/logger/middlewares/logger';
 import { loggerIdMiddleware } from './features/logger/middlewares/logger-id';
 import { loggerErrorMiddleware } from './features/logger/middlewares/logger-error';
 import { authenticationMiddleware } from './middlewares/authentication';
-import { permissionsMiddleware } from './middlewares/permissions';
+// import { permissionsMiddleware } from './middlewares/permissions';
 
 // Services
 import {
@@ -21,10 +21,7 @@ import {
   createElasticsearchClient,
 } from './services/elasticsearch';
 import { createTransactionsService } from './apps/transactions-search/services/transactions';
-import { createRcaWebAccountsService, RcaWebAccountsOptions } from './services/rca-web-accounts';
-import { createRedisService, RedisOptions } from './services/redis';
 import { CognitoOptions, createCognitoService } from './services/cognito';
-import { createPermissionsService } from './services/permissions';
 import { createAuthenticationService } from './services/authentication';
 import {
   createLaunchDarklyClient,
@@ -44,14 +41,18 @@ import {
   DESCRIPTION as authenticationDescription,
 } from './apps/authentication';
 
+import {
+  PermissionsFeatureOptions,
+  createPermissionsFeature,
+} from './features/permissions';
+
 interface ServerOptions {
   port?: number;
   host?: string;
   cognitoOptions: CognitoOptions;
   elasticsearchOptions: ElasticsearchOptions;
-  redisOptions: RedisOptions;
-  rcaWebAccountsOptions: RcaWebAccountsOptions;
   launchDarklyOptions: LaunchDarklyOptions;
+  permissionsFeatureOptions: PermissionsFeatureOptions;
 }
 
 export const startServer = async ({
@@ -59,10 +60,15 @@ export const startServer = async ({
   host = `127.0.0.1`,
   cognitoOptions,
   elasticsearchOptions,
-  rcaWebAccountsOptions,
-  redisOptions,
   launchDarklyOptions,
+  permissionsFeatureOptions,
 }: ServerOptions) => {
+  // features
+  const { permissionsMiddleware } = await createPermissionsFeature(
+    permissionsFeatureOptions
+  );
+  // end features
+
   const elasticSearchClient = createElasticsearchClient(elasticsearchOptions);
 
   const transactionsService = createTransactionsService({
@@ -71,12 +77,6 @@ export const startServer = async ({
 
   const cognitoService = await createCognitoService(cognitoOptions);
   const authenticationService = createAuthenticationService({ cognitoService });
-  const redisService = createRedisService(redisOptions);
-  const rcaWebAccountsService = createRcaWebAccountsService(rcaWebAccountsOptions);
-  const permissionsService = createPermissionsService({
-    redisService,
-    rcaWebAccountsService,
-  });
   let launchDarklyClient;
   try {
     launchDarklyClient = await createLaunchDarklyClient(launchDarklyOptions);
@@ -112,10 +112,7 @@ export const startServer = async ({
     transactionsSearchBasePath,
     authenticationMiddleware({ authenticationService })
   );
-  mounts.use(
-    transactionsSearchBasePath,
-    permissionsMiddleware({ permissionsService })
-  );
+  mounts.use(transactionsSearchBasePath, permissionsMiddleware());
 
   // Apps
   mounts.use(transactionsSearchBasePath, transactionsSearchApp);

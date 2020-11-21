@@ -30,16 +30,13 @@ const elasticsearchOptions = {
   node: ELASTICSEARCH_NODE,
 };
 
-const redisOptions = {
-  uri: REDIS_URI,
-};
-
-const rcaWebAccountsOptions = {
-  uri: MSSQL_URI,
-};
-
 const launchDarklyOptions = {
   sdkKey: LAUNCH_DARKLY_SDK,
+};
+
+const permissionsFeatureOptions = {
+  mssqlURI: MSSQL_URI,
+  redisURI: REDIS_URI,
 };
 
 startServer({
@@ -47,7 +44,6 @@ startServer({
   host,
   cognitoOptions,
   elasticsearchOptions,
-  redisOptions,
-  rcaWebAccountsOptions,
   launchDarklyOptions,
+  permissionsFeatureOptions,
 });
