@@ -10,9 +10,9 @@ const {
   ELASTICSEARCH_USERNAME,
   ELASTICSEARCH_PASSWORD,
   ELASTICSEARCH_NODE,
-  RCA_WEB_ACCOUNTS_URI,
+  MSSQL_URI,
   REDIS_URI,
-  LAUNCH_DARKLY_SDK
+  LAUNCH_DARKLY_SDK,
 } = process.env;
 
 const port = parseInt(PORT);
@@ -30,24 +30,20 @@ const elasticsearchOptions = {
   node: ELASTICSEARCH_NODE,
 };
 
-const redisOptions = {
-  uri: REDIS_URI,
-};
-
-const rcaWebAccountsOptions = {
-  uri: RCA_WEB_ACCOUNTS_URI,
-};
-
 const launchDarklyOptions = {
-  sdkKey: LAUNCH_DARKLY_SDK
-}
+  sdkKey: LAUNCH_DARKLY_SDK,
+};
+
+const permissionsFeatureOptions = {
+  mssqlURI: MSSQL_URI,
+  redisURI: REDIS_URI,
+};
 
 startServer({
   port,
   host,
   cognitoOptions,
   elasticsearchOptions,
-  redisOptions,
-  rcaWebAccountsOptions,
-  launchDarklyOptions
+  launchDarklyOptions,
+  permissionsFeatureOptions,
 });

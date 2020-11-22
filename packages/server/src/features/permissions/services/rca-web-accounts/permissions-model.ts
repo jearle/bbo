@@ -1,25 +1,25 @@
-import { csvToArray } from '../../helpers/csv';
-import { unique } from '../../helpers/array';
+import { csvToArray } from '../../../../helpers/csv';
+import { unique } from '../../../../helpers/array';
 
-export interface PermissionModel {
+export type PermissionsModel = {
   readonly stateProvidence: string[];
   readonly country: string[];
   readonly marketTier: string[];
   readonly metro: string[];
   readonly transType: string[];
   readonly propertyTypeSearch: string[];
-}
+};
 
-export interface RawPermissionModel {
+export type RawPermissionsModel = {
   readonly StateProv_csv: string | null;
   readonly Country_csv: string | null;
   readonly MarketTier_csv: string | null;
   readonly Metro_csv: string | null;
   readonly TransType_csv: string | null;
   readonly PtsMenu_csv: string | null;
-}
+};
 
-const createEmptyPermissionModel = (): PermissionModel => ({
+const createEmptyPermissionModel = (): PermissionsModel => ({
   stateProvidence: [],
   country: [],
   marketTier: [],
@@ -29,8 +29,8 @@ const createEmptyPermissionModel = (): PermissionModel => ({
 });
 
 const createPermissionModelFromRaw = (
-  rawPermissionModel: RawPermissionModel
-): PermissionModel => {
+  rawPermissionModel: RawPermissionsModel
+): PermissionsModel => {
   const {
     StateProv_csv,
     Country_csv,
@@ -40,7 +40,7 @@ const createPermissionModelFromRaw = (
     PtsMenu_csv,
   } = rawPermissionModel;
 
-  const permissionModel: PermissionModel = {
+  const permissionModel = {
     stateProvidence: csvToArray(StateProv_csv),
     country: csvToArray(Country_csv),
     marketTier: csvToArray(MarketTier_csv),
@@ -52,8 +52,8 @@ const createPermissionModelFromRaw = (
   return permissionModel;
 };
 
-export const createPermissionModelFromListOfRaw = (
-  rawPermissionModels: RawPermissionModel[]
+export const createPermissionsModelFromList = (
+  rawPermissionModels: RawPermissionsModel[]
 ) => {
   const permissionModel = rawPermissionModels.reduce(
     (acc, rawPermissionModel) => {

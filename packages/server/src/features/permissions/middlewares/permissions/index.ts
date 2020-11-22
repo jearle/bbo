@@ -1,5 +1,5 @@
 import { PermissionsService } from '../../services/permissions';
-import { createPermissionFilter } from '../../services/permissions/permission-filter';
+import { createPermissionsFilter } from '../../helpers/elasticsearch/permissions-filter';
 
 interface PermissionsMiddlewareOptions {
   permissionsService: PermissionsService;
@@ -11,13 +11,13 @@ export const permissionsMiddleware = ({
   return async (req, res, next) => {
     const { userId } = req;
 
-    const permissionModel = await permissionsService.fetchPermissionModel({
+    const permissionsModel = await permissionsService.fetchPermissionsModel({
       userId,
     });
-    const permissionFilter = createPermissionFilter({ permissionModel });
+    const permissionFilter = createPermissionsFilter({ permissionsModel });
 
-    req.permissionModel = permissionModel;
-    req.permissionFilter = permissionFilter;
+    req.permissionsModel = permissionsModel;
+    req.permissionsFilter = permissionFilter;
 
     next();
   };
