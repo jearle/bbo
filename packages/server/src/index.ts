@@ -17,13 +17,6 @@ const {
 
 const port = parseInt(PORT);
 
-const cognitoOptions = {
-  region: COGNITO_REGION,
-  userPoolId: COGNITO_USER_POOL_ID,
-  appClientId: COGNITO_APP_CLIENT_ID,
-  appClientSecret: COGNITO_APP_CLIENT_SECRET,
-};
-
 const elasticsearchOptions = {
   username: ELASTICSEARCH_USERNAME,
   password: ELASTICSEARCH_PASSWORD,
@@ -39,11 +32,18 @@ const permissionsFeatureOptions = {
   redisURI: REDIS_URI,
 };
 
+const authenticationFeatureOptions = {
+  region: COGNITO_REGION,
+  userPoolId: COGNITO_USER_POOL_ID,
+  appClientId: COGNITO_APP_CLIENT_ID,
+  appClientSecret: COGNITO_APP_CLIENT_SECRET,
+};
+
 startServer({
   port,
   host,
-  cognitoOptions,
   elasticsearchOptions,
   launchDarklyOptions,
   permissionsFeatureOptions,
+  authenticationFeatureOptions,
 });

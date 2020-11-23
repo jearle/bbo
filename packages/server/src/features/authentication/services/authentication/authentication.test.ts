@@ -1,5 +1,8 @@
 import { createAuthenticationService, AuthenticationService } from '.';
-import { createCognitoService, CognitoService } from '../cognito';
+import {
+  createCognitoProvider,
+  CognitoProvider,
+} from '../../providers/cognito';
 
 const {
   COGNITO_REGION,
@@ -14,11 +17,11 @@ const EMAIL = `jearle@rcanalytics.com`;
 const CONFIRM_SIGN_UP_CODE = `837889`;
 
 describe(`authenticationService`, () => {
-  let cognitoService: CognitoService;
+  let cognitoService: CognitoProvider;
   let authenticationService: AuthenticationService;
 
   beforeAll(async () => {
-    cognitoService = await createCognitoService({
+    cognitoService = await createCognitoProvider({
       region: COGNITO_REGION,
       userPoolId: COGNITO_USER_POOL_ID,
       appClientId: COGNITO_APP_CLIENT_ID,

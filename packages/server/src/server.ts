@@ -12,8 +12,6 @@ import { useSwaggerDocumentation } from './helpers/swagger/express-mount';
 import { loggerMiddleware } from './features/logger/middlewares/logger';
 import { loggerIdMiddleware } from './features/logger/middlewares/logger-id';
 import { loggerErrorMiddleware } from './features/logger/middlewares/logger-error';
-import { authenticationMiddleware } from './middlewares/authentication';
-// import { permissionsMiddleware } from './middlewares/permissions';
 
 // Services
 import {
@@ -21,8 +19,7 @@ import {
   createElasticsearchClient,
 } from './services/elasticsearch';
 import { createTransactionsService } from './apps/transactions-search/services/transactions';
-import { CognitoOptions, createCognitoService } from './services/cognito';
-import { createAuthenticationService } from './services/authentication';
+
 import {
   createLaunchDarklyClient,
   LaunchDarklyOptions,
@@ -36,37 +33,43 @@ import {
 } from './apps/transactions-search';
 
 import {
-  createApp as createAuthenticationApp,
-  BASE_PATH as authenticationBasePath,
-  DESCRIPTION as authenticationDescription,
-} from './apps/authentication';
-
-import {
   PermissionsFeatureOptions,
   createPermissionsFeature,
 } from './features/permissions';
 
+import {
+  AuthenticationFeatureOptions,
+  createAuthenticationFeature,
+} from './features/authentication';
+
 interface ServerOptions {
   port?: number;
   host?: string;
-  cognitoOptions: CognitoOptions;
   elasticsearchOptions: ElasticsearchOptions;
   launchDarklyOptions: LaunchDarklyOptions;
   permissionsFeatureOptions: PermissionsFeatureOptions;
+  authenticationFeatureOptions: AuthenticationFeatureOptions;
 }
 
 export const startServer = async ({
   port = 0,
   host = `127.0.0.1`,
-  cognitoOptions,
   elasticsearchOptions,
   launchDarklyOptions,
   permissionsFeatureOptions,
+  authenticationFeatureOptions,
 }: ServerOptions) => {
   // features
   const { permissionsMiddleware } = await createPermissionsFeature(
     permissionsFeatureOptions
   );
+
+  const {
+    authenticationMiddleware,
+    authenticationApp,
+    authenticationBasePath,
+    authenticationDescription,
+  } = await createAuthenticationFeature(authenticationFeatureOptions);
   // end features
 
   const elasticSearchClient = createElasticsearchClient(elasticsearchOptions);
@@ -75,8 +78,6 @@ export const startServer = async ({
     client: elasticSearchClient,
   });
 
-  const cognitoService = await createCognitoService(cognitoOptions);
-  const authenticationService = createAuthenticationService({ cognitoService });
   let launchDarklyClient;
   try {
     launchDarklyClient = await createLaunchDarklyClient(launchDarklyOptions);
@@ -85,9 +86,6 @@ export const startServer = async ({
   }
 
   const mounts = express();
-  const authenticationApp = createAuthenticationApp({
-    authenticationService,
-  });
   const transactionsSearchApp = createTransactionsSearchApp({
     transactionsService,
     launchDarklyClient,
@@ -98,7 +96,8 @@ export const startServer = async ({
   mounts.use(loggerMiddleware({ logger }));
   mounts.use(json());
 
-  mounts.use(authenticationBasePath, authenticationApp);
+  console.log(authenticationBasePath, authenticationBasePath);
+  mounts.use(authenticationBasePath, authenticationApp());
 
   useSwaggerDocumentation(mounts, {
     host,
@@ -108,10 +107,7 @@ export const startServer = async ({
     description: authenticationDescription,
   });
 
-  mounts.use(
-    transactionsSearchBasePath,
-    authenticationMiddleware({ authenticationService })
-  );
+  mounts.use(transactionsSearchBasePath, authenticationMiddleware());
   mounts.use(transactionsSearchBasePath, permissionsMiddleware());
 
   // Apps

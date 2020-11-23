@@ -1,8 +1,8 @@
 import { createHmac } from 'crypto';
-import { CognitoService } from '../cognito';
+import { CognitoProvider } from '../../providers/cognito';
 
 type CreateAuthenticationServiceInputs = {
-  cognitoService: CognitoService;
+  cognitoService: CognitoProvider;
 };
 
 type SignUpInput = {
@@ -97,7 +97,7 @@ const authenticationService = ({
   appClientSecret,
   cognitoIdentity,
   tokenValidator,
-}: CognitoService) => ({
+}: CognitoProvider) => ({
   /* istanbul ignore next */
   async signUp({
     email,

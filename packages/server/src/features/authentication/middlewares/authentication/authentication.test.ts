@@ -1,18 +1,20 @@
 import * as express from 'express';
-import * as fetch from 'node-fetch';
 
 import { authenticationMiddleware as createAuthenticationMiddleware } from '.';
 
 import {
   fetchTextOnRandomPort,
   fetchJSONOnRandomPort,
-} from '../../helpers/express/listen-fetch';
+} from '../../../../helpers/express/listen-fetch';
 
 import {
   createAuthenticationService,
   AuthenticationService,
 } from '../../services/authentication';
-import { createCognitoService, CognitoService } from '../../services/cognito';
+import {
+  createCognitoProvider,
+  CognitoProvider,
+} from '../../providers/cognito';
 
 const {
   COGNITO_REGION,
@@ -25,12 +27,12 @@ const EXPIRED_TOKEN = `eyJraWQiOiJaeWxiRk1FNml2dmxUa2JmcUJtV0paeTYxN1IxTm82bG1vQ
 
 describe(`authenticationMiddleware`, () => {
   let authenticationService: AuthenticationService;
-  let cognitoService: CognitoService;
+  let cognitoService: CognitoProvider;
   let authenticationMiddleware;
   let app;
 
   beforeAll(async () => {
-    cognitoService = await createCognitoService({
+    cognitoService = await createCognitoProvider({
       region: COGNITO_REGION,
       userPoolId: COGNITO_USER_POOL_ID,
       appClientId: COGNITO_APP_CLIENT_ID,
