@@ -20,11 +20,6 @@ import {
 } from './services/elasticsearch';
 import { createTransactionsService } from './apps/transactions-search/services/transactions';
 
-import {
-  createLaunchDarklyClient,
-  LaunchDarklyOptions,
-} from './services/launchdarkly';
-
 // Apps
 import {
   createApp as createTransactionsSearchApp,
@@ -42,22 +37,27 @@ import {
   createAuthenticationFeature,
 } from './features/authentication';
 
+import {
+  FeatureFlagOptions,
+  createFeatureFlagFeature,
+} from './features/feature-flag';
+
 interface ServerOptions {
-  port?: number;
-  host?: string;
-  elasticsearchOptions: ElasticsearchOptions;
-  launchDarklyOptions: LaunchDarklyOptions;
-  permissionsFeatureOptions: PermissionsFeatureOptions;
-  authenticationFeatureOptions: AuthenticationFeatureOptions;
+  readonly port?: number;
+  readonly host?: string;
+  readonly elasticsearchOptions: ElasticsearchOptions;
+  readonly permissionsFeatureOptions: PermissionsFeatureOptions;
+  readonly authenticationFeatureOptions: AuthenticationFeatureOptions;
+  readonly featureFlagOptions: FeatureFlagOptions;
 }
 
 export const startServer = async ({
   port = 0,
   host = `127.0.0.1`,
   elasticsearchOptions,
-  launchDarklyOptions,
   permissionsFeatureOptions,
   authenticationFeatureOptions,
+  featureFlagOptions,
 }: ServerOptions) => {
   // features
   const { permissionsMiddleware } = await createPermissionsFeature(
@@ -70,6 +70,10 @@ export const startServer = async ({
     authenticationBasePath,
     authenticationDescription,
   } = await createAuthenticationFeature(authenticationFeatureOptions);
+
+  const { featureFlagMiddleware } = await createFeatureFlagFeature(
+    featureFlagOptions
+  );
   // end features
 
   const elasticSearchClient = createElasticsearchClient(elasticsearchOptions);
@@ -78,17 +82,9 @@ export const startServer = async ({
     client: elasticSearchClient,
   });
 
-  let launchDarklyClient;
-  try {
-    launchDarklyClient = await createLaunchDarklyClient(launchDarklyOptions);
-  } catch (error) {
-    launchDarklyClient = null;
-  }
-
   const mounts = express();
   const transactionsSearchApp = createTransactionsSearchApp({
     transactionsService,
-    launchDarklyClient,
   });
 
   // Pre Middleware
@@ -96,7 +92,6 @@ export const startServer = async ({
   mounts.use(loggerMiddleware({ logger }));
   mounts.use(json());
 
-  console.log(authenticationBasePath, authenticationBasePath);
   mounts.use(authenticationBasePath, authenticationApp());
 
   useSwaggerDocumentation(mounts, {
@@ -109,6 +104,10 @@ export const startServer = async ({
 
   mounts.use(transactionsSearchBasePath, authenticationMiddleware());
   mounts.use(transactionsSearchBasePath, permissionsMiddleware());
+  mounts.use(
+    `${transactionsSearchBasePath}/feature-flag`,
+    featureFlagMiddleware()
+  );
 
   // Apps
   mounts.use(transactionsSearchBasePath, transactionsSearchApp);

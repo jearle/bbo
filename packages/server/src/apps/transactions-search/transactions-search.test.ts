@@ -4,7 +4,6 @@ import { createTransactionsService } from './services/transactions';
 import { createElasticsearchClient } from '../../services/elasticsearch';
 import { testHealthcheck } from '../../helpers/unit/healthcheck';
 import { portListen } from '../../helpers/express/port-listen';
-import { mockLDClient } from '../../services/launchdarkly/launchdarkly.mock';
 
 const {
   ELASTICSEARCH_NODE,
@@ -26,9 +25,7 @@ describe(`transactions app`, () => {
       }),
     });
 
-    const launchDarklyClient = mockLDClient({});
-
-    app = createApp({ transactionsService, launchDarklyClient });
+    app = createApp({ transactionsService });
     server = await portListen(app);
     url = `http://localhost:${server.address().port}`;
   });
@@ -53,22 +50,5 @@ describe(`transactions app`, () => {
     const { data } = await result.json();
 
     expect(data.length).toBe(5);
-  });
-
-  describe('/launchdarkly', () => {
-    it('returns value when flag enabled', async () => {
-      const result = await fetch(
-        `${url}/launchdarkly/ff-this-is-a-feature-flag?defaultValue=foo`
-      );
-      const { flagValue } = await result.json();
-
-      expect(flagValue).toBe('foo');
-    });
-    it('returns 404 when flag disabled', async () => {
-      const result = await fetch(
-        `${url}/launchdarkly/ff-this-is-a-feature-flag?defaultValue=false`
-      );
-      expect(result.status).toBe(404);
-    });
   });
 });

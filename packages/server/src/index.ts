@@ -23,7 +23,7 @@ const elasticsearchOptions = {
   node: ELASTICSEARCH_NODE,
 };
 
-const launchDarklyOptions = {
+const featureFlagOptions = {
   sdkKey: LAUNCH_DARKLY_SDK,
 };
 
@@ -43,7 +43,7 @@ startServer({
   port,
   host,
   elasticsearchOptions,
-  launchDarklyOptions,
   permissionsFeatureOptions,
   authenticationFeatureOptions,
+  featureFlagOptions,
 });
