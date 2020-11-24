@@ -1,14 +1,6 @@
 import * as express from 'express';
-import { LDClient } from 'launchdarkly-node-server-sdk';
-import logger from '../../features/logger';
-import {
-  createLaunchDarklyClient,
-  fetchLaunchDarklyFlag,
-  LDClientType,
-} from '../../services/launchdarkly';
 
 import {
-  TransactionSearchParams,
   TransactionsService,
   cleanTransactionSearchParams,
 } from './services/transactions';

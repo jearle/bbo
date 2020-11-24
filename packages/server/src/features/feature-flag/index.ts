@@ -5,6 +5,8 @@ import {
 } from './services/feature-flag';
 import { featureFlagMiddleware } from './middlewares/feature-flag';
 
+import logger from '../logger';
+
 type CreateFeatureFlagInput = {
   readonly sdkKey: string;
 };
@@ -26,7 +28,10 @@ const featureFlagFeature = ({
 export const createFeatureFlagFeature = async ({
   sdkKey,
 }: CreateFeatureFlagInput) => {
-  const launchdarklyProvider = await createLaunchdarklyProvider({ sdkKey });
+  const launchdarklyProvider = await createLaunchdarklyProvider({
+    sdkKey,
+    logger,
+  });
   const featureFlagService = await createFeatureFlagService({
     launchdarklyProvider,
   });
