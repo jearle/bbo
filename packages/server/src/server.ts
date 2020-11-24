@@ -5,9 +5,6 @@ import { AddressInfo } from 'net';
 
 import logger from './features/logger';
 
-// Helpers
-import { useSwaggerDocumentation } from './helpers/swagger/express-mount';
-
 // Middleware
 import { loggerMiddleware } from './features/logger/middlewares/logger';
 import { loggerIdMiddleware } from './features/logger/middlewares/logger-id';
@@ -24,7 +21,6 @@ import { createTransactionsService } from './apps/transactions-search/services/t
 import {
   createApp as createTransactionsSearchApp,
   BASE_PATH as transactionsSearchBasePath,
-  DESCRIPTION as transactionsSearchDescription,
 } from './apps/transactions-search';
 
 import {
@@ -41,6 +37,8 @@ import {
   FeatureFlagOptions,
   createFeatureFlagFeature,
 } from './features/feature-flag';
+
+import { createDocumentationFeature } from './features/documentation';
 
 interface ServerOptions {
   readonly port?: number;
@@ -74,6 +72,9 @@ export const startServer = async ({
   const { featureFlagMiddleware } = await createFeatureFlagFeature(
     featureFlagOptions
   );
+
+  const { documentationApp } = createDocumentationFeature();
+
   // end features
 
   const elasticSearchClient = createElasticsearchClient(elasticsearchOptions);
@@ -92,15 +93,9 @@ export const startServer = async ({
   mounts.use(loggerMiddleware({ logger }));
   mounts.use(json());
 
-  mounts.use(authenticationBasePath, authenticationApp());
+  mounts.use(documentationApp());
 
-  useSwaggerDocumentation(mounts, {
-    host,
-    port,
-    name: `authentication`,
-    basePath: authenticationBasePath,
-    description: authenticationDescription,
-  });
+  mounts.use(authenticationBasePath, authenticationApp());
 
   mounts.use(transactionsSearchBasePath, authenticationMiddleware());
   mounts.use(transactionsSearchBasePath, permissionsMiddleware());
@@ -111,13 +106,6 @@ export const startServer = async ({
 
   // Apps
   mounts.use(transactionsSearchBasePath, transactionsSearchApp);
-  useSwaggerDocumentation(mounts, {
-    host,
-    port,
-    name: `transactions-search`,
-    basePath: transactionsSearchBasePath,
-    description: transactionsSearchDescription,
-  });
 
   // Post Middleware
   mounts.use(loggerErrorMiddleware({ logger, env: process.env.NODE_ENV }));
