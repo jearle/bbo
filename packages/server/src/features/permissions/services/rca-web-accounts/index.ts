@@ -12,6 +12,10 @@ type FetchPermissionModelsInput = {
   readonly userId: string;
 };
 
+type FetchUserIdInput = {
+  readonly username: string;
+}
+
 type CreateRCAWebAccountsServiceInput = {
   readonly mssqlProvider: MSSQLProvider;
 };
@@ -32,6 +36,17 @@ const rcaWebAccountsService = ({
 
     return createPermissionsModelFromList(permissionsModel);
   },
+
+  async fetchUserId({
+    username, 
+  }: FetchUserIdInput): Promise<string> {
+    const result = await rcaWebAccountsConnection
+      .request()
+      .input(`username`, mssqlProvider.types().NVarChar, username)
+      .query('SELECT [AccountUser_Id] AS userId FROM [dbRCAWebAccounts].[dbo].[AccountUser] WHERE [Email_tx] = @username');
+
+    return result.recordset[0].userId;
+  }, 
 
   async close() {
     await rcaWebAccountsConnection.close();
