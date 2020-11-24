@@ -1,4 +1,4 @@
-import { createCognitoService, CognitoService } from '.';
+import { createCognitoProvider, CognitoProvider } from '.';
 
 const {
   COGNITO_REGION,
@@ -8,10 +8,10 @@ const {
 } = process.env;
 
 describe(`cognitoService`, () => {
-  let cognitoService: CognitoService;
+  let cognitoService: CognitoProvider;
 
   beforeAll(async () => {
-    cognitoService = await createCognitoService({
+    cognitoService = await createCognitoProvider({
       region: COGNITO_REGION,
       userPoolId: COGNITO_USER_POOL_ID,
       appClientId: COGNITO_APP_CLIENT_ID,

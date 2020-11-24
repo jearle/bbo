@@ -1,6 +1,6 @@
 import { CognitoIdentityServiceProvider } from 'aws-sdk';
 import { createTokenValidator } from './token-validator';
-import { Awaited } from '../../helpers/types/awaited';
+import { Awaited } from '../../../../helpers/types/awaited';
 
 type CreateCognitoServiceInput = {
   userPoolId: string;
@@ -10,7 +10,7 @@ type CreateCognitoServiceInput = {
 };
 export type CognitoOptions = CreateCognitoServiceInput;
 
-export const createCognitoService = async ({
+export const createCognitoProvider = async ({
   region,
   userPoolId,
   appClientId,
@@ -35,4 +35,4 @@ export const createCognitoService = async ({
   };
 };
 
-export type CognitoService = Awaited<typeof createCognitoService>;
+export type CognitoProvider = Awaited<typeof createCognitoProvider>;
