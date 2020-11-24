@@ -2,8 +2,8 @@ import { Application } from 'express';
 import * as swaggerJSDoc from 'swagger-jsdoc';
 import { serve, setup } from 'swagger-ui-express';
 
-const getSpec = ({ host, port, name, basePath, description }) =>
-  swaggerJSDoc({
+const getSpec = ({ host, port, name, basePath, description }) => {
+  const doc = swaggerJSDoc({
     definition: {
       openapi: `3.0.0`,
       servers: [
@@ -30,6 +30,9 @@ const getSpec = ({ host, port, name, basePath, description }) =>
     },
     apis: [`./dist/apps/${name}/**/*.js`],
   });
+
+  return doc;
+};
 
 type SwaggerDocumentationInput = {
   host: string;
