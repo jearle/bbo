@@ -19,13 +19,9 @@ export const BASE_PATH = `/api/transactions-search/${VERSION}`;
 
 interface Options {
   transactionsService: TransactionsService;
-  launchDarklyClient: LDClientType;
 }
 
-export const createApp = ({
-  transactionsService,
-  launchDarklyClient,
-}: Options) => {
+export const createApp = ({ transactionsService }: Options) => {
   const app = express();
 
   /**
@@ -74,47 +70,17 @@ export const createApp = ({
   /**
    * @swagger
    *
-   * /launchdarkly/{flagName}:
+   * /feature-flag:
    *   get:
-   *     description: hits launch darkly to fetch our sample flag
+   *     description: behind a feature flag
    *     produces:
    *       - application/json
-   *     parameters:
-   *     - name: flagName
-   *       in: path
-   *       description: name of the flag in launchdarkly
-   *       example: ff-release-api-27-set-up-launch-darkly
-   *       required: true
-   *     - name: defaultValue
-   *       in: query
-   *       description: optional default value to return
-   *       required: false
    *     responses:
    *       200:
    *         description: flag value
    */
-  app.get(`/launchdarkly/:flagName`, async (req, res) => {
-    const flagName = req.params.flagName;
-    const defaultValueTx = req.query.defaultValue;
-    const defaultValue =
-      defaultValueTx?.toLowerCase() === 'true' ||
-      defaultValueTx?.toLowerCase() === 'false'
-        ? JSON.parse(defaultValueTx.toLowerCase())
-        : defaultValueTx;
-    const value = await fetchLaunchDarklyFlag({
-      client: launchDarklyClient,
-      flagName: flagName,
-      defaultValue,
-    });
-    if (!value) {
-      res.status(404).send('Not Found');
-    } else {
-      res.json({
-        description: `Test ${flagName}`,
-        flagValue: value,
-        version: VERSION,
-      });
-    }
+  app.get(`/feature-flag`, async (req, res) => {
+    res.json({ response: `ok` });
   });
 
   return app;
