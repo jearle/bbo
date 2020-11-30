@@ -11,7 +11,7 @@ export const permissionsMiddleware = ({
   return async (req, res, next) => {
     const { username } = req.jwtPayload;
     
-    const userId = await permissionsService.fetchUserId({ username});
+    const userId = await permissionsService.fetchUserId({ username });
 
     const permissionsModel = await permissionsService.fetchPermissionsModel({
       userId,
