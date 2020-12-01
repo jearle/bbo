@@ -10,19 +10,7 @@ import { loggerMiddleware } from './features/logger/middlewares/logger';
 import { loggerIdMiddleware } from './features/logger/middlewares/logger-id';
 import { loggerErrorMiddleware } from './features/logger/middlewares/logger-error';
 
-// Services
-import {
-  ElasticsearchOptions,
-  createElasticsearchClient,
-} from './services/elasticsearch';
-import { createTransactionsService } from './apps/transactions-search/services/transactions';
-
-// Apps
-import {
-  createApp as createTransactionsSearchApp,
-  BASE_PATH as transactionsSearchBasePath,
-} from './apps/transactions-search';
-
+// Features
 import {
   PermissionsFeatureOptions,
   createPermissionsFeature,
@@ -40,22 +28,27 @@ import {
 
 import { createDocumentationFeature } from './features/documentation';
 
+import {
+  TransactionsSearchFeatureOptions,
+  createTransactionsSearchFeature,
+} from './features/transactions-search';
+
 interface ServerOptions {
   readonly port?: number;
   readonly host?: string;
-  readonly elasticsearchOptions: ElasticsearchOptions;
   readonly permissionsFeatureOptions: PermissionsFeatureOptions;
   readonly authenticationFeatureOptions: AuthenticationFeatureOptions;
   readonly featureFlagOptions: FeatureFlagOptions;
+  readonly transactionsSearchOptions: TransactionsSearchFeatureOptions;;
 }
 
 export const startServer = async ({
   port = 0,
   host = `127.0.0.1`,
-  elasticsearchOptions,
   permissionsFeatureOptions,
   authenticationFeatureOptions,
   featureFlagOptions,
+  transactionsSearchOptions,
 }: ServerOptions) => {
   // features
   const { permissionsMiddleware } = await createPermissionsFeature(
@@ -75,18 +68,11 @@ export const startServer = async ({
 
   const { documentationApp } = createDocumentationFeature();
 
+  const { transactionsSearchApp, transactionsSearchBasePath } = createTransactionsSearchFeature(transactionsSearchOptions);
+
   // end features
 
-  const elasticSearchClient = createElasticsearchClient(elasticsearchOptions);
-
-  const transactionsService = createTransactionsService({
-    client: elasticSearchClient,
-  });
-
   const mounts = express();
-  const transactionsSearchApp = createTransactionsSearchApp({
-    transactionsService,
-  });
 
   // Pre Middleware
   mounts.use(loggerIdMiddleware());
@@ -99,10 +85,6 @@ export const startServer = async ({
 
   mounts.use(transactionsSearchBasePath, authenticationMiddleware());
   mounts.use(transactionsSearchBasePath, permissionsMiddleware());
-  mounts.use(
-    `${transactionsSearchBasePath}/feature-flag`,
-    featureFlagMiddleware()
-  );
 
   // Apps
   mounts.use(transactionsSearchBasePath, transactionsSearchApp);
