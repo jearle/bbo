@@ -12,7 +12,7 @@ import { createRCAWebAccountsService } from '../../services/rca-web-accounts';
 
 const { MSSQL_URI, REDIS_URI } = process.env;
 
-const USER_ID = 130435;
+const USERNAME = 'jearle@rcanalytics.com';
 
 describe(`permissions service`, () => {
   let permissionsService = null;
@@ -39,7 +39,7 @@ describe(`permissions service`, () => {
 
     app = express();
     app.use((req, res, next) => {
-      req.userId = USER_ID;
+      req.jwtPayload = { username: USERNAME };
       next();
     });
     app.use(permissionsMiddleware);

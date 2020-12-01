@@ -52,7 +52,8 @@ export const createApp = ({ transactionsService }: Options) => {
    *         description: PropertyTransactionSearchResponse
    */
   app.get(`/transactions`, async (req, res) => {
-    const transactionSearchParams = cleanTransactionSearchParams(req.query);
+    const { query, permissionsFilter } = req;
+    const transactionSearchParams = cleanTransactionSearchParams({ ...query, permissionsFilter });
 
     const data = await transactionsService.search(transactionSearchParams);
 

@@ -9,13 +9,16 @@ export const permissionsMiddleware = ({
   permissionsService,
 }: PermissionsMiddlewareOptions) => {
   return async (req, res, next) => {
-    const { userId } = req;
+    const { username } = req.jwtPayload;
+    
+    const userId = await permissionsService.fetchUserId({ username });
 
     const permissionsModel = await permissionsService.fetchPermissionsModel({
       userId,
     });
+    
     const permissionFilter = createPermissionsFilter({ permissionsModel });
-
+    
     req.permissionsModel = permissionsModel;
     req.permissionsFilter = permissionFilter;
 

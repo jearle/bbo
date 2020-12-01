@@ -10,14 +10,16 @@ export interface TransactionsService {
 
 export interface TransactionSearchParams {
   limit: number;
+  filter: any;
 }
 
 export const cleanTransactionSearchParams = (searchParams: {
   limit?: number;
+  filter?: any;
 }): TransactionSearchParams => {
-  const { limit = 10 } = searchParams;
+  const { limit = 10, filter = null } = searchParams;
 
-  return { limit: parseInt(limit.toString()) };
+  return { limit: parseInt(limit.toString()), filter };
 };
 
 export const createTransactionsService = ({ client }: TransactionsOptions) => {
@@ -28,7 +30,7 @@ export const createTransactionsService = ({ client }: TransactionsOptions) => {
         from: 0,
         size: <any>params.limit,
         body: {
-          query: {
+          query: params.filter || {
             match_all: {},
           },
         },
