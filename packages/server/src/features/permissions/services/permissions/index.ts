@@ -6,10 +6,11 @@ type PermissionsServiceInput = {
 };
 
 type FetchPermissionsModelInput = {
-  readonly userId: string;
+  readonly userId?: string;
+  readonly username?: string;
 };
 
-type ClearPermissionsModelInput = {
+type ClearCachedPermissionsModelInput = {
   readonly userId: string;
 };
 
@@ -26,22 +27,22 @@ type UpdateCacheWithPermissionsModelInput = {
 
 type FetchUserIdInput = {
   readonly username: string;
-}
+};
 
-type ClearUserIdInput = {
+type ClearCachedUserIdInput = {
   readonly username: string;
 };
 
 type CheckCacheForUserIdInput = {
   readonly redisProvider;
   readonly username: string;
-}
+};
 
 type UpdateCacheWithUserIdInput = {
   readonly redisProvider;
   readonly username: string;
   readonly userId: string;
-}
+};
 
 type CreatePermissionsServiceInput = PermissionsServiceInput;
 
@@ -63,31 +64,41 @@ const updateCacheWithPermissionsModel = async ({
 };
 
 const checkCacheForUserId = async ({
-  redisProvider, 
-  username
+  redisProvider,
+  username,
 }: CheckCacheForUserIdInput) => {
   const cachedUserId = await redisProvider.get(username);
+
   if (cachedUserId) return cachedUserId;
+
   return null;
 };
 
-const updateCacheWithUserId = async({
-  redisProvider, 
-  username, 
-  userId, 
+const updateCacheWithUserId = async ({
+  redisProvider,
+  username,
+  userId,
 }: UpdateCacheWithUserIdInput) => {
   await redisProvider.set(username, userId);
-}
+};
 
 const permissionsService = ({
   redisProvider,
   rcaWebAccountsService,
 }: PermissionsServiceInput) => ({
-  async fetchPermissionsModel({ userId }: FetchPermissionsModelInput) {
+  async fetchPermissionsModel({
+    userId: userIdInput,
+    username,
+  }: FetchPermissionsModelInput) {
+    const userId = username
+      ? await this.fetchUserId({ username })
+      : userIdInput;
+
     const cachedPermissionsModel = await checkCacheForPermissionsModel({
       redisProvider,
       userId,
     });
+
     if (cachedPermissionsModel) return cachedPermissionsModel;
 
     const permissionsModel = await rcaWebAccountsService.fetchPermissionsModel({
@@ -103,30 +114,32 @@ const permissionsService = ({
     return permissionsModel;
   },
 
-  async clearPermissionModel({ userId }: ClearPermissionsModelInput) {
-    await redisProvider.del(userId);
-  },
-
-  async fetchUserId({ username } : FetchUserIdInput) {
+  async fetchUserId({ username }: FetchUserIdInput) {
     const cachedUserId = await checkCacheForUserId({
-      redisProvider, 
-      username
+      redisProvider,
+      username,
     });
     if (cachedUserId) return cachedUserId;
 
-    const userId = await rcaWebAccountsService.fetchUserId({ username});
+    const userId = await rcaWebAccountsService.fetchUserId({ username });
 
     await updateCacheWithUserId({
-      redisProvider, 
-      username, 
-      userId
+      redisProvider,
+      username,
+      userId,
     });
 
     return userId;
-  }, 
+  },
 
-  async clearUserId({ username }: ClearUserIdInput) {
+  async clearCachedUserId({ username }: ClearCachedUserIdInput) {
     await redisProvider.del(username);
+  },
+
+  async clearCachedPermissionsModel({
+    userId,
+  }: ClearCachedPermissionsModelInput) {
+    await redisProvider.del(userId);
   },
 
   async close() {

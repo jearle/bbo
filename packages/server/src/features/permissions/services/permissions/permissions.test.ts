@@ -6,6 +6,7 @@ import { createRCAWebAccountsService } from '../rca-web-accounts';
 const { MSSQL_URI, REDIS_URI } = process.env;
 
 const USER_ID = `130435`;
+const USERNAME = 'jearle@rcanalytics.com';
 
 describe(`PermissionsService`, () => {
   let permissionsService: PermissionsService;
@@ -25,19 +26,37 @@ describe(`PermissionsService`, () => {
   });
 
   beforeEach(async () => {
-    await permissionsService.clearPermissionModel({ userId: USER_ID });
+    await permissionsService.clearCachedUserId({ username: USERNAME });
+    await permissionsService.clearCachedPermissionsModel({ userId: USER_ID });
   });
 
   afterEach(async () => {
-    await permissionsService.clearPermissionModel({ userId: USER_ID });
+    await permissionsService.clearCachedUserId({ username: USERNAME });
+    await permissionsService.clearCachedPermissionsModel({ userId: USER_ID });
   });
 
   afterAll(async () => {
     await permissionsService.close();
   });
 
-  test(`createPermissionsService`, async () => {
+  test(`fetchPermissionsModel`, async () => {
     const permissionsModel = await permissionsService.fetchPermissionsModel({
+      userId: USER_ID,
+    });
+
+    expect(Array.isArray(permissionsModel.stateProvidence)).toBe(true);
+  });
+
+  test(`fetchPermissionsModel with username`, async () => {
+    const permissionsModel = await permissionsService.fetchPermissionsModel({
+      username: USERNAME,
+    });
+
+    expect(Array.isArray(permissionsModel.stateProvidence)).toBe(true);
+  });
+
+  test(`fetchPermissionsModel ensure cache works with userId`, async () => {
+    await permissionsService.fetchPermissionsModel({
       userId: USER_ID,
     });
 
@@ -45,7 +64,16 @@ describe(`PermissionsService`, () => {
     await permissionsService.fetchPermissionsModel({
       userId: USER_ID,
     });
+  });
 
-    expect(Array.isArray(permissionsModel.stateProvidence)).toBe(true);
+  test(`fetchPermissionsModel ensure cache works with username`, async () => {
+    await permissionsService.fetchPermissionsModel({
+      username: USERNAME,
+    });
+
+    // hit again to ensure caching via istanbul code coverage
+    await permissionsService.fetchPermissionsModel({
+      username: USERNAME,
+    });
   });
 });

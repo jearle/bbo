@@ -53,7 +53,10 @@ export const createApp = ({ transactionsService }: Options) => {
    */
   app.get(`/transactions`, async (req, res) => {
     const { query, permissionsFilter } = req;
-    const transactionSearchParams = cleanTransactionSearchParams({ ...query, permissionsFilter });
+    const transactionSearchParams = cleanTransactionSearchParams({
+      ...query,
+      permissionsFilter,
+    });
 
     const data = await transactionsService.search(transactionSearchParams);
 
@@ -72,9 +75,9 @@ export const createApp = ({ transactionsService }: Options) => {
    *       200:
    *         description: flag value
    */
-  app.get(`/feature-flag`, async (req, res) => {
-    res.json({ response: `ok` });
-  });
+  // app.get(`/feature-flag`, async (req, res) => {
+  //   res.json({ response: `ok` });
+  // });
 
   return app;
 };
