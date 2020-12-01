@@ -39,7 +39,7 @@ interface ServerOptions {
   readonly permissionsFeatureOptions: PermissionsFeatureOptions;
   readonly authenticationFeatureOptions: AuthenticationFeatureOptions;
   readonly featureFlagOptions: FeatureFlagOptions;
-  readonly transactionsSearchOptions: TransactionsSearchFeatureOptions;;
+  readonly transactionsSearchOptions: TransactionsSearchFeatureOptions;
 }
 
 export const startServer = async ({
@@ -68,7 +68,10 @@ export const startServer = async ({
 
   const { documentationApp } = createDocumentationFeature();
 
-  const { transactionsSearchApp, transactionsSearchBasePath } = createTransactionsSearchFeature(transactionsSearchOptions);
+  const {
+    transactionsSearchApp,
+    transactionsSearchBasePath,
+  } = createTransactionsSearchFeature(transactionsSearchOptions);
 
   // end features
 
@@ -87,7 +90,7 @@ export const startServer = async ({
   mounts.use(transactionsSearchBasePath, permissionsMiddleware());
 
   // Apps
-  mounts.use(transactionsSearchBasePath, transactionsSearchApp);
+  mounts.use(transactionsSearchBasePath, transactionsSearchApp());
 
   // Post Middleware
   mounts.use(loggerErrorMiddleware({ logger, env: process.env.NODE_ENV }));

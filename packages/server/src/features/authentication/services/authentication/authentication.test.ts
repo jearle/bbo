@@ -11,7 +11,7 @@ const {
   COGNITO_APP_CLIENT_SECRET,
 } = process.env;
 
-const USERNAME = `user-for-tests`;
+const USERNAME = `jearle@rcanalytics.com`;
 const PASSWORD = `=Z9-xW%7`;
 const EMAIL = `jearle@rcanalytics.com`;
 const CONFIRM_SIGN_UP_CODE = `837889`;
@@ -72,7 +72,7 @@ describe(`authenticationService`, () => {
     const result = await authenticationService.confirmNewPassword({
       username: USERNAME,
       password: PASSWORD,
-      code: `781400`,
+      code: `936442`,
     });
 
     console.log(result);
