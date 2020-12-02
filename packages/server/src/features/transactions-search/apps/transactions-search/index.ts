@@ -1,19 +1,17 @@
 import * as express from 'express';
 
-import {
-  TransactionsService,
-  cleanTransactionSearchParams,
-} from './services/transactions';
+import { TransactionsSearchService } from '../../services/transactions-search';
+import { cleanTransactionsSearchQuery } from '../../helpers/clean-transactions-search';
 
 export const VERSION = `v0`;
 export const DESCRIPTION = `Transactions Search API`;
 export const BASE_PATH = `/api/transactions-search/${VERSION}`;
 
-interface Options {
-  transactionsService: TransactionsService;
-}
+type CreateAppInputs = {
+  readonly transactionsSearchService: TransactionsSearchService;
+};
 
-export const createApp = ({ transactionsService }: Options) => {
+export const createApp = ({ transactionsSearchService }: CreateAppInputs) => {
   const app = express();
 
   /**
@@ -41,39 +39,31 @@ export const createApp = ({ transactionsService }: Options) => {
    *     produces:
    *       - application/json
    *     parameters:
-   *     - name: limit
-   *       in: query
-   *       description: The response item limit
-   *       required: true
-   *       schema:
-   *         type: number
+   *       - name: limit
+   *         in: query
+   *         description: The response item limit
+   *         required: true
+   *         schema:
+   *           type: number
    *     responses:
    *       200:
    *         description: PropertyTransactionSearchResponse
    */
   app.get(`/transactions`, async (req, res) => {
-    const { query, permissionsFilter } = req;
-    const transactionSearchParams = cleanTransactionSearchParams({ ...query, permissionsFilter });
+    const { query } = req;
+    const { page, limit, filter } = cleanTransactionsSearchQuery(query);
+    // const transactionSearchParams = cleanTransactionSearchParams({
+    //   ...query,
+    //   permissionsFilter,
+    // });
 
-    const data = await transactionsService.search(transactionSearchParams);
+    const data = await transactionsSearchService.search({
+      page,
+      limit,
+      filter,
+    });
 
     res.json({ data });
-  });
-
-  /**
-   * @swagger
-   *
-   * /feature-flag:
-   *   get:
-   *     description: behind a feature flag
-   *     produces:
-   *       - application/json
-   *     responses:
-   *       200:
-   *         description: flag value
-   */
-  app.get(`/feature-flag`, async (req, res) => {
-    res.json({ response: `ok` });
   });
 
   return app;

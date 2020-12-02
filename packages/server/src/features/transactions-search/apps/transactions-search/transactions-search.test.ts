@@ -1,9 +1,10 @@
 import fetch from 'node-fetch';
 import { createApp } from './';
-import { createTransactionsService } from './services/transactions';
-import { createElasticsearchClient } from '../../services/elasticsearch';
-import { testHealthcheck } from '../../helpers/unit/healthcheck';
-import { portListen } from '../../helpers/express/port-listen';
+import { testHealthcheck } from '../../../../helpers/unit/healthcheck';
+import { portListen } from '../../../../helpers/express/port-listen';
+
+import { createTransactionsSearchService } from '../../services/transactions-search';
+import { createElasticsearchProvider } from '../../providers/elasticsearch';
 
 const {
   ELASTICSEARCH_NODE,
@@ -17,15 +18,17 @@ describe(`transactions app`, () => {
   let url = null;
 
   beforeEach(async () => {
-    const transactionsService = createTransactionsService({
-      client: createElasticsearchClient({
-        node: ELASTICSEARCH_NODE,
-        username: ELASTICSEARCH_USERNAME,
-        password: ELASTICSEARCH_PASSWORD,
-      }),
+    const elasticsearchProvider = createElasticsearchProvider({
+      node: ELASTICSEARCH_NODE,
+      username: ELASTICSEARCH_USERNAME,
+      password: ELASTICSEARCH_PASSWORD,
     });
 
-    app = createApp({ transactionsService });
+    const transactionsSearchService = createTransactionsSearchService({
+      elasticsearchProvider,
+    });
+
+    app = createApp({ transactionsSearchService });
     server = await portListen(app);
     url = `http://localhost:${server.address().port}`;
   });
