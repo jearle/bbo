@@ -10,7 +10,7 @@ import {
 } from '../../services/feature-flag';
 import { createLaunchdarklyProvider } from '../../providers/launchdarkly';
 
-const { LAUNCHDARKLY_SDK } = process.env;
+const { LAUNCH_DARKLY_SDK } = process.env;
 
 describe(`authenticationMiddleware`, () => {
   let featureFlagService: FeatureFlagService;
@@ -19,7 +19,7 @@ describe(`authenticationMiddleware`, () => {
 
   beforeAll(async () => {
     const launchdarklyProvider = await createLaunchdarklyProvider({
-      sdkKey: LAUNCHDARKLY_SDK,
+      sdkKey: LAUNCH_DARKLY_SDK,
     });
 
     featureFlagService = await createFeatureFlagService({

@@ -17,12 +17,6 @@ const {
 
 const port = parseInt(PORT);
 
-const elasticsearchOptions = {
-  username: ELASTICSEARCH_USERNAME,
-  password: ELASTICSEARCH_PASSWORD,
-  node: ELASTICSEARCH_NODE,
-};
-
 const featureFlagOptions = {
   sdkKey: LAUNCH_DARKLY_SDK,
 };
@@ -39,11 +33,17 @@ const authenticationFeatureOptions = {
   appClientSecret: COGNITO_APP_CLIENT_SECRET,
 };
 
+const transactionsSearchOptions = {
+  node: ELASTICSEARCH_NODE,
+  username: ELASTICSEARCH_USERNAME,
+  password: ELASTICSEARCH_PASSWORD,
+};
+
 startServer({
   port,
   host,
-  elasticsearchOptions,
   permissionsFeatureOptions,
   authenticationFeatureOptions,
   featureFlagOptions,
+  transactionsSearchOptions,
 });
