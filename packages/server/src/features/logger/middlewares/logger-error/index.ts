@@ -4,19 +4,20 @@ export const loggerErrorMiddleware = ({ logger, env }) => (
   res,
   next
 ) => {
-  logger.log(`error`, `[${req.id}] ${err.stack}`);
+  logger.log(`error`, `[${req.id}] ${err.message} ${err.stack}`);
 
   const { id } = req;
-  const message =
-    env !== `production` ? err.message : `Internal Error Occurred`;
-  const stack = env !== `production` ? err.stack : ``;
+  const title = env !== `production` ? err.message : `Internal Error Occurred`;
+  const detail = env !== `production` ? err.stack : ``;
+  const status = 500;
+  const type = 'about:blank';
 
-  res.json({
-    error: {
-      id,
-      message,
-      stack,
-    },
+  res.status(500).type('application/problem+json').json({
+    id,
+    title,
+    detail,
+    status,
+    type,
   });
 
   next();
