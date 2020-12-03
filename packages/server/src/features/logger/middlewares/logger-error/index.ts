@@ -12,7 +12,7 @@ export const loggerErrorMiddleware = ({ logger, env }) => (
   const status = 500;
   const type = 'about:blank';
 
-  res.status(500).type('application/problem+json').json({
+  res.status(status).type('application/problem+json').json({
     instance,
     title,
     detail,
