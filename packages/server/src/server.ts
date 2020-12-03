@@ -23,7 +23,7 @@ import {
 
 import {
   FeatureFlagOptions,
-  createFeatureFlagFeature,
+  // createFeatureFlagFeature,
 } from './features/feature-flag';
 
 import { createDocumentationFeature } from './features/documentation';
@@ -47,9 +47,9 @@ export const startServer = async ({
   host = `127.0.0.1`,
   permissionsFeatureOptions,
   authenticationFeatureOptions,
-  featureFlagOptions,
+  // featureFlagOptions,
   transactionsSearchOptions,
-}: ServerOptions) => {
+}: ServerOptions): Promise<void> => {
   // features
   const { permissionsMiddleware } = await createPermissionsFeature(
     permissionsFeatureOptions
@@ -59,12 +59,12 @@ export const startServer = async ({
     authenticationMiddleware,
     authenticationApp,
     authenticationBasePath,
-    authenticationDescription,
+    // authenticationDescription,
   } = await createAuthenticationFeature(authenticationFeatureOptions);
 
-  const { featureFlagMiddleware } = await createFeatureFlagFeature(
-    featureFlagOptions
-  );
+  // const { featureFlagMiddleware } = await createFeatureFlagFeature(
+  //   featureFlagOptions
+  // );
 
   const { documentationApp } = createDocumentationFeature();
 

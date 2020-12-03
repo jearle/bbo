@@ -4,7 +4,9 @@ type CreateRedisServiceInput = {
   uri: string;
 };
 
-export const createRedisProvider = ({ uri }: CreateRedisServiceInput) => {
+export const createRedisProvider = ({
+  uri,
+}: CreateRedisServiceInput): Redis => {
   const redisService = new Redis(uri);
 
   redisService.close = redisService.end;

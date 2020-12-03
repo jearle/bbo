@@ -9,7 +9,7 @@ type FeatureFlagMiddlewareInput = {
 type FeatureFlagMiddlewareResult = (
   req: Request,
   res: Response,
-  next: Function
+  next: () => void
 ) => void;
 
 export const featureFlagMiddleware = ({

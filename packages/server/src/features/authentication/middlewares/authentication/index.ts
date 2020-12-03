@@ -9,7 +9,7 @@ type AuthenticationMiddlewareInput = {
 type AuthenticationMiddlewareResult = (
   req: Request,
   res: Response,
-  next: Function
+  next: () => void
 ) => void;
 
 export const authenticationMiddleware = ({

@@ -20,6 +20,7 @@ test(`createSpec`, () => {
     host: `localhost`,
     port: 8080,
     basePath: `/foo/bar`,
+    version: `v0`,
   });
 
   expect(spec.paths[`/spec-test`]).not.toBeUndefined();

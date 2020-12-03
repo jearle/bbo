@@ -54,8 +54,8 @@ const createPermissionModelFromRaw = (
 
 export const createPermissionsModelFromList = (
   rawPermissionModels: RawPermissionsModel[]
-) => {
-  const permissionModel = rawPermissionModels.reduce(
+): PermissionsModel => {
+  const permissionsModel = rawPermissionModels.reduce(
     (acc, rawPermissionModel) => {
       const {
         stateProvidence,
@@ -81,5 +81,5 @@ export const createPermissionsModelFromList = (
     createEmptyPermissionModel()
   );
 
-  return permissionModel;
+  return permissionsModel;
 };

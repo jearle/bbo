@@ -15,6 +15,7 @@ test(`createLogger logType JSON`, () => {
 });
 
 test(`createLogger logType PRETTY_STRING`, () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const logType: any = `FAKE`;
 
   expect(() =>

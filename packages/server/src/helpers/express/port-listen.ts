@@ -6,7 +6,7 @@ interface PortListenOptions {
 }
 
 export const portListen = (
-  app: any,
+  app: Application,
   { port = 0 }: PortListenOptions = {}
 ): Promise<Application> => {
   const promise = new Promise((resolve) => {
