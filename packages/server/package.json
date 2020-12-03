@@ -26,7 +26,7 @@
     "compile:development": "tsc -w",
     "test:development": "jest --setupFiles dotenv/config --coverage --watchAll",
     "build:production": "yarn clean && tsc -p .",
-    "run:dockercompose" : "docker-compose -f ./docker/docker-compose.yml up -d ",
+    "run:dockercompose": "docker-compose -f ./docker/docker-compose.yml up -d ",
     "clean": "rimraf ./dist"
   },
   "dependencies": {
@@ -36,7 +36,7 @@
     "body-parser": "^1.19.0",
     "chalk": "^4.1.0",
     "cognito-express": "^2.0.18",
-    "express": "^4.17.1",
+    "express": "^5.0.0-alpha.8",
     "ioredis": "^4.19.2",
     "jsonwebtoken": "^8.5.1",
     "jwk-to-pem": "^2.0.4",
