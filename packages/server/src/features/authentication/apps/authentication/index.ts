@@ -1,4 +1,5 @@
 import * as express from 'express';
+import { Application } from 'express';
 
 import { AuthenticationService } from '../../services/authentication';
 export const VERSION = `v0`;
@@ -9,7 +10,7 @@ interface Options {
   authenticationService: AuthenticationService;
 }
 
-export const createApp = ({ authenticationService }: Options) => {
+export const createApp = ({ authenticationService }: Options): Application => {
   const app = express();
 
   /**

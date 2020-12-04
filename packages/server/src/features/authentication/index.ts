@@ -1,5 +1,8 @@
 import { createCognitoProvider } from './providers/cognito';
-import { createAuthenticationService } from './services/authentication';
+import {
+  createAuthenticationService,
+  AuthenticationService,
+} from './services/authentication';
 import { authenticationMiddleware } from './middlewares/authentication';
 import { createApp, BASE_PATH, DESCRIPTION } from './apps/authentication';
 
@@ -10,12 +13,33 @@ export type AuthenticationFeatureOptions = {
   readonly appClientSecret: string;
 };
 
+type AuthenticationFeatureInputs = {
+  authenticationService: AuthenticationService;
+};
+
+const authenticationFeature = ({
+  authenticationService,
+}: AuthenticationFeatureInputs) => ({
+  authenticationBasePath: BASE_PATH,
+  authenticationDescription: DESCRIPTION,
+
+  authenticationMiddleware() {
+    return authenticationMiddleware({ authenticationService });
+  },
+
+  authenticationApp() {
+    return createApp({ authenticationService });
+  },
+});
+
+type AuthenticationFeature = ReturnType<typeof authenticationFeature>;
+
 export const createAuthenticationFeature = async ({
   region,
   userPoolId,
   appClientId,
   appClientSecret,
-}: AuthenticationFeatureOptions) => {
+}: AuthenticationFeatureOptions): Promise<AuthenticationFeature> => {
   const cognitoService = await createCognitoProvider({
     region,
     userPoolId,
@@ -25,16 +49,5 @@ export const createAuthenticationFeature = async ({
 
   const authenticationService = createAuthenticationService({ cognitoService });
 
-  return {
-    authenticationBasePath: BASE_PATH,
-    authenticationDescription: DESCRIPTION,
-
-    authenticationMiddleware() {
-      return authenticationMiddleware({ authenticationService });
-    },
-
-    authenticationApp() {
-      return createApp({ authenticationService });
-    },
-  };
+  return authenticationFeature({ authenticationService });
 };

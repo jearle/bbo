@@ -2,9 +2,12 @@ import {
   createLogger as createWinstonLogger,
   format,
   transports,
+  Logger,
 } from 'winston';
 import { prettyStringFormat } from './pretty-string-format';
 import { ConsoleTransportInstance } from 'winston/lib/winston/transports';
+
+export { Logger } from 'winston';
 
 type LogType = `JSON` | `PRETTY_STRING`;
 
@@ -43,7 +46,10 @@ const createConsoleTransport = ({
     handleExceptions: true,
   });
 
-export const createLogger = ({ logLevel, logType }: CreateLoggerInput) => {
+export const createLogger = ({
+  logLevel,
+  logType,
+}: CreateLoggerInput): Logger => {
   const logTypeFormat = getLogTypeFormat({ logType });
 
   return createWinstonLogger({

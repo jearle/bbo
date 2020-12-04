@@ -25,9 +25,11 @@ const featureFlagFeature = ({
   },
 });
 
+export type FeatureFlagFeature = ReturnType<typeof featureFlagFeature>;
+
 export const createFeatureFlagFeature = async ({
   sdkKey,
-}: CreateFeatureFlagInput) => {
+}: CreateFeatureFlagInput): Promise<FeatureFlagFeature> => {
   const launchdarklyProvider = await createLaunchdarklyProvider({
     sdkKey,
     logger,

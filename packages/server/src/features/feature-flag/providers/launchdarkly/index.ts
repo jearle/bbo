@@ -8,10 +8,18 @@ type CreateLaunchdarkleyProviderInput = {
 };
 
 const EMPTY_LOGGER = {
-  error() {},
-  warn() {},
-  info() {},
-  debug() {},
+  error() {
+    return;
+  },
+  warn() {
+    return;
+  },
+  info() {
+    return;
+  },
+  debug() {
+    return;
+  },
 };
 
 export const createLaunchdarklyProvider = async ({

@@ -11,10 +11,18 @@ type CreatePermissionsFeatureInput = {
 
 export type PermissionsFeatureOptions = CreatePermissionsFeatureInput;
 
+const permissionsFeature = ({ permissionsService }) => ({
+  permissionsMiddleware() {
+    return permissionsMiddleware({ permissionsService });
+  },
+});
+
+export type PermissionsFeature = ReturnType<typeof permissionsFeature>;
+
 export const createPermissionsFeature = async ({
   mssqlURI,
   redisURI,
-}: CreatePermissionsFeatureInput) => {
+}: CreatePermissionsFeatureInput): Promise<PermissionsFeature> => {
   const mssqlProvider = await createMSSQLProvider({ uri: mssqlURI });
   const redisProvider = await createRedisProvider({ uri: redisURI });
 
@@ -27,9 +35,5 @@ export const createPermissionsFeature = async ({
     rcaWebAccountsService,
   });
 
-  return {
-    permissionsMiddleware() {
-      return permissionsMiddleware({ permissionsService });
-    },
-  };
+  return permissionsFeature({ permissionsService });
 };

@@ -73,7 +73,7 @@ type ValidateInput = {
 
 type ValidateResult = {
   username: string;
-  [key: string]: any;
+  [key: string]: null | boolean | number | string;
 };
 
 type HashSecretInput = {
