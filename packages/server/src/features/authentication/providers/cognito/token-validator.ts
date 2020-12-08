@@ -31,7 +31,7 @@ type ValidateInput = {
 
 type ValidateResult = {
   username: string;
-  [key: string]: any;
+  [key: string]: null | boolean | number | string;
 };
 
 type TokenValidatorInput = {
@@ -137,7 +137,7 @@ export const createTokenValidator = async ({
   userPoolId,
   tokenUse,
   maxAge,
-}: CreateTokenValidatorInput) => {
+}: CreateTokenValidatorInput): Promise<TokenValidator> => {
   checkRegion(region);
   checkUserPoolId(userPoolId);
   checkTokenUseConfig(tokenUse);

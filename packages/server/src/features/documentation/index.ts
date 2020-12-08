@@ -1,7 +1,7 @@
 import * as express from 'express';
 import { createApp } from './apps/documentation';
 
-const feature = () => ({
+const documentationFeature = () => ({
   documentationApp() {
     const app = express();
 
@@ -22,8 +22,9 @@ const feature = () => ({
         feature: `authentication`,
         description: `Authentication Documentation`,
         host: `localhost`,
-        port: `39000`,
+        port: 39000,
         basePath: `/api/authentication/v0`,
+        version: `v0`,
       })
     );
 
@@ -31,8 +32,8 @@ const feature = () => ({
   },
 });
 
-export type DocumentationFeature = ReturnType<typeof feature>;
+export type DocumentationFeature = ReturnType<typeof documentationFeature>;
 
-export const createDocumentationFeature = () => {
-  return feature();
+export const createDocumentationFeature = (): DocumentationFeature => {
+  return documentationFeature();
 };

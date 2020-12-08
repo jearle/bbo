@@ -1,8 +1,19 @@
 import { format } from 'winston';
+
 import { blue, green, bgRed, yellow, bgMagenta } from 'chalk';
 
-export const prettyStringFormat = () =>
-  format.printf((info) => {
+type Info = {
+  readonly timestamp: string;
+  readonly level: string;
+  readonly message: string;
+};
+
+type PrettyStringFormatResult = {
+  template: (info: Info) => string;
+};
+
+export const prettyStringFormat = (): PrettyStringFormatResult =>
+  (<unknown>format.printf((info) => {
     const { timestamp, level, message } = info;
 
     const colorFunction = {
@@ -15,4 +26,4 @@ export const prettyStringFormat = () =>
     const coloredLevel = colorFunction(level);
 
     return `${blue(timestamp)} ${coloredLevel} ${message}`;
-  });
+  })) as PrettyStringFormatResult;

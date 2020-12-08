@@ -1,4 +1,22 @@
-export const loggerErrorMiddleware = ({ logger, env }) => (
+import { Request, Response } from 'express';
+import { Logger } from '../../providers/winston';
+
+type LoggerErrorMiddlewareInputs = {
+  readonly logger: Logger;
+  readonly env: string;
+};
+
+type LoggerErrorMiddlewareResult = (
+  err: Error,
+  req: Request,
+  res: Response,
+  next: () => void
+) => void;
+
+export const loggerErrorMiddleware = ({
+  logger,
+  env,
+}: LoggerErrorMiddlewareInputs): LoggerErrorMiddlewareResult => (
   err,
   req,
   res,

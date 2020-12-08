@@ -14,6 +14,7 @@ type TransactionsSearchServiceInputs = {
 type TransactionSearchInputs = {
   page?: number;
   limit?: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   filter?: any;
 };
 
@@ -52,7 +53,7 @@ export type TransactionsSearchService = ReturnType<
 
 export const createTransactionsSearchService = ({
   elasticsearchProvider,
-}: CreateTransactionsSearchServiceInputs) => {
+}: CreateTransactionsSearchServiceInputs): TransactionsSearchService => {
   const elasticsearchClient = elasticsearchProvider.createClient();
 
   return transactionsSearchService({ elasticsearchClient });

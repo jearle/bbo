@@ -39,8 +39,8 @@ const featureFlagService = ({
 
 export type FeatureFlagService = ReturnType<typeof featureFlagService>;
 
-export const createFeatureFlagService = async ({
+export const createFeatureFlagService = ({
   launchdarklyProvider,
-}: CreateFeatureFlagServiceInput) => {
+}: CreateFeatureFlagServiceInput): FeatureFlagService => {
   return featureFlagService({ launchdarklyProvider });
 };

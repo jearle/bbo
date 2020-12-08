@@ -1,4 +1,5 @@
 import * as express from 'express';
+import { Application } from 'express';
 
 import { TransactionsSearchService } from '../../services/transactions-search';
 import { cleanTransactionsSearchQuery } from '../../helpers/clean-transactions-search';
@@ -11,7 +12,7 @@ type CreateAppInputs = {
   readonly transactionsSearchService: TransactionsSearchService;
 };
 
-export const createApp = ({ transactionsSearchService }: CreateAppInputs) => {
+export const createApp = ({ transactionsSearchService }: CreateAppInputs): Application => {
   const app = express();
 
   /**

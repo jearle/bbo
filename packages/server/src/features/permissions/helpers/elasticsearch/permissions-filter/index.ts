@@ -1,9 +1,15 @@
 import { PermissionsModel } from '../../../services/rca-web-accounts/permissions-model';
 
+type MatchObject = {
+  match: { [key: string]: string };
+};
+
+type CreateMatchObjectsResult = MatchObject[];
+
 const createMatchObjects = (
   permissionsModel: PermissionsModel,
   mappings: { permissionsModelProperty: string; elasticSearchId: string }[]
-) => {
+): CreateMatchObjectsResult => {
   const matchObjects = mappings.reduce(
     (acc, { permissionsModelProperty, elasticSearchId }) => {
       return [
@@ -21,11 +27,19 @@ const createMatchObjects = (
   return matchObjects;
 };
 
+type CreatePermissionsFilterInputs = {
+  permissionsModel: PermissionsModel;
+};
+
+type CreatePermissionsFilterResult = {
+  bool: {
+    must: CreateMatchObjectsResult;
+  };
+};
+
 export const createPermissionsFilter = ({
   permissionsModel,
-}: {
-  permissionsModel: PermissionsModel;
-}) => {
+}: CreatePermissionsFilterInputs): CreatePermissionsFilterResult => {
   const must = createMatchObjects(permissionsModel, [
     {
       permissionsModelProperty: `stateProvidence`,

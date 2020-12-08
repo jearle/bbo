@@ -159,6 +159,6 @@ export type PermissionsService = ReturnType<typeof permissionsService>;
 export const createPermissionsService = ({
   redisProvider,
   rcaWebAccountsService,
-}: CreatePermissionsServiceInput) => {
+}: CreatePermissionsServiceInput): PermissionsService => {
   return permissionsService({ redisProvider, rcaWebAccountsService });
 };
