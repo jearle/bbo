@@ -36,7 +36,7 @@
     "run:dockercompose": "docker-compose -f ./docker/docker-compose.yml up -d ",
     "clean": "rimraf ./dist",
     "pre-commit": "yarn format && yarn lint",
-    "format": "yarn prettier --write ./src/**/*.ts",
+    "format": "yarn prettier --loglevel warn --write ./src/**/*.ts",
     "lint": "yarn eslint --fix"
   },
   "dependencies": {
