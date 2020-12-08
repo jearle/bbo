@@ -77,11 +77,9 @@ describe(`authenticationMiddleware`, () => {
       res.send(`pass`);
     });
 
-    const {
-      data: { error },
-    } = await fetchJSONOnRandomPort(app);
+    const { detail } = await fetchJSONOnRandomPort(app);
 
-    expect(error).toMatch(/invalid/i);
+    expect(detail).toMatch(/invalid/i);
   });
 
   test(`invalid token from auth service`, async () => {
@@ -95,9 +93,9 @@ describe(`authenticationMiddleware`, () => {
     });
 
     const {
-      data: { error },
+      error: { message },
     } = await fetchJSONOnRandomPort(app);
 
-    expect(error).toMatch(/expired/);
+    expect(message).toMatch(/expired/i);
   });
 });

@@ -4,7 +4,7 @@ export const loggerErrorMiddleware = ({ logger, env }) => (
   res,
   next
 ) => {
-  logger.log(`error`, `[${req.id}] ${err.stack}`);
+  logger.error(`[${req.id}] ${err.stack}`);
 
   const { id: instance } = req;
   const title = env !== `production` ? err.message : `Internal Error Occurred`;
