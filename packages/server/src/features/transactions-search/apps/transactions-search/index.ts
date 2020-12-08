@@ -12,7 +12,9 @@ type CreateAppInputs = {
   readonly transactionsSearchService: TransactionsSearchService;
 };
 
-export const createApp = ({ transactionsSearchService }: CreateAppInputs): Application => {
+export const createApp = ({
+  transactionsSearchService,
+}: CreateAppInputs): Application => {
   const app = express();
 
   /**
