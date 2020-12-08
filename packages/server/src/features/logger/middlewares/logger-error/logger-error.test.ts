@@ -27,11 +27,8 @@ describe(`loggerErrorMiddleware`, () => {
   });
 
   test(`error logged and returned`, async () => {
-    const error = new Error('Something went horribly wrong!');
-
     app.get(`/`, (req, res) => {
-      req.id = 'request-id';
-      throw error;
+      throw new Error('Something went horribly wrong!');
     });
 
     app.use(loggerErrorMiddleware({ logger, env }));
