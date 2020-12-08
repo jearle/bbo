@@ -20,12 +20,19 @@ export const authenticationMiddleware = ({
   next
 ) => {
   const token = req.get(`accesstoken`);
+  const { id: instance } = req;
+  const status = 401;
+  const contentType = 'application/problem+json';
+  const title = 'Unauthorized';
+  const type = 'about:blank';
 
   if (!token) {
-    return res.status(401).json({
-      data: {
-        error: `Invalid JWT Token`,
-      },
+    return res.type(contentType).status(status).json({
+      instance,
+      title,
+      detail: `Missing JWT Token`,
+      status,
+      type,
     });
   }
 
@@ -34,10 +41,13 @@ export const authenticationMiddleware = ({
 
     req.jwtPayload = jwtPayload;
   } catch (e) {
-    return res.status(401).json({
-      data: {
-        error: e.message,
-      },
+    return res.type(contentType).status(status).json({
+      instance,
+      title,
+      detail: `Invalid JWT Token`,
+      status,
+      type,
+      error: e,
     });
   }
 
