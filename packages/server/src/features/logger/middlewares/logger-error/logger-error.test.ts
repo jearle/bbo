@@ -43,6 +43,6 @@ describe(`loggerErrorMiddleware`, () => {
     expect(response.status).toBe(500);
     expect(detail).toMatch(/Something went horribly wrong/);
 
-    console.error = originalLoggerError;
+    logger.error = originalLoggerError;
   });
 });
