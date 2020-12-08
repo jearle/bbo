@@ -79,7 +79,7 @@ describe(`authenticationMiddleware`, () => {
 
     const { detail } = await fetchJSONOnRandomPort(app);
 
-    expect(detail).toMatch(/invalid/i);
+    expect(detail).toMatch(/missing/i);
   });
 
   test(`invalid token from auth service`, async () => {

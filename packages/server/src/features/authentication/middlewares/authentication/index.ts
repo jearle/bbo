@@ -30,7 +30,7 @@ export const authenticationMiddleware = ({
     return res.type(contentType).status(status).json({
       instance,
       title,
-      detail: `Invalid JWT Token`,
+      detail: `Missing JWT Token`,
       status,
       type,
     });
