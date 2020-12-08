@@ -7,7 +7,8 @@ type CreateLaunchdarkleyProviderInput = {
   readonly logger?: LDLogger;
 };
 
-const EMPTY_LOGGER = {
+/* istanbul ignore next */
+export const EMPTY_LOGGER = {
   error() {
     return;
   },
@@ -21,6 +22,7 @@ const EMPTY_LOGGER = {
     return;
   },
 };
+/* istanbul ignore next */
 
 export const createLaunchdarklyProvider = async ({
   sdkKey,
@@ -29,7 +31,6 @@ export const createLaunchdarklyProvider = async ({
   const client = init(sdkKey, {
     logger,
   });
-
   await client.waitForInitialization();
 
   return client;

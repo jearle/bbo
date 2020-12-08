@@ -13,25 +13,24 @@ type FeatureFlagMiddlewareResult = (
 ) => void;
 
 export const featureFlagMiddleware = ({
-  featureFlagService,
-}: FeatureFlagMiddlewareInput): FeatureFlagMiddlewareResult => async (
+                                        featureFlagService,
+                                      }: FeatureFlagMiddlewareInput): FeatureFlagMiddlewareResult => async (
   req,
   res,
   next
 ) => {
   const {
     [`flag-name`]: flagName,
-    [`override-feature-flag`]: overrideFeatureFlag,
+    [`default-value`]: defaultValue
   } = req.query;
 
   const featureFlagValue =
     (await featureFlagService.fetchFeatureFlag({
       flagName,
-    })) === `true`;
+      options: {defaultValue}
+    }))
 
-  const shouldOverrideFeatureFlag = overrideFeatureFlag === `true`;
-
-  if (featureFlagValue || shouldOverrideFeatureFlag) {
+  if (featureFlagValue) {
     return next();
   }
 
