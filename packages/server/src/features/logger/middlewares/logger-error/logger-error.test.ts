@@ -18,6 +18,7 @@ describe(`loggerErrorMiddleware`, () => {
     app.get(`/`, (req, res) => {
       res.json({});
     });
+
     app.use(loggerErrorMiddleware({ logger, env }));
 
     const { status } = await fetchResponseOnRandomPort(app);
@@ -27,18 +28,24 @@ describe(`loggerErrorMiddleware`, () => {
 
   test(`error logged and returned`, async () => {
     const error = new Error('Something went horribly wrong!');
+
     app.get(`/`, (req, res) => {
+      req.id = 'request-id';
       throw error;
     });
+
     app.use(loggerErrorMiddleware({ logger, env }));
 
-    const spy = jest.spyOn(logger, 'error');
+    const originalLoggerError = logger.error;
+    logger.error = jest.fn();
 
     const response = await fetchResponseOnRandomPort(app);
     const { detail } = await response.json();
 
-    expect(spy).toBeCalled();
+    expect(logger.error).toBeCalled();
     expect(response.status).toBe(500);
     expect(detail).toMatch(/Something went horribly wrong/);
+
+    console.error = originalLoggerError;
   });
 });
