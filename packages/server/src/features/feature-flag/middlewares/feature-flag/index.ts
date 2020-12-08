@@ -13,22 +13,21 @@ type FeatureFlagMiddlewareResult = (
 ) => void;
 
 export const featureFlagMiddleware = ({
-                                        featureFlagService,
-                                      }: FeatureFlagMiddlewareInput): FeatureFlagMiddlewareResult => async (
+  featureFlagService,
+}: FeatureFlagMiddlewareInput): FeatureFlagMiddlewareResult => async (
   req,
   res,
   next
 ) => {
   const {
     [`flag-name`]: flagName,
-    [`default-value`]: defaultValue
+    [`default-value`]: defaultValue,
   } = req.query;
 
-  const featureFlagValue =
-    (await featureFlagService.fetchFeatureFlag({
-      flagName,
-      options: {defaultValue}
-    }))
+  const featureFlagValue = await featureFlagService.fetchFeatureFlag({
+    flagName,
+    options: { defaultValue },
+  });
 
   if (featureFlagValue) {
     return next();

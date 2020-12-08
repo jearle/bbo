@@ -9,16 +9,16 @@ type CreateLaunchdarkleyProviderInput = {
 
 /* istanbul ignore next */
 export const EMPTY_LOGGER = {
-  error() {
+  error(): void {
     return;
   },
-  warn() {
+  warn(): void {
     return;
   },
-  info() {
+  info(): void {
     return;
   },
-  debug() {
+  debug(): void {
     return;
   },
 };

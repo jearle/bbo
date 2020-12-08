@@ -75,5 +75,4 @@ describe(`authenticationMiddleware`, () => {
     });
     expect(status).toBe(404);
   });
-
 });

@@ -22,9 +22,11 @@ describe(`FeatureFlagService`, () => {
 
   test(`fetchFeatureFlag`, async () => {
     const value = await featureFlagService.fetchFeatureFlag({
-      flagName: `ff-release-api-27-set-up-launch-darkly`, options: {
-        defaultValue: true
-      }});
+      flagName: `ff-release-api-27-set-up-launch-darkly`,
+      options: {
+        defaultValue: true,
+      },
+    });
 
     expect(value).toBeFalsy();
   });
@@ -39,9 +41,11 @@ describe(`FeatureFlagService`, () => {
 
   test(`Smoketest, featureFlag service can return a false flag correctly`, async () => {
     const value = await featureFlagService.fetchFeatureFlag({
-      flagName: `ff-debug-test-false`, options: {
-        defaultValue: true
-      }});
+      flagName: `ff-debug-test-false`,
+      options: {
+        defaultValue: true,
+      },
+    });
 
     expect(value).toBeFalsy();
   });

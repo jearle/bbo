@@ -8,7 +8,7 @@ import logger from '../..';
 
 describe(`loggerErrorMiddleware`, () => {
   let app;
-  let env = 'test';
+  const env = 'test';
 
   beforeEach(() => {
     app = express();
@@ -27,7 +27,7 @@ describe(`loggerErrorMiddleware`, () => {
   });
 
   test(`error logged and returned`, async () => {
-    app.get(`/`, (req, res) => {
+    app.get(`/`, () => {
       throw new Error('Something went horribly wrong!');
     });
 
