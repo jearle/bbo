@@ -21,17 +21,15 @@ export const featureFlagMiddleware = ({
 ) => {
   const {
     [`flag-name`]: flagName,
-    [`override-feature-flag`]: overrideFeatureFlag,
+    [`default-value`]: defaultValue,
   } = req.query;
 
-  const featureFlagValue =
-    (await featureFlagService.fetchFeatureFlag({
-      flagName,
-    })) === `true`;
+  const featureFlagValue = await featureFlagService.fetchFeatureFlag({
+    flagName,
+    options: { defaultValue },
+  });
 
-  const shouldOverrideFeatureFlag = overrideFeatureFlag === `true`;
-
-  if (featureFlagValue || shouldOverrideFeatureFlag) {
+  if (featureFlagValue) {
     return next();
   }
 
