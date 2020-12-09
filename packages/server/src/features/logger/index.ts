@@ -11,4 +11,12 @@ const logger: Logger = createLogger({
   logType,
 });
 
+const loggerFeature = () => ({});
+
+type LoggerFeature = ReturnType<typeof loggerFeature>;
+
+export const createLoggerFeature = (): LoggerFeature => {
+  return loggerFeature;
+};
+
 export default logger;
