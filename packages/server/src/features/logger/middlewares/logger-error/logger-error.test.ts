@@ -8,7 +8,6 @@ import logger from '../..';
 
 describe(`loggerErrorMiddleware`, () => {
   let app;
-  const env = 'test';
 
   beforeEach(() => {
     app = express();
@@ -19,7 +18,7 @@ describe(`loggerErrorMiddleware`, () => {
       res.json({});
     });
 
-    app.use(loggerErrorMiddleware({ logger, env }));
+    app.use(loggerErrorMiddleware({ logger, env: `test` }));
 
     const { status } = await fetchResponseOnRandomPort(app);
 
@@ -27,22 +26,27 @@ describe(`loggerErrorMiddleware`, () => {
   });
 
   test(`error logged and returned`, async () => {
-    app.get(`/`, () => {
-      throw new Error('Something went horribly wrong!');
-    });
+    const testError = async ({ env }) => {
+      app.get(`/`, () => {
+        throw new Error('Something went horribly wrong!');
+      });
 
-    app.use(loggerErrorMiddleware({ logger, env }));
+      app.use(loggerErrorMiddleware({ logger, env }));
 
-    const originalLoggerError = logger.error;
-    logger.error = jest.fn();
+      const originalLoggerError = logger.error;
+      logger.error = jest.fn();
 
-    const response = await fetchResponseOnRandomPort(app);
-    const { detail } = await response.json();
+      const response = await fetchResponseOnRandomPort(app);
+      const { detail } = await response.json();
 
-    expect(logger.error).toBeCalled();
-    expect(response.status).toBe(500);
-    expect(detail).toMatch(/Something went horribly wrong/);
+      expect(logger.error).toBeCalled();
+      expect(response.status).toBe(500);
+      expect(detail).toMatch(/Something went horribly wrong/);
 
-    logger.error = originalLoggerError;
+      logger.error = originalLoggerError;
+    };
+
+    await testError({ env: `test` });
+    await testError({ env: `production` });
   });
 });

@@ -3,12 +3,7 @@ import { json } from 'body-parser';
 import { createServer } from 'http';
 import { AddressInfo } from 'net';
 
-import logger from './features/logger';
-
-// Middleware
-import { loggerMiddleware } from './features/logger/middlewares/logger';
-import { loggerIdMiddleware } from './features/logger/middlewares/logger-id';
-import { loggerErrorMiddleware } from './features/logger/middlewares/logger-error';
+import logger, { createLoggerFeature } from './features/logger';
 
 // Features
 import {
@@ -51,6 +46,11 @@ export const startServer = async ({
   transactionsSearchOptions,
 }: ServerOptions): Promise<void> => {
   // features
+  const {
+    loggerIdMiddleware,
+    loggerMiddleware,
+    loggerErrorMiddleware,
+  } = createLoggerFeature();
   const { permissionsMiddleware } = await createPermissionsFeature(
     permissionsFeatureOptions
   );
@@ -79,7 +79,7 @@ export const startServer = async ({
 
   // Pre Middleware
   mounts.use(loggerIdMiddleware());
-  mounts.use(loggerMiddleware({ logger }));
+  mounts.use(loggerMiddleware());
   mounts.use(json());
 
   mounts.use(documentationApp());
@@ -93,7 +93,7 @@ export const startServer = async ({
   mounts.use(transactionsSearchBasePath, transactionsSearchApp());
 
   // Post Middleware
-  mounts.use(loggerErrorMiddleware({ logger, env: process.env.NODE_ENV }));
+  mounts.use(loggerErrorMiddleware());
 
   // Start Server
   const server = createServer(mounts);

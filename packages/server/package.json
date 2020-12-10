@@ -31,7 +31,7 @@
     "lint:development": "esw --color -w --ext .ts ./src",
     "node:development": "nodemon -r dotenv/config dist/index",
     "compile:development": "tsc -w",
-    "test:development": "jest --setupFiles dotenv/config --coverage --watchAll",
+    "test:development": "jest --detectOpenHandles --setupFiles dotenv/config --coverage --watchAll",
     "build:production": "yarn clean && tsc -p .",
     "run:dockercompose": "docker-compose -f ./docker/docker-compose.yml up -d ",
     "clean": "rimraf ./dist",
