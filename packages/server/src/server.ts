@@ -70,7 +70,9 @@ export const startServer = async ({
 
   const { documentationApp } = createDocumentationFeature();
 
-  const { healthCheckApp, healthCheckBasePath } = createHealthCheckFeature();
+  const { healthCheckApp, healthCheckBasePath } = createHealthCheckFeature(
+    transactionsSearchOptions
+  );
 
   const {
     transactionsSearchApp,
