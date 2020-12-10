@@ -11,6 +11,8 @@ import { loggerIdMiddleware } from './features/logger/middlewares/logger-id';
 import { loggerErrorMiddleware } from './features/logger/middlewares/logger-error';
 
 // Features
+import { createPingFeature } from './features/ping';
+
 import {
   PermissionsFeatureOptions,
   createPermissionsFeature,
@@ -68,6 +70,8 @@ export const startServer = async ({
 
   const { documentationApp } = createDocumentationFeature();
 
+  const { pingApp, pingBasePath } = createPingFeature();
+
   const {
     transactionsSearchApp,
     transactionsSearchBasePath,
@@ -83,6 +87,8 @@ export const startServer = async ({
   mounts.use(json());
 
   mounts.use(documentationApp());
+
+  mounts.use(pingBasePath, pingApp());
 
   mounts.use(authenticationBasePath, authenticationApp());
 
