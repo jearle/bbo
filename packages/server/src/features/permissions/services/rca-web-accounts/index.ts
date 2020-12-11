@@ -4,6 +4,7 @@ import {
   createPermissionsModelFromList,
 } from './permissions-model';
 import { MSSQLProvider } from '../../providers/mssql';
+import { Health } from 'aws-sdk';
 
 const DATABASE = `dbRCAWebAccounts`;
 const STORED_PROCEDURE = `ReturnStateProvAndCountryPTsByUser_New_PTSMenu`;
@@ -46,6 +47,10 @@ const rcaWebAccountsService = ({
       );
 
     return result.recordset[0].userId;
+  },
+
+  async Health() {
+    await await rcaWebAccountsConnection.request().query('SELECT 1');
   },
 
   async close() {

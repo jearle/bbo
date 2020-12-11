@@ -21,9 +21,7 @@ export const createApp = ({
   });
 
   app.get(`/healthcheck`, async (req, res) => {
-    const transactionsSearchServiceHealth = await transactionsSearchService.health();
-
-    const endpoints = [transactionsSearchServiceHealth];
+    const endpoints = [await transactionsSearchService.health()];
     const status = endpoints.reduce(
       (maxStatus, currentService) => Math.max(maxStatus, currentService.status),
       0
