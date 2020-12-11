@@ -12,7 +12,9 @@ type LoggerIdMiddlewareResult = (
 ) => void;
 
 export const loggerIdMiddleware = (): LoggerIdMiddlewareResult => {
-  morgan.token(`id`, ({ id }) => id);
+  morgan.token(`id`, ({ id }) => {
+    return id;
+  });
 
   return (req, res, next) => {
     req.id = uuid();
