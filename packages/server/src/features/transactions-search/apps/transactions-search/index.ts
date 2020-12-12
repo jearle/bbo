@@ -53,17 +53,12 @@ export const createApp = ({
    *         description: PropertyTransactionSearchResponse
    */
   app.get(`/transactions`, async (req, res) => {
-    const { query } = req;
-    const { page, limit, filter } = cleanTransactionsSearchQuery(query);
-    // const transactionSearchParams = cleanTransactionSearchParams({
-    //   ...query,
-    //   permissionsFilter,
-    // });
-
+    const { query, permissionsFilter } = req;
+    const { page, limit } = cleanTransactionsSearchQuery(query);
     const data = await transactionsSearchService.search({
       page,
       limit,
-      filter,
+      filter: permissionsFilter,
     });
 
     res.json({ data });

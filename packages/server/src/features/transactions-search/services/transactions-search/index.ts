@@ -36,9 +36,7 @@ const transactionsSearchService = ({
         query: filter,
       },
     });
-
     const { hits } = result.body.hits;
-
     const sources = hits.map(({ _source }) => {
       return _source;
     });
