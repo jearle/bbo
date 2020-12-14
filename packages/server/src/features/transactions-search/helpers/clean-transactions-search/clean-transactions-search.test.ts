@@ -1,11 +1,10 @@
 import { cleanTransactionsSearchQuery } from '.';
 
 test(`cleanTransactionsSearchQuery empty`, () => {
-  const { page, limit, filter } = cleanTransactionsSearchQuery();
+  const { page, limit } = cleanTransactionsSearchQuery();
 
   expect(page).toBe(0);
   expect(limit).toBe(10);
-  expect(filter).toBeUndefined();
 });
 
 test(`cleanTransactionsSearchQuery limit string`, () => {
