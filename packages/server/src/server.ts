@@ -70,9 +70,13 @@ export const startServer = async ({
 
   const { documentationApp } = createDocumentationFeature();
 
-  const { healthCheckApp, healthCheckBasePath } = createHealthCheckFeature(
-    transactionsSearchOptions
-  );
+  const {
+    healthCheckApp,
+    healthCheckBasePath,
+  } = await createHealthCheckFeature({
+    ...transactionsSearchOptions,
+    mssqlURI: permissionsFeatureOptions.mssqlURI,
+  });
 
   const {
     transactionsSearchApp,

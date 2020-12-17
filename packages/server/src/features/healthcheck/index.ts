@@ -1,40 +1,64 @@
 import { createApp, BASE_PATH } from './apps/healthcheck';
-import { createElasticsearchProvider } from '../transactions-search/providers/elasticsearch';
+import { createElasticsearchProvider } from '../../providers/elasticsearch';
+import { createMSSQLProvider } from '../../providers/mssql';
 import {
-  createTransactionsSearchService,
-  TransactionsSearchService,
-} from '../transactions-search/services/transactions-search';
-import { TransactionsSearchFeatureOptions } from '../transactions-search';
+  createElasticsearchHealthService,
+  ElasticsearchHealthService,
+} from './services/elasticsearch';
+import {
+  createRCAWebAccountsHealthService,
+  RCAWebAccountsHealthService,
+} from './services/rca-web-accounts';
+
+export type HealthCheckFeatureOptions = {
+  readonly node: string;
+  readonly username: string;
+  readonly password: string;
+  readonly mssqlURI: string;
+};
 
 type HealthCheckFeatureInputs = {
-  readonly transactionsSearchService: TransactionsSearchService;
+  readonly elasticsearchHealthService: ElasticsearchHealthService;
+  readonly rcaWebAccountsHealthService: RCAWebAccountsHealthService;
 };
 
 const healtCheckFeature = ({
-  transactionsSearchService,
+  elasticsearchHealthService,
+  rcaWebAccountsHealthService,
 }: HealthCheckFeatureInputs) => ({
   healthCheckBasePath: BASE_PATH,
 
   healthCheckApp() {
-    return createApp({ transactionsSearchService });
+    return createApp({
+      elasticsearchHealthService,
+      rcaWebAccountsHealthService,
+    });
   },
 });
 
 export type HealthCheckFeature = ReturnType<typeof healtCheckFeature>;
 
-export const createHealthCheckFeature = ({
+export const createHealthCheckFeature = async ({
   username,
   password,
   node,
-}: TransactionsSearchFeatureOptions): HealthCheckFeature => {
+  mssqlURI,
+}: HealthCheckFeatureOptions): Promise<HealthCheckFeature> => {
   const elasticsearchProvider = createElasticsearchProvider({
     node,
     username,
     password,
   });
-  const transactionsSearchService = createTransactionsSearchService({
+  const elasticsearchHealthService = createElasticsearchHealthService({
     elasticsearchProvider,
   });
+  const mssqlProvider = await createMSSQLProvider({ uri: mssqlURI });
+  const rcaWebAccountsHealthService = await createRCAWebAccountsHealthService({
+    mssqlProvider,
+  });
 
-  return healtCheckFeature({ transactionsSearchService });
+  return healtCheckFeature({
+    elasticsearchHealthService,
+    rcaWebAccountsHealthService,
+  });
 };

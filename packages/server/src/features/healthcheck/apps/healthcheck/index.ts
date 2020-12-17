@@ -1,18 +1,21 @@
 import * as express from 'express';
 import { Application } from 'express';
 
-import { TransactionsSearchService } from '../../../transactions-search/services/transactions-search';
+import { ElasticsearchHealthService } from '../../services/elasticsearch';
+import { RCAWebAccountsHealthService } from '../../services/rca-web-accounts';
 
 export const VERSION = `v0`;
 export const DESCRIPTION = `Ping`;
 export const BASE_PATH = `/api/healthcheck/${VERSION}`;
 
 type CreateAppInputs = {
-  readonly transactionsSearchService: TransactionsSearchService;
+  readonly elasticsearchHealthService: ElasticsearchHealthService;
+  readonly rcaWebAccountsHealthService: RCAWebAccountsHealthService;
 };
 
 export const createApp = ({
-  transactionsSearchService,
+  elasticsearchHealthService,
+  rcaWebAccountsHealthService,
 }: CreateAppInputs): Application => {
   const app = express();
 
@@ -21,24 +24,29 @@ export const createApp = ({
   });
 
   app.get(`/healthcheck`, async (req, res) => {
-    const endpoints = [await transactionsSearchService.health()];
-    const status = endpoints.reduce(
-      (maxStatus, currentService) => Math.max(maxStatus, currentService.status),
-      0
+    const endpoints = [
+      await elasticsearchHealthService.health(),
+      await rcaWebAccountsHealthService.health(),
+    ];
+    const apiHealth = endpoints.reduce(
+      (apiStatus, currentService) => {
+        const msg =
+          currentService.status === 0
+            ? apiStatus.msg
+            : `${apiStatus.msg}${currentService.name} Failed;`;
+        const status = Math.max(apiStatus.status, currentService.status);
+        return { ...apiStatus, status, msg };
+      },
+      {
+        name: 'Product API',
+        status: 0,
+        msg: '',
+      }
     );
-    const nonOkMessages = endpoints.filter((e) => e.msg !== 'ok');
-    const msg =
-      nonOkMessages.length === 0
-        ? 'ok'
-        : nonOkMessages.reduce(
-            (msg, currentService) => `${msg}${currentService.msg};`,
-            ''
-          );
 
     res.json({
-      name: 'Product API',
-      status,
-      msg,
+      ...apiHealth,
+      msg: apiHealth.msg || 'ok',
       endpoints,
     });
   });

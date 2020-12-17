@@ -1,5 +1,5 @@
 import { createPermissionsService, PermissionsService } from '.';
-import { createMSSQLProvider } from '../../providers/mssql';
+import { createMSSQLProvider } from '../../../../providers/mssql';
 import { createRedisProvider } from '../../providers/redis';
 import { createRCAWebAccountsService } from '../rca-web-accounts';
 

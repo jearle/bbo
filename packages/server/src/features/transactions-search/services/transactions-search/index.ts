@@ -1,7 +1,7 @@
 import {
   ElasticsearchProvider,
   ElasticsearchClient,
-} from '../../providers/elasticsearch';
+} from '../../../../providers/elasticsearch';
 
 type CreateTransactionsSearchServiceInputs = {
   elasticsearchProvider: ElasticsearchProvider;
@@ -44,27 +44,6 @@ const transactionsSearchService = ({
     });
 
     return sources;
-  },
-
-  async health() {
-    const result = await elasticsearchClient.search({
-      index: 'test7_multi_pst',
-      from: 0,
-      size: 1,
-      body: {
-        query: {
-          match_all: {},
-        },
-      },
-    });
-
-    const { hits } = result.body.hits;
-
-    const status = hits.length === 1 ? 0 : 1;
-    const msg =
-      hits.length === 1 ? 'ok' : 'TransactionSearchService is unhealthy';
-
-    return { name: 'TransactionSearchService', status, msg };
   },
 });
 

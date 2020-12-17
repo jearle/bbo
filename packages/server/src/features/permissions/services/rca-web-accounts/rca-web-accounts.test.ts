@@ -1,5 +1,5 @@
 import { createRCAWebAccountsService, RCAWebAccountsService } from '.';
-import { createMSSQLProvider } from '../../providers/mssql';
+import { createMSSQLProvider } from '../../../../providers/mssql';
 
 const { MSSQL_URI: uri } = process.env;
 
