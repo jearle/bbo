@@ -17,7 +17,7 @@ const elasticsearchHealthService = ({
   elasticsearchClient,
 }: ElasticsearchHealthServiceInputs) => ({
   async health() {
-    const health = {
+    const healthResult = {
       name: 'Elasticsearch',
       status: 0,
       msg: 'ok',
@@ -35,16 +35,16 @@ const elasticsearchHealthService = ({
       const { hits } = result.body.hits;
 
       if (hits.length !== 1) {
-        health.status = 1;
-        health.msg = `${health.name} is unhealty`;
+        healthResult.status = 1;
+        healthResult.msg = `${healthResult.name} is unhealty`;
       }
 
-      return health;
+      return healthResult;
     } catch (error) {
       return {
-        ...health,
+        ...healthResult,
         status: 1,
-        msg: `${health.name} threw error: ${error.message}`,
+        msg: `${healthResult.name} threw error: ${error.message}`,
       };
     }
   },

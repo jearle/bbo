@@ -75,7 +75,7 @@ export const startServer = async ({
     healthCheckBasePath,
   } = await createHealthCheckFeature({
     ...transactionsSearchOptions,
-    mssqlURI: permissionsFeatureOptions.mssqlURI,
+    ...permissionsFeatureOptions,
   });
 
   const {

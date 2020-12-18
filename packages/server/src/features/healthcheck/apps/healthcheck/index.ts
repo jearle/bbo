@@ -3,6 +3,7 @@ import { Application } from 'express';
 
 import { ElasticsearchHealthService } from '../../services/elasticsearch';
 import { RCAWebAccountsHealthService } from '../../services/rca-web-accounts';
+import { RedisHealthService } from '../../services/redis';
 
 export const VERSION = `v0`;
 export const DESCRIPTION = `Ping`;
@@ -11,11 +12,13 @@ export const BASE_PATH = `/api/healthcheck/${VERSION}`;
 type CreateAppInputs = {
   readonly elasticsearchHealthService: ElasticsearchHealthService;
   readonly rcaWebAccountsHealthService: RCAWebAccountsHealthService;
+  readonly redisHealthService: RedisHealthService;
 };
 
 export const createApp = ({
   elasticsearchHealthService,
   rcaWebAccountsHealthService,
+  redisHealthService,
 }: CreateAppInputs): Application => {
   const app = express();
 
@@ -27,6 +30,7 @@ export const createApp = ({
     const endpoints = [
       await elasticsearchHealthService.health(),
       await rcaWebAccountsHealthService.health(),
+      await redisHealthService.health(),
     ];
     const apiHealth = endpoints.reduce(
       (apiStatus, currentService) => {

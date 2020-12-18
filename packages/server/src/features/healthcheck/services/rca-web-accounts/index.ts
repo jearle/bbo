@@ -8,7 +8,7 @@ type CreateRCAWebAccountsHealthServiceInput = {
 
 const rcaWebAccountsHealthService = ({ createRcaWebAccountsConnection }) => ({
   async health() {
-    const health = {
+    const healthStatus = {
       name: 'RCAWebAccounts',
       status: 0,
       msg: 'ok',
@@ -16,19 +16,13 @@ const rcaWebAccountsHealthService = ({ createRcaWebAccountsConnection }) => ({
     let connection = null;
     try {
       connection = await createRcaWebAccountsConnection();
-      const result = await connection.request().query('SELECT 0 AS status');
-
-      if (result.recordset[0].status !== 0) {
-        health.status = 1;
-        health.msg = `${health.name} is unhealthy`;
-      }
-
-      return health;
+      await connection.request().query('SELECT 0 AS status');
+      return healthStatus;
     } catch (error) {
       return {
-        ...health,
+        ...healthStatus,
         status: 1,
-        msg: `${health.name} threw error: ${error.message}`,
+        msg: `${healthStatus.name} threw error: ${error.message}`,
       };
     } finally {
       if (connection) {
