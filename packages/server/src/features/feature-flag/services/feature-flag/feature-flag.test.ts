@@ -1,5 +1,5 @@
 import { createFeatureFlagService, FeatureFlagService } from '.';
-import { createLaunchdarklyProvider } from '../../providers/launchdarkly';
+import { createLaunchdarklyProvider } from '../../../../providers/launchdarkly';
 
 const { LAUNCH_DARKLY_SDK } = process.env;
 

@@ -1,4 +1,4 @@
-import { LaunchdarklyProvider } from '../../providers/launchdarkly';
+import { LaunchdarklyProvider } from '../../../../providers/launchdarkly';
 
 type CreateFeatureFlagServiceInput = {
   launchdarklyProvider: LaunchdarklyProvider;
