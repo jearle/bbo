@@ -1,3 +1,11 @@
+import {
+  HealthStatus,
+  createHealthyStatus,
+  createUnhealthyStatus,
+} from '../../helpers/health-status';
+
+const SERVICE_NAME = 'Redis';
+
 type RedisHealthServiceInput = {
   readonly createRedisProvider;
 };
@@ -5,27 +13,17 @@ type RedisHealthServiceInput = {
 const redisHealthService = ({
   createRedisProvider,
 }: RedisHealthServiceInput) => ({
-  async health() {
-    const healthResult = {
-      name: 'Redis',
-      status: 0,
-      msg: 'ok',
-    };
+  async health(): Promise<HealthStatus> {
     let redisProvider = null;
     try {
       redisProvider = await createRedisProvider();
       const result = await redisProvider.ping();
       if (result !== 'PONG') {
-        healthResult.status = 1;
-        healthResult.msg = `${healthResult.name} is unhealty`;
+        return createUnhealthyStatus(SERVICE_NAME);
       }
-      return healthResult;
+      return createHealthyStatus(SERVICE_NAME);
     } catch (error) {
-      return {
-        ...healthResult,
-        status: 1,
-        msg: `${healthResult.name} threw error: ${error.message}`,
-      };
+      return createUnhealthyStatus(SERVICE_NAME);
     } finally {
       if (redisProvider) {
         await redisProvider.close();

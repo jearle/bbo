@@ -2,6 +2,11 @@ import {
   ElasticsearchProvider,
   ElasticsearchClient,
 } from '../../../../providers/elasticsearch';
+import {
+  HealthStatus,
+  createHealthyStatus,
+  createUnhealthyStatus,
+} from '../../helpers/health-status';
 
 type CreateElasticsearchHealthServiceInputs = {
   elasticsearchProvider: ElasticsearchProvider;
@@ -12,17 +17,12 @@ type ElasticsearchHealthServiceInputs = {
 };
 
 const DEFAULT_FILTER = { match_all: {} };
+const SERVICE_NAME = 'Elasticsearch';
 
 const elasticsearchHealthService = ({
   elasticsearchClient,
 }: ElasticsearchHealthServiceInputs) => ({
-  async health() {
-    const healthResult = {
-      name: 'Elasticsearch',
-      status: 0,
-      msg: 'ok',
-    };
-
+  async health(): Promise<HealthStatus> {
     try {
       const result = await elasticsearchClient.search({
         index: 'test7_multi_pst',
@@ -35,17 +35,12 @@ const elasticsearchHealthService = ({
       const { hits } = result.body.hits;
 
       if (hits.length !== 1) {
-        healthResult.status = 1;
-        healthResult.msg = `${healthResult.name} is unhealty`;
+        return createUnhealthyStatus(SERVICE_NAME);
       }
 
-      return healthResult;
+      return createHealthyStatus(SERVICE_NAME);
     } catch (error) {
-      return {
-        ...healthResult,
-        status: 1,
-        msg: `${healthResult.name} threw error: ${error.message}`,
-      };
+      return createUnhealthyStatus(SERVICE_NAME);
     }
   },
 });

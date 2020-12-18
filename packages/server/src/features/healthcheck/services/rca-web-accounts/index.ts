@@ -1,29 +1,26 @@
 import { MSSQLProvider } from '../../../../providers/mssql';
+import {
+  HealthStatus,
+  createHealthyStatus,
+  createUnhealthyStatus,
+} from '../../helpers/health-status';
 
 const DATABASE = `dbRCAWebAccounts`;
+const SERVICE_NAME = 'RCAWebAccounts';
 
 type CreateRCAWebAccountsHealthServiceInput = {
   readonly mssqlProvider: MSSQLProvider;
 };
 
 const rcaWebAccountsHealthService = ({ createRcaWebAccountsConnection }) => ({
-  async health() {
-    const healthStatus = {
-      name: 'RCAWebAccounts',
-      status: 0,
-      msg: 'ok',
-    };
+  async health(): Promise<HealthStatus> {
     let connection = null;
     try {
       connection = await createRcaWebAccountsConnection();
       await connection.request().query('SELECT 0 AS status');
-      return healthStatus;
+      return createHealthyStatus(SERVICE_NAME);
     } catch (error) {
-      return {
-        ...healthStatus,
-        status: 1,
-        msg: `${healthStatus.name} threw error: ${error.message}`,
-      };
+      return createUnhealthyStatus(SERVICE_NAME);
     } finally {
       if (connection) {
         await connection.close();
