@@ -49,7 +49,7 @@ export const startServer = async ({
   host = `127.0.0.1`,
   permissionsFeatureOptions,
   authenticationFeatureOptions,
-  // featureFlagOptions,
+  featureFlagOptions,
   transactionsSearchOptions,
 }: ServerOptions): Promise<void> => {
   // features
@@ -76,6 +76,7 @@ export const startServer = async ({
   } = await createHealthCheckFeature({
     ...transactionsSearchOptions,
     ...permissionsFeatureOptions,
+    ...featureFlagOptions,
   });
 
   const {

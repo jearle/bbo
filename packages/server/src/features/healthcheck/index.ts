@@ -11,6 +11,11 @@ import {
   RCAWebAccountsHealthService,
 } from './services/rca-web-accounts';
 import { createRedisHealthService, RedisHealthService } from './services/redis';
+import {
+  createLaunchDarklyHealthService,
+  LaunchDarklyHealthService,
+} from './services/launchdarkly';
+import { createLaunchdarklyProvider } from '../../providers/launchdarkly';
 
 export type HealthCheckFeatureOptions = {
   readonly node: string;
@@ -18,18 +23,21 @@ export type HealthCheckFeatureOptions = {
   readonly password: string;
   readonly mssqlURI: string;
   readonly redisURI: string;
+  readonly sdkKey: string;
 };
 
 type HealthCheckFeatureInputs = {
   readonly elasticsearchHealthService: ElasticsearchHealthService;
   readonly rcaWebAccountsHealthService: RCAWebAccountsHealthService;
   readonly redisHealthService: RedisHealthService;
+  readonly launchDarklyHealthService: LaunchDarklyHealthService;
 };
 
 const healtCheckFeature = ({
   elasticsearchHealthService,
   rcaWebAccountsHealthService,
   redisHealthService,
+  launchDarklyHealthService,
 }: HealthCheckFeatureInputs) => ({
   healthCheckBasePath: BASE_PATH,
 
@@ -38,6 +46,7 @@ const healtCheckFeature = ({
       elasticsearchHealthService,
       rcaWebAccountsHealthService,
       redisHealthService,
+      launchDarklyHealthService,
     });
   },
 });
@@ -50,6 +59,7 @@ export const createHealthCheckFeature = async ({
   node,
   mssqlURI,
   redisURI,
+  sdkKey,
 }: HealthCheckFeatureOptions): Promise<HealthCheckFeature> => {
   const elasticsearchProvider = createElasticsearchProvider({
     node,
@@ -69,10 +79,17 @@ export const createHealthCheckFeature = async ({
   const redisHealthService = await createRedisHealthService({
     createRedisProvider: createRedisProviderWrapper,
   });
+  const createLaunchDarklyProviderWrapper = async () => {
+    return await createLaunchdarklyProvider({ sdkKey });
+  };
+  const launchDarklyHealthService = await createLaunchDarklyHealthService({
+    createLaunchDarklyProvider: createLaunchDarklyProviderWrapper,
+  });
 
   return healtCheckFeature({
     elasticsearchHealthService,
     rcaWebAccountsHealthService,
     redisHealthService,
+    launchDarklyHealthService,
   });
 };
