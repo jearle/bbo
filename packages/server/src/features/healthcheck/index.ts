@@ -16,14 +16,43 @@ import {
   LaunchDarklyHealthService,
 } from './services/launchdarkly';
 import { createLaunchdarklyProvider } from '../../providers/launchdarkly';
+import {
+  CognitoHealthService,
+  createCognitoHealthService,
+} from './services/cognito';
+import { createCognitoProvider } from '../../providers/cognito';
 
-export type HealthCheckFeatureOptions = {
+type CreateElasticsearchProviderOptions = {
   readonly node: string;
   readonly username: string;
   readonly password: string;
+};
+
+type CreateMssqlProviderOptions = {
   readonly mssqlURI: string;
+};
+
+type CreateRedisProviderOptions = {
   readonly redisURI: string;
+};
+
+type CreateLaunchDarklyProviderOptions = {
   readonly sdkKey: string;
+};
+
+type CreateCognitoProviderOptions = {
+  readonly region: string;
+  readonly userPoolId: string;
+  readonly appClientId: string;
+  readonly appClientSecret: string;
+};
+
+export type HealthCheckFeatureOptions = {
+  readonly createElasticsearchProviderOptions: CreateElasticsearchProviderOptions;
+  readonly createMssqlProviderOptions: CreateMssqlProviderOptions;
+  readonly createRedisProviderOptions: CreateRedisProviderOptions;
+  readonly createLaunchDarklyProviderOptions: CreateLaunchDarklyProviderOptions;
+  readonly createCognitoProviderOptions: CreateCognitoProviderOptions;
 };
 
 type HealthCheckFeatureInputs = {
@@ -31,6 +60,7 @@ type HealthCheckFeatureInputs = {
   readonly rcaWebAccountsHealthService: RCAWebAccountsHealthService;
   readonly redisHealthService: RedisHealthService;
   readonly launchDarklyHealthService: LaunchDarklyHealthService;
+  readonly cognitoHealthService: CognitoHealthService;
 };
 
 const healtCheckFeature = ({
@@ -38,6 +68,7 @@ const healtCheckFeature = ({
   rcaWebAccountsHealthService,
   redisHealthService,
   launchDarklyHealthService,
+  cognitoHealthService,
 }: HealthCheckFeatureInputs) => ({
   healthCheckBasePath: BASE_PATH,
 
@@ -47,6 +78,7 @@ const healtCheckFeature = ({
       rcaWebAccountsHealthService,
       redisHealthService,
       launchDarklyHealthService,
+      cognitoHealthService,
     });
   },
 });
@@ -54,36 +86,43 @@ const healtCheckFeature = ({
 export type HealthCheckFeature = ReturnType<typeof healtCheckFeature>;
 
 export const createHealthCheckFeature = async ({
-  username,
-  password,
-  node,
-  mssqlURI,
-  redisURI,
-  sdkKey,
+  createElasticsearchProviderOptions,
+  createMssqlProviderOptions,
+  createRedisProviderOptions,
+  createLaunchDarklyProviderOptions,
+  createCognitoProviderOptions,
 }: HealthCheckFeatureOptions): Promise<HealthCheckFeature> => {
-  const elasticsearchProvider = createElasticsearchProvider({
-    node,
-    username,
-    password,
-  });
+  const elasticsearchProvider = createElasticsearchProvider(
+    createElasticsearchProviderOptions
+  );
   const elasticsearchHealthService = createElasticsearchHealthService({
     elasticsearchProvider,
   });
-  const mssqlProvider = await createMSSQLProvider({ uri: mssqlURI });
+  const mssqlProvider = await createMSSQLProvider({
+    uri: createMssqlProviderOptions.mssqlURI,
+  });
   const rcaWebAccountsHealthService = await createRCAWebAccountsHealthService({
     mssqlProvider,
   });
   const createRedisProviderWrapper = async () => {
-    return await createRedisProvider({ uri: redisURI });
+    return await createRedisProvider({
+      uri: createRedisProviderOptions.redisURI,
+    });
   };
   const redisHealthService = await createRedisHealthService({
     createRedisProvider: createRedisProviderWrapper,
   });
   const createLaunchDarklyProviderWrapper = async () => {
-    return await createLaunchdarklyProvider({ sdkKey });
+    return await createLaunchdarklyProvider(createLaunchDarklyProviderOptions);
   };
   const launchDarklyHealthService = await createLaunchDarklyHealthService({
     createLaunchDarklyProvider: createLaunchDarklyProviderWrapper,
+  });
+  const createCognitoProviderWrapper = async () => {
+    return await createCognitoProvider(createCognitoProviderOptions);
+  };
+  const cognitoHealthService = await createCognitoHealthService({
+    createCognitoProvider: createCognitoProviderWrapper,
   });
 
   return healtCheckFeature({
@@ -91,5 +130,6 @@ export const createHealthCheckFeature = async ({
     rcaWebAccountsHealthService,
     redisHealthService,
     launchDarklyHealthService,
+    cognitoHealthService,
   });
 };

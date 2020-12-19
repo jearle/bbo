@@ -1,5 +1,6 @@
 import * as express from 'express';
 import { Application } from 'express';
+import { CognitoHealthService } from '../../services/cognito';
 
 import { ElasticsearchHealthService } from '../../services/elasticsearch';
 import { LaunchDarklyHealthService } from '../../services/launchdarkly';
@@ -15,6 +16,7 @@ type CreateAppInputs = {
   readonly rcaWebAccountsHealthService: RCAWebAccountsHealthService;
   readonly redisHealthService: RedisHealthService;
   readonly launchDarklyHealthService: LaunchDarklyHealthService;
+  readonly cognitoHealthService: CognitoHealthService;
 };
 
 export const createApp = ({
@@ -22,6 +24,7 @@ export const createApp = ({
   rcaWebAccountsHealthService,
   redisHealthService,
   launchDarklyHealthService,
+  cognitoHealthService,
 }: CreateAppInputs): Application => {
   const app = express();
 
@@ -35,6 +38,7 @@ export const createApp = ({
       await rcaWebAccountsHealthService.health(),
       await redisHealthService.health(),
       await launchDarklyHealthService.health(),
+      await cognitoHealthService.health(),
     ];
     const apiHealth = endpoints.reduce(
       (apiStatus, currentService) => {

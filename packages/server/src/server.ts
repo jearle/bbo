@@ -74,9 +74,11 @@ export const startServer = async ({
     healthCheckApp,
     healthCheckBasePath,
   } = await createHealthCheckFeature({
-    ...transactionsSearchOptions,
-    ...permissionsFeatureOptions,
-    ...featureFlagOptions,
+    createElasticsearchProviderOptions: transactionsSearchOptions,
+    createMssqlProviderOptions: permissionsFeatureOptions,
+    createRedisProviderOptions: permissionsFeatureOptions,
+    createLaunchDarklyProviderOptions: featureFlagOptions,
+    createCognitoProviderOptions: authenticationFeatureOptions,
   });
 
   const {
