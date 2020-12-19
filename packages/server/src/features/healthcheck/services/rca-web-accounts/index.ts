@@ -17,7 +17,14 @@ const rcaWebAccountsHealthService = ({ createRcaWebAccountsConnection }) => ({
     let connection = null;
     try {
       connection = await createRcaWebAccountsConnection();
-      await connection.request().query('SELECT 0 AS status');
+      const result = await connection
+        .request()
+        .query(
+          'SELECT TOP (1) 1 AS status FROM [dbRCAWebAccounts].[dbo].[AccountUser]'
+        );
+      if (result.recordset[0].status !== 1) {
+        return createHealthyStatus(SERVICE_NAME);
+      }
       return createHealthyStatus(SERVICE_NAME);
     } catch (error) {
       return createUnhealthyStatus(SERVICE_NAME);
