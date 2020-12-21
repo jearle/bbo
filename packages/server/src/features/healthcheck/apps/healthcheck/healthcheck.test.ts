@@ -51,7 +51,7 @@ describe(`transactions app`, () => {
       return await createLaunchdarklyProvider({ sdkKey: LAUNCH_DARKLY_SDK });
     };
     const createUnhealthyLaunchDarklyProviderWrapper = async () => {
-      return await createLaunchdarklyProvider({ sdkKey: '_WRONG_SDK_KEY_' });
+      throw new Error();
     };
     const createCognitoProviderWrapper = async () => {
       return await createCognitoProvider({
