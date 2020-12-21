@@ -28,10 +28,34 @@ export const createApp = ({
 }: CreateAppInputs): Application => {
   const app = express();
 
+  /**
+   * @swagger
+   *
+   * /ping:
+   *   get:
+   *     description: Responds with 200 OK
+   *     produces:
+   *       - text/plain
+   *     responses:
+   *       200:
+   *         description: OK
+   */
   app.get(`/ping`, async (req, res) => {
     res.sendStatus(200);
   });
 
+  /**
+   * @swagger
+   *
+   * /healthcheck:
+   *   get:
+   *     description: Gets health of app and external services
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: health
+   */
   app.get(`/healthcheck`, async (req, res) => {
     const endpoints = [
       await elasticsearchHealthService.health(),
