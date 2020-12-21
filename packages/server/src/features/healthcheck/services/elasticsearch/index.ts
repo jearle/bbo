@@ -1,7 +1,4 @@
-import {
-  ElasticsearchProvider,
-  ElasticsearchClient,
-} from '../../../../providers/elasticsearch';
+import { ElasticsearchProvider } from '../../../../providers/elasticsearch';
 import {
   HealthStatus,
   createHealthyStatus,
@@ -13,18 +10,19 @@ type CreateElasticsearchHealthServiceInputs = {
 };
 
 type ElasticsearchHealthServiceInputs = {
-  elasticsearchClient: ElasticsearchClient;
+  elasticsearchProvider: ElasticsearchProvider;
 };
 
 const DEFAULT_FILTER = { match_all: {} };
 const SERVICE_NAME = 'Elasticsearch';
 
 const elasticsearchHealthService = ({
-  elasticsearchClient,
+  elasticsearchProvider,
 }: ElasticsearchHealthServiceInputs) => ({
   async health(): Promise<HealthStatus> {
     try {
-      const result = await elasticsearchClient.search({
+      const client = elasticsearchProvider.createClient();
+      await client.search({
         index: 'test7_multi_pst',
         from: 0,
         size: 1,
@@ -32,12 +30,6 @@ const elasticsearchHealthService = ({
           query: DEFAULT_FILTER,
         },
       });
-      const { hits } = result.body.hits;
-
-      if (hits.length !== 1) {
-        return createUnhealthyStatus(SERVICE_NAME);
-      }
-
       return createHealthyStatus(SERVICE_NAME);
     } catch (error) {
       return createUnhealthyStatus(SERVICE_NAME);
@@ -52,7 +44,5 @@ export type ElasticsearchHealthService = ReturnType<
 export const createElasticsearchHealthService = ({
   elasticsearchProvider,
 }: CreateElasticsearchHealthServiceInputs): ElasticsearchHealthService => {
-  const elasticsearchClient = elasticsearchProvider.createClient();
-
-  return elasticsearchHealthService({ elasticsearchClient });
+  return elasticsearchHealthService({ elasticsearchProvider });
 };
