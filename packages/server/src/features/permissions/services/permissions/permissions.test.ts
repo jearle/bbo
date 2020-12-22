@@ -1,6 +1,6 @@
 import { createPermissionsService, PermissionsService } from '.';
-import { createMSSQLProvider } from '../../providers/mssql';
-import { createRedisProvider } from '../../providers/redis';
+import { createMSSQLProvider } from '../../../../providers/mssql';
+import { createRedisProvider } from '../../../../providers/redis';
 import { createRCAWebAccountsService } from '../rca-web-accounts';
 
 const { MSSQL_URI, REDIS_URI } = process.env;

@@ -6,6 +6,8 @@ import { AddressInfo } from 'net';
 import logger, { createLoggerFeature } from './features/logger';
 
 // Features
+import { createHealthCheckFeature } from './features/healthcheck';
+
 import {
   PermissionsFeatureOptions,
   createPermissionsFeature,
@@ -42,7 +44,7 @@ export const startServer = async ({
   host = `127.0.0.1`,
   permissionsFeatureOptions,
   authenticationFeatureOptions,
-  // featureFlagOptions,
+  featureFlagOptions,
   transactionsSearchOptions,
 }: ServerOptions): Promise<void> => {
   // features
@@ -69,6 +71,17 @@ export const startServer = async ({
   const { documentationApp } = createDocumentationFeature();
 
   const {
+    healthCheckApp,
+    healthCheckBasePath,
+  } = await createHealthCheckFeature({
+    createElasticsearchProviderOptions: transactionsSearchOptions,
+    createMssqlProviderOptions: permissionsFeatureOptions,
+    createRedisProviderOptions: permissionsFeatureOptions,
+    createLaunchDarklyProviderOptions: featureFlagOptions,
+    createCognitoProviderOptions: authenticationFeatureOptions,
+  });
+
+  const {
     transactionsSearchApp,
     transactionsSearchBasePath,
   } = createTransactionsSearchFeature(transactionsSearchOptions);
@@ -83,6 +96,8 @@ export const startServer = async ({
   mounts.use(json());
 
   mounts.use(documentationApp());
+
+  mounts.use(healthCheckBasePath, healthCheckApp());
 
   mounts.use(authenticationBasePath, authenticationApp());
 

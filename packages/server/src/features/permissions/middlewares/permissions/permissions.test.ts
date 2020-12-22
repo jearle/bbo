@@ -6,8 +6,8 @@ import { permissionsMiddleware as createPermissionsMiddleware } from '.';
 import { portListen } from '../../../../helpers/express/port-listen';
 
 import { createPermissionsService } from '../../services/permissions';
-import { createRedisProvider } from '../../providers/redis';
-import { createMSSQLProvider } from '../../providers/mssql';
+import { createRedisProvider } from '../../../../providers/redis';
+import { createMSSQLProvider } from '../../../../providers/mssql';
 import { createRCAWebAccountsService } from '../../services/rca-web-accounts';
 
 const { MSSQL_URI, REDIS_URI } = process.env;

@@ -3,7 +3,7 @@ import {
   PermissionsModel,
   createPermissionsModelFromList,
 } from './permissions-model';
-import { MSSQLProvider } from '../../providers/mssql';
+import { MSSQLProvider } from '../../../../providers/mssql';
 
 const DATABASE = `dbRCAWebAccounts`;
 const STORED_PROCEDURE = `ReturnStateProvAndCountryPTsByUser_New_PTSMenu`;

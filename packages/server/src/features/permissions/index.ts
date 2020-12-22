@@ -1,6 +1,6 @@
 import { createPermissionsService } from './services/permissions';
-import { createMSSQLProvider } from './providers/mssql';
-import { createRedisProvider } from './providers/redis';
+import { createMSSQLProvider } from '../../providers/mssql';
+import { createRedisProvider } from '../../providers/redis';
 import { createRCAWebAccountsService } from './services/rca-web-accounts';
 import { permissionsMiddleware } from './middlewares/permissions';
 

@@ -5,12 +5,12 @@ import { testHealthcheck } from '../../../../helpers/unit/healthcheck';
 import { portListen } from '../../../../helpers/express/port-listen';
 
 import { createTransactionsSearchService } from '../../services/transactions-search';
-import { createElasticsearchProvider } from '../../providers/elasticsearch';
-import { createMSSQLProvider } from '../../../permissions/providers/mssql';
+import { createElasticsearchProvider } from '../../../../providers/elasticsearch';
+import { createMSSQLProvider } from '../../../../providers/mssql';
 import { createRCAWebAccountsService } from '../../../permissions/services/rca-web-accounts';
 import { createPermissionsService } from '../../../permissions/services/permissions';
 import { permissionsMiddleware as createPermissionsMiddleware } from '../../../permissions/middlewares/permissions';
-import { createRedisProvider } from '../../../permissions/providers/redis';
+import { createRedisProvider } from '../../../../providers/redis';
 
 const {
   MSSQL_URI,

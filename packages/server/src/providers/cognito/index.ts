@@ -1,6 +1,6 @@
 import { CognitoIdentityServiceProvider } from 'aws-sdk';
 import { createTokenValidator, TokenValidator } from './token-validator';
-import { Awaited } from '../../../../helpers/types/awaited';
+import { Awaited } from '../../helpers/types/awaited';
 
 type CreateCognitoServiceInput = {
   userPoolId: string;

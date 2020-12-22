@@ -1,7 +1,7 @@
 import {
   ElasticsearchProvider,
   ElasticsearchClient,
-} from '../../providers/elasticsearch';
+} from '../../../../providers/elasticsearch';
 
 type CreateTransactionsSearchServiceInputs = {
   elasticsearchProvider: ElasticsearchProvider;

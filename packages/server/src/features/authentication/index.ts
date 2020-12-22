@@ -1,4 +1,4 @@
-import { createCognitoProvider } from './providers/cognito';
+import { createCognitoProvider } from '../../providers/cognito';
 import {
   createAuthenticationService,
   AuthenticationService,

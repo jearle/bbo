@@ -1,4 +1,4 @@
-import { createLaunchdarklyProvider } from './providers/launchdarkly';
+import { createLaunchdarklyProvider } from '../../providers/launchdarkly';
 import {
   createFeatureFlagService,
   FeatureFlagService,

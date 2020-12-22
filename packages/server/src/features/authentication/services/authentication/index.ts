@@ -1,5 +1,5 @@
 import { createHmac } from 'crypto';
-import { CognitoProvider } from '../../providers/cognito';
+import { CognitoProvider } from '../../../../providers/cognito';
 
 type CreateAuthenticationServiceInputs = {
   cognitoService: CognitoProvider;

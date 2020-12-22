@@ -1,5 +1,5 @@
 import { createApp, BASE_PATH, DESCRIPTION } from './apps/transactions-search';
-import { createElasticsearchProvider } from './providers/elasticsearch';
+import { createElasticsearchProvider } from '../../providers/elasticsearch';
 import {
   createTransactionsSearchService,
   TransactionsSearchService,

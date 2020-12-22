@@ -2,7 +2,7 @@ import { createAuthenticationService, AuthenticationService } from '.';
 import {
   createCognitoProvider,
   CognitoProvider,
-} from '../../providers/cognito';
+} from '../../../../providers/cognito';
 
 const {
   COGNITO_REGION,
