@@ -32,7 +32,7 @@
     "node:development": "nodemon -r dotenv/config dist/index",
     "compile:development": "tsc -w",
     "test:development": "jest --detectOpenHandles --setupFiles dotenv/config --coverage --watchAll",
-    "build:production": "yarn clean && tsc -p .",
+    "build:production": "yarn shared:build && yarn clean && tsc -p .",
     "run:dockercompose": "docker-compose -f ./docker/docker-compose.yml up -d ",
     "shared:build": "cd ../shared && yarn build:production",
     "clean": "rimraf ./dist",
