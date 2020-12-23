@@ -3,7 +3,7 @@ import * as fetch from 'node-fetch';
 
 import { permissionsMiddleware as createPermissionsMiddleware } from '.';
 
-import { portListen } from '../../../../helpers/express/port-listen';
+import { portListen } from 'shared/dist/helpers/express/port-listen';
 
 import { createPermissionsService } from '../../services/permissions';
 import { createRedisProvider } from '../../../../providers/redis';
