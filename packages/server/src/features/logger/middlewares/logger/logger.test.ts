@@ -4,7 +4,7 @@ import logger from '../../';
 import { loggerMiddleware } from '../logger';
 import { loggerIdMiddleware } from '../logger-id';
 
-import { fetchResponseOnRandomPort } from '../../../../helpers/express/listen-fetch';
+import { fetchResponseOnRandomPort } from 'shared/dist/helpers/express/listen-fetch';
 
 describe(`loggerErrorMiddleware`, () => {
   let app;

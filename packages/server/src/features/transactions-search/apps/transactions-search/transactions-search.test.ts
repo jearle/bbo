@@ -1,8 +1,10 @@
 import fetch from 'node-fetch';
 import * as express from 'express';
+
+import { testHealthcheck } from 'shared/dist/helpers/unit/healthcheck';
+import { portListen } from 'shared/dist/helpers/express/port-listen';
+
 import { createApp } from './';
-import { testHealthcheck } from '../../../../helpers/unit/healthcheck';
-import { portListen } from '../../../../helpers/express/port-listen';
 
 import { createTransactionsSearchService } from '../../services/transactions-search';
 import { createElasticsearchProvider } from '../../../../providers/elasticsearch';

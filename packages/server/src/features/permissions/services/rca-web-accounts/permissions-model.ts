@@ -1,5 +1,5 @@
-import { csvToArray } from '../../../../helpers/csv';
-import { unique } from '../../../../helpers/array';
+import { csvToArray } from 'shared/dist/helpers/csv';
+import { unique } from 'shared/dist/helpers/array';
 
 export type PermissionsModel = {
   readonly stateProvidence: string[];

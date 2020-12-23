@@ -1,11 +1,11 @@
 import * as express from 'express';
 
-import { authenticationMiddleware as createAuthenticationMiddleware } from '.';
-
 import {
   fetchTextOnRandomPort,
   fetchJSONOnRandomPort,
-} from '../../../../helpers/express/listen-fetch';
+} from 'shared/dist/helpers/express/listen-fetch';
+
+import { authenticationMiddleware as createAuthenticationMiddleware } from '.';
 
 import {
   createAuthenticationService,

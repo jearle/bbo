@@ -2,7 +2,7 @@ import * as express from 'express';
 
 import { featureFlagMiddleware as createFeatureFlagMiddleware } from '.';
 
-import { fetchResponseOnRandomPort } from '../../../../helpers/express/listen-fetch';
+import { fetchResponseOnRandomPort } from 'shared/dist/helpers/express/listen-fetch';
 
 import {
   createFeatureFlagService,

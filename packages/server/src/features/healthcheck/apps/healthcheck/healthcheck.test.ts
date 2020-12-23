@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 import * as express from 'express';
 import { createApp } from './';
-import { portListen } from '../../../../helpers/express/port-listen';
+import { portListen } from 'shared/dist/helpers/express/port-listen';
 
 import { createElasticsearchProvider } from '../../../../providers/elasticsearch';
 import { createMSSQLProvider } from '../../../../providers/mssql';
