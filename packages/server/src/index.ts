@@ -13,6 +13,7 @@ const {
   MSSQL_URI,
   REDIS_URI,
   LAUNCH_DARKLY_SDK,
+  SEGMENT_ACCESS_KEY,
 } = process.env;
 
 const port = parseInt(PORT);
@@ -39,6 +40,10 @@ const transactionsSearchOptions = {
   password: ELASTICSEARCH_PASSWORD,
 };
 
+const userActivityFeatureOptions = {
+  accessKey: SEGMENT_ACCESS_KEY,
+};
+
 startServer({
   port,
   host,
@@ -46,4 +51,5 @@ startServer({
   authenticationFeatureOptions,
   featureFlagOptions,
   transactionsSearchOptions,
+  userActivityFeatureOptions,
 });

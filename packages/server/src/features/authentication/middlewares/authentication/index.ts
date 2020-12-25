@@ -38,7 +38,6 @@ export const authenticationMiddleware = ({
 
   try {
     const jwtPayload = await authenticationService.validate({ token });
-
     req.jwtPayload = jwtPayload;
   } catch (e) {
     return res.type(contentType).status(status).json({

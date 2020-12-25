@@ -29,6 +29,7 @@ import {
   TransactionsSearchFeatureOptions,
   createTransactionsSearchFeature,
 } from './features/transactions-search';
+import { UserActivityFeatureInputOptions, createUserActivityFeature } from './features/user-activity';
 
 interface ServerOptions {
   readonly port?: number;
@@ -37,7 +38,9 @@ interface ServerOptions {
   readonly authenticationFeatureOptions: AuthenticationFeatureOptions;
   readonly featureFlagOptions: FeatureFlagOptions;
   readonly transactionsSearchOptions: TransactionsSearchFeatureOptions;
+  readonly userActivityFeatureOptions: UserActivityFeatureInputOptions;
 }
+
 
 export const startServer = async ({
   port = 0,
@@ -46,6 +49,7 @@ export const startServer = async ({
   authenticationFeatureOptions,
   featureFlagOptions,
   transactionsSearchOptions,
+  userActivityFeatureOptions
 }: ServerOptions): Promise<void> => {
   // features
   const {
@@ -56,6 +60,12 @@ export const startServer = async ({
   const { permissionsMiddleware } = await createPermissionsFeature(
     permissionsFeatureOptions
   );
+
+
+  const { userActivityMiddleWare } = await createUserActivityFeature(
+    userActivityFeatureOptions
+  );
+
 
   const {
     authenticationMiddleware,
@@ -93,6 +103,7 @@ export const startServer = async ({
   // Pre Middleware
   mounts.use(loggerIdMiddleware());
   mounts.use(loggerMiddleware());
+  mounts.use(userActivityMiddleWare());
   mounts.use(json());
 
   mounts.use(documentationApp());
