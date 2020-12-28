@@ -1,10 +1,13 @@
+import { createCognitoPemsURL } from './cognito-pems-url';
 import { createTokenValidator, TokenValidator } from './token-validator';
 
-const { COGNITO_REGION, COGNITO_USER_POOL_ID } = process.env;
+const {
+  COGNITO_REGION: region,
+  COGNITO_USER_POOL_ID: userPoolId,
+} = process.env;
 
 const createTokenValidatorInput = {
-  region: COGNITO_REGION,
-  userPoolId: COGNITO_USER_POOL_ID,
+  pemsUrl: createCognitoPemsURL({ region, userPoolId }),
   tokenUse: `access`,
   maxAge: 3600,
 };
@@ -22,8 +25,7 @@ describe(`tokenValidator`, () => {
 
   test(`createCognitoService bad config`, () => {
     const badConfigs = [
-      { region: null },
-      { userPoolId: null },
+      { pemsUrl: null },
       { tokenUse: null },
       { maxAge: null },
     ];

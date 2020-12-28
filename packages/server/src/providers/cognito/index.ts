@@ -1,6 +1,9 @@
 import { CognitoIdentityServiceProvider } from 'aws-sdk';
+import { createCognitoPemsURL } from './cognito-pems-url';
 import { createTokenValidator, TokenValidator } from './token-validator';
 import { Awaited } from 'shared/dist/helpers/types/awaited';
+
+const { COGNITO_PEM_URL_OVERRIDE } = process.env;
 
 type CreateCognitoServiceInput = {
   userPoolId: string;
@@ -27,9 +30,15 @@ export const createCognitoProvider = async ({
     region,
   });
 
+  const pemsUrl = COGNITO_PEM_URL_OVERRIDE
+    ? COGNITO_PEM_URL_OVERRIDE
+    : createCognitoPemsURL({
+        region,
+        userPoolId,
+      });
+
   const tokenValidator = await createTokenValidator({
-    region,
-    userPoolId,
+    pemsUrl,
     tokenUse: `access`,
     maxAge: 3600,
   });

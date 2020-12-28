@@ -5,14 +5,8 @@ import fetch from 'node-fetch';
 
 const verify = promisify(verifyCallback);
 
-type CreateCognitoUrlInput = {
-  region: string;
-  userPoolId: string;
-};
-
 type CreateTokenValidatorInput = {
-  region: string;
-  userPoolId: string;
+  pemsUrl: string;
   tokenUse: string;
   maxAge: number;
 };
@@ -40,12 +34,6 @@ type TokenValidatorInput = {
   tokenUse: string;
   maxAge: number;
 };
-
-const createCognitoURL = ({
-  region,
-  userPoolId,
-}: CreateCognitoUrlInput): string =>
-  `https://cognito-idp.${region}.amazonaws.com/${userPoolId}/.well-known/jwks.json`;
 
 const fetchPems = async ({ url }: FetchPemsInput): Promise<FetchPemsResult> => {
   const response = await fetch(url);
@@ -114,13 +102,9 @@ export type TokenValidator = ReturnType<typeof tokenValidator>;
 const createConfigTypeError = (name, value) =>
   new TypeError(`${name} must be specified, received '${value}'`);
 
-const checkRegion = (region: string) => {
-  if (!region || !region.trim()) throw createConfigTypeError(`region`, region);
-};
-
-const checkUserPoolId = (userPoolId: string) => {
-  if (!userPoolId || !userPoolId.trim())
-    throw createConfigTypeError(`userPoolId`, userPoolId);
+const checkPemsUrl = (pemsUrl: string) => {
+  if (!pemsUrl || !pemsUrl.trim())
+    throw createConfigTypeError(`pemsUrl`, pemsUrl);
 };
 
 const checkTokenUseConfig = (tokenUse: string) => {
@@ -133,18 +117,15 @@ const checkMaxAge = (maxAge: number) => {
 };
 
 export const createTokenValidator = async ({
-  region,
-  userPoolId,
+  pemsUrl,
   tokenUse,
   maxAge,
 }: CreateTokenValidatorInput): Promise<TokenValidator> => {
-  checkRegion(region);
-  checkUserPoolId(userPoolId);
+  checkPemsUrl(pemsUrl);
   checkTokenUseConfig(tokenUse);
   checkMaxAge(maxAge);
 
-  const url = createCognitoURL({ region, userPoolId });
-  const pems = await fetchPems({ url });
+  const pems = await fetchPems({ url: pemsUrl });
 
-  return tokenValidator({ url, pems, tokenUse, maxAge });
+  return tokenValidator({ url: pemsUrl, pems, tokenUse, maxAge });
 };
