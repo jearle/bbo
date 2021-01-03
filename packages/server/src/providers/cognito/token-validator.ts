@@ -1,22 +1,16 @@
 import { promisify } from 'util';
-import * as jwkToPem from 'jwk-to-pem';
 import { decode, verify as verifyCallback } from 'jsonwebtoken';
-import fetch from 'node-fetch';
 
 const verify = promisify(verifyCallback);
 
+type PublicKeys = { [key: string]: string };
+type FetchPublicKeys = () => Promise<PublicKeys>;
+
 type CreateTokenValidatorInput = {
-  pemsUrl: string;
+  publicKeysUrl: string;
+  fetchPublicKeys: FetchPublicKeys;
   tokenUse: string;
   maxAge: number;
-};
-
-type FetchPemsInput = {
-  url: string;
-};
-
-type FetchPemsResult = {
-  [key: string]: string;
 };
 
 type ValidateInput = {
@@ -29,25 +23,10 @@ type ValidateResult = {
 };
 
 type TokenValidatorInput = {
-  url: string;
-  pems: FetchPemsResult;
+  publicKeysUrl: string;
+  publicKeys: PublicKeys;
   tokenUse: string;
   maxAge: number;
-};
-
-const fetchPems = async ({ url }: FetchPemsInput): Promise<FetchPemsResult> => {
-  const response = await fetch(url);
-  const { keys } = await response.json();
-
-  const pems = keys.reduce((acc, key) => {
-    const { kid: keyId, n: modulus, e: exponent, kty: keyType } = key;
-    const jwk = { kty: keyType, n: modulus, e: exponent };
-    const pem = jwkToPem(jwk);
-
-    return { ...acc, [keyId]: pem };
-  }, {});
-
-  return pems;
 };
 
 const checkDecodedJwt = (decodeJwt: string) => {
@@ -71,8 +50,8 @@ const checkPem = (pem) => {
 };
 
 const tokenValidator = ({
-  url,
-  pems,
+  publicKeysUrl,
+  publicKeys,
   tokenUse,
   maxAge,
 }: TokenValidatorInput) => ({
@@ -81,11 +60,13 @@ const tokenValidator = ({
     checkDecodedJwt(decodedJwt);
 
     const { iss, token_use: actualTokenUse } = decodedJwt.payload;
-    checkIssuer(url, iss);
+    checkIssuer(publicKeysUrl, iss);
     checkTokenUse(tokenUse, actualTokenUse);
 
     const { kid: keyId } = decodedJwt.header;
-    const pem = pems[keyId];
+
+    const pem = publicKeys[keyId];
+
     checkPem(pem);
 
     const body = await verify(token, pem, {
@@ -102,11 +83,6 @@ export type TokenValidator = ReturnType<typeof tokenValidator>;
 const createConfigTypeError = (name, value) =>
   new TypeError(`${name} must be specified, received '${value}'`);
 
-const checkPemsUrl = (pemsUrl: string) => {
-  if (!pemsUrl || !pemsUrl.trim())
-    throw createConfigTypeError(`pemsUrl`, pemsUrl);
-};
-
 const checkTokenUseConfig = (tokenUse: string) => {
   if (!tokenUse || !tokenUse.trim())
     throw createConfigTypeError(`tokenUse`, tokenUse);
@@ -117,15 +93,15 @@ const checkMaxAge = (maxAge: number) => {
 };
 
 export const createTokenValidator = async ({
-  pemsUrl,
+  publicKeysUrl,
+  fetchPublicKeys,
   tokenUse,
   maxAge,
 }: CreateTokenValidatorInput): Promise<TokenValidator> => {
-  checkPemsUrl(pemsUrl);
   checkTokenUseConfig(tokenUse);
   checkMaxAge(maxAge);
 
-  const pems = await fetchPems({ url: pemsUrl });
+  const publicKeys = await fetchPublicKeys();
 
-  return tokenValidator({ url: pemsUrl, pems, tokenUse, maxAge });
+  return tokenValidator({ publicKeysUrl, publicKeys, tokenUse, maxAge });
 };

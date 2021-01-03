@@ -30,18 +30,16 @@ describe(`initiateAuth`, () => {
       },
     } = await initiateAuth(request);
 
-    console.log(accessToken);
-
     expect(typeof accessToken).toBe(`string`);
   });
 
-  // test(`initiateAuth failure`, async () => {
-  //   const request = createRequest({ username: `foo` });
+  test(`initiateAuth failure`, async () => {
+    const request = createRequest({ username: `foo` });
 
-  //   const {
-  //     body: { message },
-  //   } = await initiateAuth(request);
+    const {
+      body: { message },
+    } = await initiateAuth(request);
 
-  //   expect(/incorrect/i.test(message)).toBe(true);
-  // });
+    expect(/incorrect/i.test(message)).toBe(true);
+  });
 });

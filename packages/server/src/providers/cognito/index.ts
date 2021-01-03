@@ -1,7 +1,10 @@
 import { CognitoIdentityServiceProvider } from 'aws-sdk';
+import { Awaited } from 'shared/dist/helpers/types/awaited';
+
 import { createCognitoPemsURL } from './cognito-pems-url';
 import { createTokenValidator, TokenValidator } from './token-validator';
-import { Awaited } from 'shared/dist/helpers/types/awaited';
+import { fetchPems } from './fetch-pems';
+import { fetchPublicKeys as fetchPublicKeysOriginal } from './fetch-public-keys';
 
 const { COGNITO_PEM_URL_OVERRIDE } = process.env;
 
@@ -20,6 +23,21 @@ type CreateCognitoServiceResult = {
   tokenValidator: TokenValidator;
 };
 
+const getPublicKeysUrl = ({
+  region,
+  userPoolId,
+}: {
+  region: string;
+  userPoolId: string;
+}): string => {
+  return COGNITO_PEM_URL_OVERRIDE
+    ? COGNITO_PEM_URL_OVERRIDE
+    : createCognitoPemsURL({
+        region,
+        userPoolId,
+      });
+};
+
 export const createCognitoProvider = async ({
   region,
   userPoolId,
@@ -28,17 +46,28 @@ export const createCognitoProvider = async ({
 }: CreateCognitoServiceInput): Promise<CreateCognitoServiceResult> => {
   const cognitoIdentity = new CognitoIdentityServiceProvider({
     region,
+    endpoint: `http://127.0.0.1:49000`,
   });
 
-  const pemsUrl = COGNITO_PEM_URL_OVERRIDE
-    ? COGNITO_PEM_URL_OVERRIDE
-    : createCognitoPemsURL({
-        region,
-        userPoolId,
-      });
+  const publicKeysUrl = getPublicKeysUrl({ region, userPoolId });
+
+  const fetchPublicKeys = COGNITO_PEM_URL_OVERRIDE
+    ? () => {
+        const publicKeys = fetchPublicKeysOriginal({ url: publicKeysUrl });
+
+        return publicKeys;
+      }
+    : () => {
+        const publicKeys = fetchPems({
+          url: publicKeysUrl,
+        });
+
+        return publicKeys;
+      };
 
   const tokenValidator = await createTokenValidator({
-    pemsUrl,
+    publicKeysUrl,
+    fetchPublicKeys,
     tokenUse: `access`,
     maxAge: 3600,
   });

@@ -4,7 +4,7 @@ import { createUserStoreFeature } from '../../user-store';
 const DEFAULT_USERNAME = `test@rcanalytics.com`;
 const DEFAULT_PASSWORD = `=Z9-xW%7`;
 
-describe(`signUp`, () => {
+describe.skip(`signUp`, () => {
   const { userStore } = createUserStoreFeature();
   const signUp = createSignUp({ userStore });
 

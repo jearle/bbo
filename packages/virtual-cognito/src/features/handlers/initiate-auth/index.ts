@@ -45,5 +45,7 @@ export const createInitiateAuth = ({
 
   if (validatedUser.isInvalid) return createLoginFailure();
 
-  return createLoginSuccess();
+  const loginSuccess = await createLoginSuccess();
+
+  return loginSuccess;
 };
