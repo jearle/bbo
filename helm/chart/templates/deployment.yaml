@@ -25,7 +25,7 @@ spec:
               memory: 100Mi
           ports:
             - containerPort: 6379
-        - name: cd-product-api
+        - name: app
           image: {{ .Values.image }}
           imagePullPolicy: Always
           ports:
@@ -44,7 +44,7 @@ spec:
               value: "{{ .Values.esPassword }}"
             - name: ELASTICSEARCH_NODE
               value: "{{ .Values.esUrl }}"
-            - name: RCA_WEB_ACCOUNTS_URI
+            - name: MSSQL_URI
               value: "{{ .Values.rcaWebAccountsUri }}"
             - name: LAUNCH_DARKLY_SDK
               value: "{{ .Values.launchDarklySdk }}"
