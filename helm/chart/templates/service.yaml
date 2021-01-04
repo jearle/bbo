@@ -16,3 +16,17 @@ spec:
       targetPort: 8080
   selector:
     k8s-app: cd-product-api
+---
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    k8s-app: cd-product-api
+  name: cd-product-api-redis
+  namespace: cd-{{ .Values.environment }}
+spec:
+  ports:
+    - port: 6379
+      targetPort: 6379
+  selector:
+    k8s-app: cd-product-api

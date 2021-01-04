@@ -17,6 +17,14 @@ spec:
         k8s-app: cd-product-api
     spec:
       containers:
+        - name: redis
+          image: redis
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          ports:
+            - containerPort: 6379
         - name: cd-product-api
           image: {{ .Values.image }}
           imagePullPolicy: Always
@@ -48,6 +56,8 @@ spec:
               value: "{{ .Values.cognitoAppClientId }}"
             - name: COGNITO_APP_CLIENT_SECRET
               value: "{{ .Values.cognitoAppClientSecret }}"
+            - name: REDIS_URI
+              value: "redis://cd-{{ .Values.environment }}.cd-product-api-redis.svc:6379"
       imagePullSecrets:
         - name: dockerhub
       serviceAccountName: cd-product-api
