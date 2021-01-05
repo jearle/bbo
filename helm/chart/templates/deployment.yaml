@@ -2,19 +2,19 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   labels:
-    k8s-app: cd-product-api
-  name: cd-product-api
-  namespace: cd-{{ .Values.environment }}
+    k8s-app: cd-{{ .Values.environment }}-product-api
+  name: cd-{{ .Values.environment }}-product-api
+  namespace: cd
 spec:
   replicas: 1
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      k8s-app: cd-product-api
+      k8s-app: cd-{{ .Values.environment }}-product-api
   template:
     metadata:
       labels:
-        k8s-app: cd-product-api
+        k8s-app: cd-{{ .Values.environment }}-product-api
     spec:
       containers:
         - name: app
@@ -49,7 +49,7 @@ spec:
             - name: COGNITO_APP_CLIENT_SECRET
               value: "{{ .Values.cognitoAppClientSecret }}"
             - name: REDIS_URI
-              value: "redis://cd-product-api-redis.cd-{{ .Values.environment }}:6379"
+              value: "redis://cd-{{ .Values.environment }}-product-api-redis.cd:6379"
         - name: redis
           image: redis
           resources:
@@ -60,6 +60,6 @@ spec:
             - containerPort: 6379
       imagePullSecrets:
         - name: dockerhub
-      serviceAccountName: cd-product-api
+      serviceAccountName: cd-{{ .Values.environment }}-product-api
       nodeSelector:
         kubernetes.io/os: linux

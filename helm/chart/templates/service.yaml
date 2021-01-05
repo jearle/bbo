@@ -2,9 +2,9 @@ kind: Service
 apiVersion: v1
 metadata:
   labels:
-    k8s-app: cd-product-api
-  name: cd-product-api
-  namespace: cd-{{ .Values.environment }}
+    k8s-app: cd-{{ .Values.environment }}-product-api
+  name: cd-{{ .Values.environment }}-product-api
+  namespace: cd
   annotations:
     external-dns.alpha.kubernetes.io/hostname: {{ .Values.apiHostname }}
     service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
@@ -15,18 +15,18 @@ spec:
     - port: 443
       targetPort: 8080
   selector:
-    k8s-app: cd-product-api
+    k8s-app: cd-{{ .Values.environment }}-product-api
 ---
 kind: Service
 apiVersion: v1
 metadata:
   labels:
-    k8s-app: cd-product-api
-  name: cd-product-api-redis
-  namespace: cd-{{ .Values.environment }}
+    k8s-app: cd-{{ .Values.environment }}-product-api
+  name: cd-{{ .Values.environment }}-product-api-redis
+  namespace: cd
 spec:
   ports:
     - port: 6379
       targetPort: 6379
   selector:
-    k8s-app: cd-product-api
+    k8s-app: cd-{{ .Values.environment }}-product-api
