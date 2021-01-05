@@ -15,6 +15,7 @@ type ElasticsearchHealthServiceInputs = {
 
 const DEFAULT_FILTER = { match_all: {} };
 const SERVICE_NAME = 'Elasticsearch';
+const { TRANSACTIONS_INDEX } = process.env;
 
 const elasticsearchHealthService = ({
   elasticsearchProvider,
@@ -23,7 +24,7 @@ const elasticsearchHealthService = ({
     try {
       const client = elasticsearchProvider.createClient();
       await client.search({
-        index: 'test7_multi_pst',
+        index: TRANSACTIONS_INDEX,
         from: 0,
         size: 1,
         body: {
