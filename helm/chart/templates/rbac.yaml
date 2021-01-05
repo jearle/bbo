@@ -2,29 +2,27 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   labels:
-    k8s-app: cd-product-api
-  name: cd-product-api
-  namespace: cd-{{ .Values.environment }}
+    k8s-app: cd-{{ .Values.environment }}-product-api
+  name: cd-{{ .Values.environment }}-product-api
+  namespace: cd
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: cd-product-api
+  name: cd-{{ .Values.environment }}-product-api
 subjects:
   - kind: ServiceAccount
-    name: cd-product-api
-    namespace: cd-{{ .Values.environment }}
-
+    name: cd-{{ .Values.environment }}-product-api
+    namespace: cd
 ---
-
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: cd-product-api
+  name: cd-{{ .Values.environment }}-product-api
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: cd-product-api
+  name: cd-{{ .Values.environment }}-product-api
 subjects:
   - kind: ServiceAccount
-    name: cd-product-api
-    namespace: cd-{{ .Values.environment }}
+    name: cd-{{ .Values.environment }}-product-api
+    namespace: cd
