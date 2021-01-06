@@ -50,6 +50,8 @@ spec:
               value: "{{ .Values.cognitoAppClientSecret }}"
             - name: REDIS_URI
               value: "redis://cd-{{ .Values.environment }}-product-api-redis.cd:6379"
+            - name: TRANSACTIONS_INDEX
+              value: "{{ .Values.environment }}7_multi_pst"
         - name: redis
           image: redis
           resources:
