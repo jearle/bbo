@@ -1,45 +1,116 @@
-import { createCognitoProvider, CognitoProvider } from '.';
+import { createCognitoProvider } from '.';
+import { hashSecret } from './helpers/hash-secret';
+import {
+  CREDENTIALS,
+  COGNITO_CONFIG,
+  LOCALHOST_COGNITO_CONFIG,
+} from './helpers/test/data';
 
+const { username, password } = CREDENTIALS;
 const {
-  COGNITO_REGION,
-  COGNITO_USER_POOL_ID,
-  COGNITO_APP_CLIENT_ID,
-  COGNITO_APP_CLIENT_SECRET,
-} = process.env;
+  region: cognitoRegion,
+  userPoolId: cognitoUserPoolId,
+  appClientId,
+  appClientSecret,
+} = COGNITO_CONFIG;
+const { region: localhostRegion } = LOCALHOST_COGNITO_CONFIG;
 
-describe(`cognitoService`, () => {
-  let cognitoService: CognitoProvider;
-
-  beforeAll(async () => {
-    cognitoService = await createCognitoProvider({
-      region: COGNITO_REGION,
-      userPoolId: COGNITO_USER_POOL_ID,
-      appClientId: COGNITO_APP_CLIENT_ID,
-      appClientSecret: COGNITO_APP_CLIENT_SECRET,
+describe(`cognitoProvider`, () => {
+  const createTestCognitoProvider = async ({
+    region,
+    userPoolId = cognitoUserPoolId,
+  }) => {
+    const cognitoProvider = createCognitoProvider({
+      region,
+      userPoolId,
+      appClientId,
+      appClientSecret,
     });
+
+    return cognitoProvider;
+  };
+
+  const initiateAuth = async (cognitoProvider) => {
+    const { cognitoIdentity } = cognitoProvider;
+
+    const {
+      AuthenticationResult: { AccessToken: accessToken },
+    } = await cognitoIdentity
+      .initiateAuth({
+        AuthFlow: 'USER_PASSWORD_AUTH' /* required */,
+        ClientId: appClientId /* required */,
+        AuthParameters: {
+          USERNAME: username,
+          PASSWORD: password,
+          SECRET_HASH: hashSecret({ username, appClientId, appClientSecret }),
+        },
+      })
+      .promise();
+
+    return { accessToken };
+  };
+
+  const testCognitoProvider = async (cognitoProvider) => {
+    const { accessToken } = await initiateAuth(cognitoProvider);
+
+    expect(accessToken.length).toBeGreaterThan(0);
+  };
+
+  const testTokenValidator = async ({ region }) => {
+    const cognitoProvider = await createTestCognitoProvider({
+      region,
+    });
+    const { accessToken } = await initiateAuth(cognitoProvider);
+
+    const { tokenValidator } = cognitoProvider;
+
+    const { token_use: tokenUse } = await tokenValidator.validate({
+      token: accessToken,
+    });
+
+    expect(tokenUse).toBe(`access`);
+  };
+
+  test(`cognito`, async () => {
+    const cognitoProvider = await createTestCognitoProvider({
+      region: cognitoRegion,
+    });
+    await testCognitoProvider(cognitoProvider);
   });
 
-  test(`cognitoService`, () => {
-    expect(cognitoService).toBeTruthy();
+  test(`virtual cognito`, async () => {
+    const cognitoProvider = await createTestCognitoProvider({
+      region: localhostRegion,
+    });
+    await testCognitoProvider(cognitoProvider);
   });
 
-  test(`cognitoProvider COGNITO_PEM_URL_OVERRIDE coverage`, async () => {
-    jest.resetModules();
-    process.env.COGNITO_PEM_URL_OVERRIDE = `http://localhost:59149`;
+  test(`validate cognito region`, async () => {
+    await testTokenValidator({ region: cognitoRegion });
+  });
+
+  test(`validate local region`, async () => {
+    await testTokenValidator({ region: localhostRegion });
+  });
+
+  test(`validate no region`, async () => {
     try {
-      //eslint-disable-next-line @typescript-eslint/no-var-requires
-      await require(`.`).createCognitoProvider({
-        region: COGNITO_REGION,
-        userPoolId: COGNITO_USER_POOL_ID,
-        appClientId: COGNITO_APP_CLIENT_ID,
-        appClientSecret: COGNITO_APP_CLIENT_SECRET,
+      await createTestCognitoProvider({
+        region: null,
       });
-    } catch (e) {
-      //eslint-disable-line no-empty
+    } catch ({ message }) {
+      expect(message).toMatch(/region/);
     }
+  });
 
-    delete process.env.COGNITO_PEM_URL_OVERRIDE;
-
-    jest.resetModules();
+  test(`validate no region`, async () => {
+    try {
+      await createTestCognitoProvider({
+        region: cognitoRegion,
+        userPoolId: null,
+      });
+    } catch ({ message }) {
+      expect(message).toMatch(/userPoolId/);
+    }
   });
 });

@@ -1,12 +1,8 @@
 import { CognitoIdentityServiceProvider } from 'aws-sdk';
-import { Awaited } from 'shared/dist/helpers/types/awaited';
 
-import { createCognitoPemsURL } from './cognito-pems-url';
 import { createTokenValidator, TokenValidator } from './token-validator';
-import { fetchPems } from './fetch-pems';
-import { fetchPublicKeys as fetchPublicKeysOriginal } from './fetch-public-keys';
 
-const { COGNITO_PEM_URL_OVERRIDE } = process.env;
+import { createPublicKeys } from './public-keys';
 
 type CreateCognitoServiceInput = {
   userPoolId: string;
@@ -23,53 +19,24 @@ type CreateCognitoServiceResult = {
   tokenValidator: TokenValidator;
 };
 
-const getPublicKeysUrl = ({
-  region,
-  userPoolId,
-}: {
-  region: string;
-  userPoolId: string;
-}): string => {
-  return COGNITO_PEM_URL_OVERRIDE
-    ? COGNITO_PEM_URL_OVERRIDE
-    : createCognitoPemsURL({
-        region,
-        userPoolId,
-      });
-};
-
-export const createCognitoProvider = async ({
+export const createCognitoProvider = ({
   region,
   userPoolId,
   appClientId,
   appClientSecret,
-}: CreateCognitoServiceInput): Promise<CreateCognitoServiceResult> => {
+}: CreateCognitoServiceInput): CreateCognitoServiceResult => {
+  const endpoint =
+    region === `localhost` ? { endpoint: process.env.VIRTUAL_COGNITO_URL } : {};
+
   const cognitoIdentity = new CognitoIdentityServiceProvider({
     region,
-    endpoint: `http://127.0.0.1:49000`,
+    ...endpoint,
   });
 
-  const publicKeysUrl = getPublicKeysUrl({ region, userPoolId });
+  const publicKeys = createPublicKeys({ region, userPoolId });
 
-  const fetchPublicKeys = COGNITO_PEM_URL_OVERRIDE
-    ? () => {
-        const publicKeys = fetchPublicKeysOriginal({ url: publicKeysUrl });
-
-        return publicKeys;
-      }
-    : () => {
-        const publicKeys = fetchPems({
-          url: publicKeysUrl,
-        });
-
-        return publicKeys;
-      };
-
-  const tokenValidator = await createTokenValidator({
-    publicKeysUrl,
-    fetchPublicKeys,
-    tokenUse: `access`,
-    maxAge: 3600,
+  const tokenValidator = createTokenValidator({
+    publicKeys,
   });
 
   return {
@@ -80,4 +47,4 @@ export const createCognitoProvider = async ({
   };
 };
 
-export type CognitoProvider = Awaited<typeof createCognitoProvider>;
+export type CognitoProvider = ReturnType<typeof createCognitoProvider>;

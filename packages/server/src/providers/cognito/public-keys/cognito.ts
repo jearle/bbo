@@ -9,7 +9,7 @@ type FetchPemsResult = {
   [key: string]: string;
 };
 
-export const fetchPems = async ({
+export const fetchCognitoPublicKeys = async ({
   url,
 }: FetchPemsInput): Promise<FetchPemsResult> => {
   const response = await fetch(url);

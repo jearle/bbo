@@ -8,7 +8,7 @@ type FetchPublicKeyResult = {
   [key: string]: string;
 };
 
-export const fetchPublicKeys = async ({
+export const fetchVirtualCognitoPublicKeys = async ({
   url,
 }: FetchPublicKeyInput): Promise<FetchPublicKeyResult> => {
   const response = await fetch(url);
