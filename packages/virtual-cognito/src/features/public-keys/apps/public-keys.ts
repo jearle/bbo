@@ -2,10 +2,10 @@ import * as express from 'express';
 import { Application } from 'express';
 import { readFile } from 'fs/promises';
 
-export const createPemsApp = (): Application => {
+export const createPublicKeysApp = (): Application => {
   const app = express();
 
-  app.get(`/jwks.json`, async (req, res) => {
+  app.get(`/:userPoolId`, async (req, res) => {
     const keysDir = `${__dirname}/../../../../keys`;
 
     const publicKey = await readFile(`${keysDir}/public.key`, `utf8`);

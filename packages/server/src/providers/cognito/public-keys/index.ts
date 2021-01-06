@@ -1,6 +1,4 @@
-import { createCognitoPemsURL } from './cognito-pems-url';
-import { fetchCognitoPublicKeys } from './cognito';
-import { fetchVirtualCognitoPublicKeys } from './virtual-cognito';
+import { PublicKeyOptions } from '../public-keys-options';
 
 type Header = {
   readonly kid: string;
@@ -16,13 +14,12 @@ type FetchInput = {
   readonly payload: Payload;
 };
 
-type CreatePublicKeysInput = {
-  readonly region: string;
-  readonly userPoolId: string;
-};
-
 const checkIssuer = (url: string, issuer: string) => {
-  if (!url.includes(issuer))
+  if (
+    !url
+      .replace(`127.0.0.1`, `localhost`)
+      .includes(issuer.replace(`127.0.0.1`, `localhost`))
+  )
     throw new TypeError(`URL does not match JWT issuer`);
 };
 
@@ -60,22 +57,8 @@ const publicKeys = ({ url, fetchPublicKeys }) => ({
 
 export type PublicKeys = ReturnType<typeof publicKeys>;
 
-export const createPublicKeys = ({
-  region,
-  userPoolId,
-}: CreatePublicKeysInput): PublicKeys => {
-  const virtualCognitoOptions = {
-    url: process.env.VIRTUAL_COGNITO_PUBLIC_KEYS_URL,
-    fetchPublicKeys: fetchVirtualCognitoPublicKeys,
-  };
-
-  const options =
-    region === `localhost`
-      ? virtualCognitoOptions
-      : {
-          url: createCognitoPemsURL({ region, userPoolId }),
-          fetchPublicKeys: fetchCognitoPublicKeys,
-        };
-
-  return publicKeys(options);
+export const createPublicKeys = (
+  publicKeyOptions: PublicKeyOptions
+): PublicKeys => {
+  return publicKeys(publicKeyOptions);
 };

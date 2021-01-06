@@ -1,17 +1,11 @@
 import fetch from 'node-fetch';
 import * as jwkToPem from 'jwk-to-pem';
 
-type FetchPemsInput = {
-  url: string;
-};
-
-type FetchPemsResult = {
-  [key: string]: string;
-};
+import { FetchPublicKeyInput, FetchPublicKeyResult } from '.';
 
 export const fetchCognitoPublicKeys = async ({
   url,
-}: FetchPemsInput): Promise<FetchPemsResult> => {
+}: FetchPublicKeyInput): Promise<FetchPublicKeyResult> => {
   const response = await fetch(url);
   const json = await response.json();
 

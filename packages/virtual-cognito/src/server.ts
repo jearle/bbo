@@ -5,7 +5,7 @@ import { AddressInfo } from 'net';
 import { createUserStoreFeature } from './features/user-store';
 import { createTargetFeature } from './features/target';
 import { createHandlersFeature } from './features/handlers';
-import { createPemsFeature } from './features/pems';
+import { createPublicKeysFeature } from './features/public-keys';
 
 type StartServerInputs = {
   readonly host: string;
@@ -22,12 +22,12 @@ export const startServer = async ({
   const { targetFeatureMiddleware } = createTargetFeature({
     handlers,
   });
-  const { pemsApp } = createPemsFeature();
+  const { publicKeysApp } = createPublicKeysFeature();
 
   // end features
   const mounts = express();
 
-  mounts.use(`/pems`, pemsApp());
+  mounts.use(`/public-keys`, publicKeysApp());
 
   mounts.use((req, res, next) => {
     req.headers[`content-type`] = `application/json`;

@@ -10,7 +10,7 @@ const { username, password } = CREDENTIALS;
 const {
   region: cognitoRegion,
   userPoolId: cognitoUserPoolId,
-  appClientId,
+  appClientId: cognitoAppClientId,
   appClientSecret,
 } = COGNITO_CONFIG;
 const { region: localhostRegion } = LOCALHOST_COGNITO_CONFIG;
@@ -19,6 +19,7 @@ describe(`cognitoProvider`, () => {
   const createTestCognitoProvider = async ({
     region,
     userPoolId = cognitoUserPoolId,
+    appClientId = cognitoAppClientId,
   }) => {
     const cognitoProvider = createCognitoProvider({
       region,
@@ -31,7 +32,7 @@ describe(`cognitoProvider`, () => {
   };
 
   const initiateAuth = async (cognitoProvider) => {
-    const { cognitoIdentity } = cognitoProvider;
+    const { cognitoIdentity, appClientId } = cognitoProvider;
 
     const {
       AuthenticationResult: { AccessToken: accessToken },
@@ -42,7 +43,11 @@ describe(`cognitoProvider`, () => {
         AuthParameters: {
           USERNAME: username,
           PASSWORD: password,
-          SECRET_HASH: hashSecret({ username, appClientId, appClientSecret }),
+          SECRET_HASH: hashSecret({
+            username,
+            appClientId,
+            appClientSecret,
+          }),
         },
       })
       .promise();
@@ -103,7 +108,7 @@ describe(`cognitoProvider`, () => {
     }
   });
 
-  test(`validate no region`, async () => {
+  test(`validate no userPoolId`, async () => {
     try {
       await createTestCognitoProvider({
         region: cognitoRegion,
@@ -111,6 +116,82 @@ describe(`cognitoProvider`, () => {
       });
     } catch ({ message }) {
       expect(message).toMatch(/userPoolId/);
+    }
+  });
+
+  test(`bad issuer`, async () => {
+    const cognitoProvider = await createTestCognitoProvider({
+      region: localhostRegion,
+      appClientId: `bad-issuer`,
+    });
+
+    const { accessToken } = await initiateAuth(cognitoProvider);
+
+    const { tokenValidator } = cognitoProvider;
+
+    try {
+      await tokenValidator.validate({
+        token: accessToken,
+      });
+    } catch ({ message }) {
+      expect(message).toMatch(/issuer/);
+    }
+  });
+
+  test(`bad token use`, async () => {
+    const cognitoProvider = await createTestCognitoProvider({
+      region: localhostRegion,
+      appClientId: `bad-token-use`,
+    });
+
+    const { accessToken } = await initiateAuth(cognitoProvider);
+
+    const { tokenValidator } = cognitoProvider;
+
+    try {
+      await tokenValidator.validate({
+        token: accessToken,
+      });
+    } catch ({ message }) {
+      expect(message).toMatch(/access/);
+    }
+  });
+
+  test(`bad token`, async () => {
+    const cognitoProvider = await createTestCognitoProvider({
+      region: localhostRegion,
+      appClientId: `bad-token`,
+    });
+
+    const { accessToken } = await initiateAuth(cognitoProvider);
+
+    const { tokenValidator } = cognitoProvider;
+
+    try {
+      await tokenValidator.validate({
+        token: accessToken,
+      });
+    } catch ({ message }) {
+      expect(message).toMatch(/invalid signature/);
+    }
+  });
+
+  test(`bad kid`, async () => {
+    const cognitoProvider = await createTestCognitoProvider({
+      region: localhostRegion,
+      appClientId: `bad-kid`,
+    });
+
+    const { accessToken } = await initiateAuth(cognitoProvider);
+
+    const { tokenValidator } = cognitoProvider;
+
+    try {
+      await tokenValidator.validate({
+        token: accessToken,
+      });
+    } catch ({ message }) {
+      expect(message).toMatch(/kid/);
     }
   });
 });

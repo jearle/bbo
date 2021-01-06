@@ -1,22 +1,22 @@
 import { CognitoIdentityServiceProvider } from 'aws-sdk';
 
 import { createTokenValidator, TokenValidator } from './token-validator';
-
 import { createPublicKeys } from './public-keys';
+import { createPublicKeysOptions } from './public-keys-options';
 
 type CreateCognitoServiceInput = {
-  userPoolId: string;
-  appClientId: string;
-  appClientSecret: string;
-  region: string;
+  readonly userPoolId: string;
+  readonly appClientId: string;
+  readonly appClientSecret: string;
+  readonly region: string;
 };
 export type CognitoOptions = CreateCognitoServiceInput;
 
 type CreateCognitoServiceResult = {
-  appClientId: string;
-  appClientSecret: string;
-  cognitoIdentity: CognitoIdentityServiceProvider;
-  tokenValidator: TokenValidator;
+  readonly appClientId: string;
+  readonly appClientSecret: string;
+  readonly cognitoIdentity: CognitoIdentityServiceProvider;
+  readonly tokenValidator: TokenValidator;
 };
 
 export const createCognitoProvider = ({
@@ -33,7 +33,8 @@ export const createCognitoProvider = ({
     ...endpoint,
   });
 
-  const publicKeys = createPublicKeys({ region, userPoolId });
+  const publicKeysOptions = createPublicKeysOptions({ region, userPoolId });
+  const publicKeys = createPublicKeys(publicKeysOptions);
 
   const tokenValidator = createTokenValidator({
     publicKeys,

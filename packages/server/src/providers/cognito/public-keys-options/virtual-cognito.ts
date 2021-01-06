@@ -1,12 +1,6 @@
 import fetch from 'node-fetch';
 
-type FetchPublicKeyInput = {
-  url: string;
-};
-
-type FetchPublicKeyResult = {
-  [key: string]: string;
-};
+import { FetchPublicKeyInput, FetchPublicKeyResult } from '.';
 
 export const fetchVirtualCognitoPublicKeys = async ({
   url,

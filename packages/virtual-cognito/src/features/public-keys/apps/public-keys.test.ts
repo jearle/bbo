@@ -1,11 +1,11 @@
 import { fetchJSONOnRandomPort } from 'shared/dist/helpers/express/listen-fetch';
-import { createPemsApp } from './pems';
+import { createPublicKeysApp } from './public-keys';
 
-describe(`createPemsApp`, () => {
+describe(`createPublicKeysApp`, () => {
   test(`should return a public key`, async () => {
-    const app = createPemsApp();
+    const app = createPublicKeysApp();
 
-    const json = await fetchJSONOnRandomPort(app, { path: `/jwks.json` });
+    const json = await fetchJSONOnRandomPort(app, { path: `/user-pool-id` });
 
     const keys = Object.keys(json);
 

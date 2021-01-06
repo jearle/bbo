@@ -12,12 +12,14 @@ type BodyAuthParameters = {
 };
 
 type CredentialsFromBodyInput = {
+  readonly ClientId: string;
   readonly AuthParameters: BodyAuthParameters;
 };
 
 type CredentialsFromBodyResult = {
   readonly username: string;
   readonly password: string;
+  readonly clientId: string;
 };
 
 type CreateInitiateAuthInput = {
@@ -28,10 +30,11 @@ const credentialsFromBody = (
   body: CredentialsFromBodyInput
 ): CredentialsFromBodyResult => {
   const {
+    ClientId: clientId,
     AuthParameters: { USERNAME: username, PASSWORD: password },
   } = body;
 
-  return { username, password };
+  return { username, password, clientId };
 };
 
 export const createInitiateAuth = ({
@@ -39,13 +42,18 @@ export const createInitiateAuth = ({
 }: CreateInitiateAuthInput) => async ({
   body,
 }: Request): Promise<LoginResponse> => {
-  const { username, password } = credentialsFromBody(body);
+  const { username, password, clientId } = credentialsFromBody(body);
 
   const validatedUser = userStore.getValidatedUser({ username, password });
 
   if (validatedUser.isInvalid) return createLoginFailure();
 
-  const loginSuccess = await createLoginSuccess();
+  const loginSuccess = await createLoginSuccess({
+    badIssuer: clientId === `bad-issuer`,
+    badTokenUse: clientId === `bad-token-use`,
+    badToken: clientId === `bad-token`,
+    badKid: clientId === `bad-kid`,
+  });
 
   return loginSuccess;
 };
