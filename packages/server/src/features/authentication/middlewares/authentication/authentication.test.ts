@@ -7,95 +7,86 @@ import {
 
 import { authenticationMiddleware as createAuthenticationMiddleware } from '.';
 
+import { createAuthenticationService } from '../../services/authentication';
+import { createCognitoProvider } from '../../../../providers/cognito';
 import {
-  createAuthenticationService,
-  AuthenticationService,
-} from '../../services/authentication';
-import {
-  createCognitoProvider,
-  CognitoProvider,
-} from '../../../../providers/cognito';
+  CREDENTIALS,
+  LOCALHOST_COGNITO_CONFIG,
+} from '../../../../providers/cognito/helpers/test/data';
 
-const {
-  COGNITO_REGION,
-  COGNITO_USER_POOL_ID,
-  COGNITO_APP_CLIENT_ID,
-  COGNITO_APP_CLIENT_SECRET,
-} = process.env;
-
-const EXPIRED_TOKEN = `eyJraWQiOiJaeWxiRk1FNml2dmxUa2JmcUJtV0paeTYxN1IxTm82bG1vQXREa24reVdFPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJhMjc5MTg2YS0wZGQ4LTQ3NjUtYmU5Ny0zYzJlMWZjMTE1YWEiLCJkZXZpY2Vfa2V5IjoidXMtZWFzdC0xXzM3Mjk5ZjI2LTAzOGQtNGJiNC1iMzBkLWE5ZTAzOTMwMjcxMSIsImV2ZW50X2lkIjoiNmUwZjNlNDAtMjcxMy00NGI1LTk4ZjItZWZhMTU5OTk5ZGY5IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTYwNTE5NDgwNCwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tXC91cy1lYXN0LTFfUnBNTmZobEZnIiwiZXhwIjoxNjA1MTk4NDA0LCJpYXQiOjE2MDUxOTQ4MDUsImp0aSI6IjlkN2I3OGE0LTRhMmYtNDliMS1iY2U1LWFkYzA4OWQ0YjU5YSIsImNsaWVudF9pZCI6Im11bXRjYjVhbnJubGVtaW9ucHFlanFmNGgiLCJ1c2VybmFtZSI6ImplYXJsZUByY2FuYWx5dGljcy5jb20ifQ.BBpDtsJAnUdxBtzxw7IfmAFXZQeY3VQmhUo434mLMb-cGvPOYTJMDyjmi_Fd3oz0PSvfQzQp1X4CxD75dCvxLEBHlX4uMop9W2KOrQxjB0mbZLaaIzt8gDvsTvVD5_VTCnNMtz_B8FHxhWLxGAxiSpX8GsyarpczN8aQnT2jkxYkgr1tXfSZfVGyoxe4bXZ44KMeYndi8tJ44bUcTzeUC_UDmRR5zleFIvlYtjOwmY4JOADN27zlG45IoIDH-3mJktXFr61HG3gGdMLBu-rSsxz8jjT7wGzqX_wVYehD82uIANCsu6lZw9yTtH_YBRopG1aWHtmg6IG8XDqSMp1ARw`;
-
-describe.skip(`authenticationMiddleware`, () => {
-  let authenticationService: AuthenticationService;
-  let cognitoService: CognitoProvider;
-  let authenticationMiddleware;
-  let app;
-
-  beforeAll(async () => {
-    cognitoService = await createCognitoProvider({
-      region: COGNITO_REGION,
-      userPoolId: COGNITO_USER_POOL_ID,
-      appClientId: COGNITO_APP_CLIENT_ID,
-      appClientSecret: COGNITO_APP_CLIENT_SECRET,
-    });
-
-    authenticationService = await createAuthenticationService({
-      cognitoService,
-    });
-
-    authenticationMiddleware = createAuthenticationMiddleware({
-      authenticationService,
-    });
+const createTestAuthentication = async ({
+  appClientId = LOCALHOST_COGNITO_CONFIG.appClientId,
+} = {}) => {
+  const cognitoProvider = await createCognitoProvider({
+    ...LOCALHOST_COGNITO_CONFIG,
+    appClientId,
+  });
+  const authenticationService = await createAuthenticationService({
+    cognitoService: cognitoProvider,
+  });
+  const authenticationMiddleware = await createAuthenticationMiddleware({
+    authenticationService,
   });
 
-  beforeEach(() => {
-    app = express();
+  return {
+    cognitoProvider,
+    authenticationService,
+    authenticationMiddleware,
+  };
+};
+
+const getAuthenticatedUserAccessToken = async ({
+  appClientId = undefined,
+} = {}) => {
+  const { authenticationService } = await createTestAuthentication({
+    appClientId,
+  });
+  const { accessToken } = await authenticationService.authenticateUser({
+    username: CREDENTIALS.username,
+    password: CREDENTIALS.password,
+  });
+  return accessToken;
+};
+
+const createApp = async ({ accessToken }) => {
+  const { authenticationMiddleware } = await createTestAuthentication();
+
+  const app = express();
+  app.use(async (req, res, next) => {
+    req.headers[`accesstoken`] = accessToken;
+    next();
+  });
+  app.use(authenticationMiddleware);
+  app.get(`/`, (req, res) => {
+    res.send(`pass`);
   });
 
-  test(`valid token`, async () => {
-    app.use(async (req, res, next) => {
-      const { accessToken } = await authenticationService.authenticateUser({
-        username: `user-for-tests`,
-        password: `=Z9-xW%7`,
-      });
-      req.headers[`accesstoken`] = accessToken;
-      next();
-    });
-    app.use(authenticationMiddleware);
-    app.get(`/`, (req, res) => {
-      res.send(`pass`);
-    });
+  return app;
+};
 
+describe(`authenticationMiddleware`, () => {
+  test(`authenticationMiddleware`, async () => {
+    const accessToken = await getAuthenticatedUserAccessToken();
+    const app = await createApp({ accessToken });
     const text = await fetchTextOnRandomPort(app);
 
     expect(text).toBe(`pass`);
   });
 
-  test(`no token`, async () => {
-    app.use(authenticationMiddleware);
-    app.get(`/`, (req, res) => {
-      res.send(`pass`);
-    });
+  test(`authenticationMiddleware no token`, async () => {
+    const app = await createApp({ accessToken: undefined });
+    const { status } = await fetchJSONOnRandomPort(app);
 
-    const { detail } = await fetchJSONOnRandomPort(app);
-
-    expect(detail).toMatch(/missing/i);
+    expect(status).toBe(401);
   });
 
-  test(`invalid token from auth service`, async () => {
-    app.use(async (req, res, next) => {
-      req.headers[`accesstoken`] = EXPIRED_TOKEN;
-      next();
+  test(`authenticationMiddleware expired`, async () => {
+    const accessToken = await getAuthenticatedUserAccessToken({
+      appClientId: `expired`,
     });
-    app.use(authenticationMiddleware);
-    app.get(`/`, (req, res) => {
-      res.send(`pass`);
-    });
+    const app = await createApp({ accessToken });
+    const { status } = await fetchJSONOnRandomPort(app);
 
-    const {
-      error: { message },
-    } = await fetchJSONOnRandomPort(app);
-
-    expect(message).toMatch(/expired/i);
+    expect(status).toBe(401);
   });
 });
