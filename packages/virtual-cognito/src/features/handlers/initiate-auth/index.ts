@@ -49,6 +49,7 @@ export const createInitiateAuth = ({
   if (validatedUser.isInvalid) return createLoginFailure();
 
   const loginSuccess = await createLoginSuccess({
+    expired: clientId === `expired`,
     badIssuer: clientId === `bad-issuer`,
     badTokenUse: clientId === `bad-token-use`,
     badToken: clientId === `bad-token`,

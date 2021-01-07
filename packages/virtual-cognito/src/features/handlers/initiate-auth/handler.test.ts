@@ -93,6 +93,22 @@ describe(`initiateAuth`, () => {
     );
   });
 
+  test(`initiateAuth success expired`, async () => {
+    const badRequest = createRequest({ clientId: `expired` });
+
+    const {
+      body: {
+        AuthenticationResult: { AccessToken: accessToken },
+      },
+    } = await initiateAuth(badRequest);
+
+    const { exp: expiration } = JSON.parse(
+      Buffer.from(accessToken.split(`.`)[1], 'base64').toString()
+    );
+    const oneHourAgo = Math.floor(Date.now() / 1000 - 3600);
+    expect(expiration).toBeLessThan(oneHourAgo);
+  });
+
   test(`initiateAuth failure`, async () => {
     const request = createRequest({ username: `foo` });
 

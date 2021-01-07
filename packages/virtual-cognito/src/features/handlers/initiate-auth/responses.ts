@@ -1,4 +1,4 @@
-import { sign, verify } from 'jsonwebtoken';
+import { sign } from 'jsonwebtoken';
 import { readFile } from 'fs/promises';
 
 type Data = {
@@ -26,10 +26,11 @@ export type LoginResponse = {
   readonly body: any; // eslint-disable-line
 };
 
-const createBodyJSON = ({ issuer: iss, tokenUse: token_use }) => {
-  const nowSeconds = Math.floor(new Date().getTime() / 1000);
-  const hourLaterSeconds = nowSeconds + 3600;
-
+const createBodyJSON = ({
+  times: { authorizationTime, expiration },
+  issuer: iss,
+  tokenUse: token_use,
+}) => {
   return {
     iss,
     token_use,
@@ -40,9 +41,20 @@ const createBodyJSON = ({ issuer: iss, tokenUse: token_use }) => {
     scope: 'aws.cognito.signin.user.admin',
     sub: '84756f8f-dcac-4267-b1c3-398765d84061',
     username: 'jearle@rcanalytics.com',
-    auth_time: nowSeconds,
-    iat: nowSeconds,
-    exp: hourLaterSeconds,
+    auth_time: authorizationTime,
+    iat: authorizationTime,
+    exp: expiration,
+  };
+};
+
+const getTimes = ({ expired }) => {
+  const authorizationTime = Math.floor(new Date().getTime() / 1000);
+  const anHourAgo = authorizationTime - 3601;
+  const anHourLater = authorizationTime + 3600;
+
+  return {
+    authorizationTime,
+    expiration: expired ? anHourAgo : anHourLater,
   };
 };
 
@@ -64,8 +76,14 @@ const getKid = ({ badKid }) => {
   return `ZylbFME6ivvlTkbfqBmWJZy617R1No6lmoAtDkn+yWE=`;
 };
 
-const createAccessToken = async ({ badIssuer, badTokenUse, badKid }) => {
+const createAccessToken = async ({
+  expired,
+  badIssuer,
+  badTokenUse,
+  badKid,
+}) => {
   const bodyJSON = createBodyJSON({
+    times: getTimes({ expired }),
     issuer: getIssuer({ badIssuer }),
     tokenUse: getTokenUse({ badTokenUse }),
   });
@@ -73,7 +91,6 @@ const createAccessToken = async ({ badIssuer, badTokenUse, badKid }) => {
   const keysDir = `${__dirname}/../../../../keys`;
 
   const privateKey = await readFile(`${keysDir}/private.key`, `utf8`);
-  const publicKey = await readFile(`${keysDir}/public.key`, `utf8`);
 
   const accessToken = sign(bodyJSON, privateKey, {
     header: {
@@ -83,16 +100,18 @@ const createAccessToken = async ({ badIssuer, badTokenUse, badKid }) => {
     algorithm: `RS256`,
   });
 
-  await verify(accessToken, publicKey, {
-    iss: bodyJSON.iss,
-    maxAge: 3600,
-  });
-
   return accessToken;
 };
 
-const createBody = async ({ badIssuer, badTokenUse, badToken, badKid }) => {
+const createBody = async ({
+  expired,
+  badIssuer,
+  badTokenUse,
+  badToken,
+  badKid,
+}) => {
   const accessToken = await createAccessToken({
+    expired,
     badIssuer,
     badTokenUse,
     badKid,
@@ -117,6 +136,7 @@ const createBody = async ({ badIssuer, badTokenUse, badToken, badKid }) => {
 };
 
 type CreateLoginSuccessInput = {
+  readonly expired: boolean;
   readonly badIssuer: boolean;
   readonly badTokenUse: boolean;
   readonly badToken: boolean;
@@ -124,6 +144,7 @@ type CreateLoginSuccessInput = {
 };
 
 export const createLoginSuccess = async ({
+  expired,
   badIssuer,
   badTokenUse,
   badToken,
@@ -131,7 +152,13 @@ export const createLoginSuccess = async ({
 }: CreateLoginSuccessInput): Promise<LoginResponse> => {
   return {
     statusCode: 200,
-    body: await createBody({ badIssuer, badTokenUse, badToken, badKid }),
+    body: await createBody({
+      expired,
+      badIssuer,
+      badTokenUse,
+      badToken,
+      badKid,
+    }),
   };
 };
 
