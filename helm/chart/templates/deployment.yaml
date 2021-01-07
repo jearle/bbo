@@ -2,22 +2,22 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   labels:
-    k8s-app: cd-product-api
-  name: cd-product-api
-  namespace: cd-{{ .Values.environment }}
+    k8s-app: cd-{{ .Values.environment }}-product-api
+  name: cd-{{ .Values.environment }}-product-api
+  namespace: cd
 spec:
   replicas: 1
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      k8s-app: cd-product-api
+      k8s-app: cd-{{ .Values.environment }}-product-api
   template:
     metadata:
       labels:
-        k8s-app: cd-product-api
+        k8s-app: cd-{{ .Values.environment }}-product-api
     spec:
       containers:
-        - name: cd-product-api
+        - name: app
           image: {{ .Values.image }}
           imagePullPolicy: Always
           ports:
@@ -36,7 +36,7 @@ spec:
               value: "{{ .Values.esPassword }}"
             - name: ELASTICSEARCH_NODE
               value: "{{ .Values.esUrl }}"
-            - name: RCA_WEB_ACCOUNTS_URI
+            - name: MSSQL_URI
               value: "{{ .Values.rcaWebAccountsUri }}"
             - name: LAUNCH_DARKLY_SDK
               value: "{{ .Values.launchDarklySdk }}"
@@ -48,8 +48,20 @@ spec:
               value: "{{ .Values.cognitoAppClientId }}"
             - name: COGNITO_APP_CLIENT_SECRET
               value: "{{ .Values.cognitoAppClientSecret }}"
+            - name: REDIS_URI
+              value: "redis://cd-{{ .Values.environment }}-product-api-redis.cd:6379"
+            - name: TRANSACTIONS_INDEX
+              value: "{{ .Values.environment }}7_multi_pst"
+        - name: redis
+          image: redis
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          ports:
+            - containerPort: 6379
       imagePullSecrets:
         - name: dockerhub
-      serviceAccountName: cd-product-api
+      serviceAccountName: cd-{{ .Values.environment }}-product-api
       nodeSelector:
         kubernetes.io/os: linux

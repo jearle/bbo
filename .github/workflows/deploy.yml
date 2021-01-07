@@ -55,7 +55,7 @@ jobs:
           command: install
           release: cd-product-api-${{ github.event.deployment.environment }}
           cluster: eks-default
-          namespace: cd-${{ github.event.deployment.environment }}
+          namespace: cd
           chart: helm/chart
           values: helm/helm-values.yaml
 

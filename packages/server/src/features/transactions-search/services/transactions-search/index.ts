@@ -19,6 +19,7 @@ type TransactionSearchInputs = {
 };
 
 const DEFAULT_FILTER = { match_all: {} };
+const { TRANSACTIONS_INDEX } = process.env;
 
 const transactionsSearchService = ({
   elasticsearchClient,
@@ -29,7 +30,7 @@ const transactionsSearchService = ({
     filter = DEFAULT_FILTER,
   }: TransactionSearchInputs = {}) {
     const result = await elasticsearchClient.search({
-      index: 'test7_multi_pst',
+      index: TRANSACTIONS_INDEX,
       from: page * limit,
       size: limit,
       body: {
