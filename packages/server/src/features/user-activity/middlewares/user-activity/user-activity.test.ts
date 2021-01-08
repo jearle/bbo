@@ -12,7 +12,6 @@ import {
   SegmentProvider,
 } from '../../providers/segment';
 import { portListen } from 'shared/dist/helpers/express/port-listen';
-import { createAuthenticationFeature } from '../../../authentication';
 import {
   CognitoProvider,
   createCognitoProvider,
@@ -113,7 +112,7 @@ describe(`SegmentProvider`, () => {
       userId: expect.any(String),
     });
   });
-  
+
   test(`Middleware calls the track method for all other endpoints`, async () => {
     const elasticsearchProvider = createElasticsearchProvider({
       node: ELASTICSEARCH_NODE,

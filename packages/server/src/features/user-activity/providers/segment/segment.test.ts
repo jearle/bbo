@@ -2,7 +2,7 @@ import { createSegmentProvider, SegmentProvider } from './index';
 
 const { SEGMENT_ACCESS_KEY } = process.env;
 
-describe(`SegmentProvider`, async () => {
+describe(`SegmentProvider`, () => {
   let segmentProvider: SegmentProvider;
 
   beforeAll(() => {

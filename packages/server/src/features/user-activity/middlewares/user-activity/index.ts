@@ -19,7 +19,7 @@ export const userActivityMiddleWare = ({
       intercept: function (body, send) {
         send(body);
       },
-      afterSend: function (oldBody, newBody) {
+      afterSend: function (oldBody) {
         if (['/login', '/register'].includes(req.url)) {
           const decoded = decode(JSON.parse(oldBody).accessToken);
           const identifyInfo = {
