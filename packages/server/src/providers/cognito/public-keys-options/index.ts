@@ -11,6 +11,10 @@ export type FetchPublicKeyResult = {
   [key: string]: string;
 };
 
+type FetchPublicKeys = (
+  fetchPublicKeyInput: FetchPublicKeyInput
+) => Promise<FetchPublicKeyResult>;
+
 export type PublicKeyOptions = {
   readonly url: string;
   readonly fetchPublicKeys: FetchPublicKeys;
@@ -20,10 +24,6 @@ type CreatePublicKeysOptionsInput = {
   readonly region: string;
   readonly userPoolId: string;
 };
-
-type FetchPublicKeys = (
-  fetchPublicKeyInput: FetchPublicKeyInput
-) => Promise<FetchPublicKeyResult>;
 
 const createVirtualCognitoOptions = ({ userPoolId }): PublicKeyOptions => {
   return {

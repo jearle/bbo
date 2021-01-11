@@ -61,7 +61,7 @@ const getTimes = ({ expired }) => {
 const getIssuer = ({ badIssuer }) => {
   if (badIssuer) return `http://bad-issuer`;
 
-  return `http://${process.env.HOST}:${process.env.PORT}`;
+  return `http://localhost:${process.env.PORT}`;
 };
 
 const getTokenUse = ({ badTokenUse }) => {

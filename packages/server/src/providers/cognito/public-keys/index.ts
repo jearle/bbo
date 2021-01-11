@@ -15,10 +15,12 @@ type FetchInput = {
 };
 
 const checkIssuer = (url: string, issuer: string) => {
+  const localhostRegexp = /127.0.0.1/;
+
   if (
     !url
-      .replace(`127.0.0.1`, `localhost`)
-      .includes(issuer.replace(`127.0.0.1`, `localhost`))
+      .replace(localhostRegexp, `localhost`)
+      .includes(issuer.replace(localhostRegexp, `localhost`))
   )
     throw new TypeError(`URL does not match JWT issuer`);
 };

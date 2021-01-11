@@ -1,6 +1,11 @@
 version: '3'
 
 services:
+  virtual-cognito:
+    image: rcanalytics/virtual-cognito:latest
+    ports:
+      - 10203:10203
+
   mssql:
     image: rcanalytics/product-api-mssql-rca-web-accounts:latest
     ports:
