@@ -2,7 +2,7 @@ version: '3'
 
 services:
   virtual-cognito:
-    image: rcanalytics/virtual-cognito:latest
+    image: rcanalytics/product-api-virtual-cognito:latest
     ports:
       - 10203:10203
 

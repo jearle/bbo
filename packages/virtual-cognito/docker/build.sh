@@ -35,8 +35,8 @@ $RSYNC $DIR/../../shared $DIR/cd-product-api/packages
 echo "Copying virtual cognito"
 $RSYNC $DIR/.. $DIR/cd-product-api/packages/virtual-cognito
 
-docker rmi -f rcanalytics/virtual-cognito:latest
-docker build --no-cache -t rcanalytics/virtual-cognito:latest .
+docker rmi -f rcanalytics/product-api-virtual-cognito:latest
+docker build --no-cache -t rcanalytics/product-api-virtual-cognito:latest .
 
 echo "Remove cd-product-api files"
 rm -rf $DIR/cd-product-api
