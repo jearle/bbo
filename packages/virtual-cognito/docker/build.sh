@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
-# docker login
+docker login
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-# die () {
-#     echo >&2 "$@"
-#     exit 1
-# }
+die () {
+    echo >&2 "$@"
+    exit 1
+}
 
 echo "Remove cd-product-api files"
 rm -rf $DIR/cd-product-api
@@ -37,6 +37,9 @@ $RSYNC $DIR/.. $DIR/cd-product-api/packages/virtual-cognito
 
 docker rmi -f rcanalytics/product-api-virtual-cognito:latest
 docker build --no-cache -t rcanalytics/product-api-virtual-cognito:latest .
+
+echo "Pushing image to docker"
+docker push rcanalytics/product-api-virtual-cognito:latest
 
 echo "Remove cd-product-api files"
 rm -rf $DIR/cd-product-api
