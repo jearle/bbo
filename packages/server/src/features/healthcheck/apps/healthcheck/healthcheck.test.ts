@@ -21,7 +21,7 @@ const {
   ELASTICSEARCH_NODE,
   ELASTICSEARCH_USERNAME,
   ELASTICSEARCH_PASSWORD,
-  LAUNCH_DARKLY_SDK,
+  LAUNCHDARKLY_SDK,
   COGNITO_REGION,
   COGNITO_USER_POOL_ID,
   COGNITO_APP_CLIENT_ID,
@@ -48,7 +48,7 @@ describe(`transactions app`, () => {
       });
     };
     const createLaunchDarklyProviderWrapper = async () => {
-      return await createLaunchdarklyProvider({ sdkKey: LAUNCH_DARKLY_SDK });
+      return await createLaunchdarklyProvider({ sdkKey: LAUNCHDARKLY_SDK });
     };
     const createUnhealthyLaunchDarklyProviderWrapper = async () => {
       throw new Error();

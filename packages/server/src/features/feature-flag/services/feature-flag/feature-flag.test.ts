@@ -1,14 +1,14 @@
 import { createFeatureFlagService, FeatureFlagService } from '.';
 import { createLaunchdarklyProvider } from '../../../../providers/launchdarkly';
 
-const { LAUNCH_DARKLY_SDK } = process.env;
+const { LAUNCHDARKLY_SDK } = process.env;
 
 describe(`FeatureFlagService`, () => {
   let featureFlagService: FeatureFlagService;
 
   beforeAll(async () => {
     const launchdarklyProvider = await createLaunchdarklyProvider({
-      sdkKey: LAUNCH_DARKLY_SDK,
+      sdkKey: LAUNCHDARKLY_SDK,
     });
 
     featureFlagService = await createFeatureFlagService({

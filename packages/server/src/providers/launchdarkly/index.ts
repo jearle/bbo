@@ -31,6 +31,8 @@ export const createLaunchdarklyProvider = async ({
   endpoint,
 }: CreateLaunchdarkleyProviderInput): Promise<LDClient> => {
   const endpointMixin = endpoint ? { endpoint } : {};
+  console.log(`SDK KEY`, sdkKey);
+  console.log(`MIXIN`, endpointMixin);
 
   const client = init(sdkKey, {
     logger,

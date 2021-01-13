@@ -1,13 +1,13 @@
 import { createLaunchdarklyProvider } from '../../../../providers/launchdarkly';
 import { createLaunchDarklyHealthService } from './';
 
-const { LAUNCH_DARKLY_SDK } = process.env;
+const { LAUNCHDARKLY_SDK } = process.env;
 
 test('healthy launch darkly health service', async () => {
   const healthService = await createLaunchDarklyHealthService({
     createLaunchDarklyProvider: async () =>
       await createLaunchdarklyProvider({
-        sdkKey: LAUNCH_DARKLY_SDK,
+        sdkKey: LAUNCHDARKLY_SDK,
       }),
   });
   const { status } = await healthService.health();

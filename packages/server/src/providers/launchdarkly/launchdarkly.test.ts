@@ -1,10 +1,10 @@
 import { createLaunchdarklyProvider } from '.';
-const { LAUNCH_DARKLY_SDK } = process.env;
+const { LAUNCHDARKLY_SDK } = process.env;
 
 describe(`launchdarklyProvider`, () => {
   test('createLaunchdarkly client initialized', async () => {
     const launchdarklyProvider = await createLaunchdarklyProvider({
-      sdkKey: LAUNCH_DARKLY_SDK,
+      sdkKey: LAUNCHDARKLY_SDK,
     });
 
     const isClientInitialized = launchdarklyProvider.initialized();

@@ -10,10 +10,10 @@ RUN yarn install \
   && cd /app/packages/virtual-launchdarkly \
   && yarn build:production
 
-EXPOSE 10203
+EXPOSE 20204
 
 ENV HOST=0.0.0.0
-ENV PORT=10203
+ENV PORT=20204
 
 STOPSIGNAL SIGTERM
 
