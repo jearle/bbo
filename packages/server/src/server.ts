@@ -29,7 +29,10 @@ import {
   TransactionsSearchFeatureOptions,
   createTransactionsSearchFeature,
 } from './features/transactions-search';
-import { UserActivityFeatureInputOptions, createUserActivityFeature } from './features/user-activity';
+import {
+  UserActivityFeatureInputOptions,
+  createUserActivityFeature,
+} from './features/user-activity';
 
 interface ServerOptions {
   readonly port?: number;
@@ -41,7 +44,6 @@ interface ServerOptions {
   readonly userActivityFeatureOptions: UserActivityFeatureInputOptions;
 }
 
-
 export const startServer = async ({
   port = 0,
   host = `127.0.0.1`,
@@ -49,7 +51,7 @@ export const startServer = async ({
   authenticationFeatureOptions,
   featureFlagOptions,
   transactionsSearchOptions,
-  userActivityFeatureOptions
+  userActivityFeatureOptions,
 }: ServerOptions): Promise<void> => {
   // features
   const {
@@ -61,11 +63,9 @@ export const startServer = async ({
     permissionsFeatureOptions
   );
 
-
   const { userActivityMiddleWare } = await createUserActivityFeature(
     userActivityFeatureOptions
   );
-
 
   const {
     authenticationMiddleware,

@@ -25,7 +25,8 @@
   },
   "scripts": {
     "prestart": "yarn clean && tsc",
-    "start": "concurrently -c \"blue.bold,magenta.bold,green.bold\" -n lint,compile,test \"yarn lint:development\" \"yarn compile:development\" \"yarn test:development\"",    "lint:development": "esw --color -w --ext .ts ./src",
+    "start": "concurrently -c \"blue.bold,magenta.bold,green.bold\" -n lint,compile,test \"yarn lint:development\" \"yarn compile:development\" \"yarn test:development\"",
+    "lint:development": "esw --color -w --ext .ts ./src",
     "compile:development": "tsc -w",
     "test:development": "jest --setupFiles dotenv/config --coverage --watchAll",
     "build:production": "yarn clean && tsc -p .",

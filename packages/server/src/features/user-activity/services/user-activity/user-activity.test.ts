@@ -48,5 +48,5 @@ test(`We can call track`, () => {
     },
   };
   userActivityService.track(trackInfo);
-  expect(userActivityServiceSpy).toBeCalledTimes(1)
+  expect(userActivityServiceSpy).toBeCalledTimes(1);
 });
