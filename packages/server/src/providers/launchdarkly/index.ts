@@ -4,6 +4,7 @@ export { LDClient as LaunchdarklyProvider } from 'launchdarkly-node-server-sdk';
 
 type CreateLaunchdarkleyProviderInput = {
   readonly sdkKey: string;
+  readonly endpoint?: string;
   readonly logger?: LDLogger;
 };
 
@@ -27,10 +28,15 @@ export const EMPTY_LOGGER = {
 export const createLaunchdarklyProvider = async ({
   sdkKey,
   logger = EMPTY_LOGGER,
+  endpoint,
 }: CreateLaunchdarkleyProviderInput): Promise<LDClient> => {
+  const endpointMixin = endpoint ? { endpoint } : {};
+
   const client = init(sdkKey, {
     logger,
+    ...endpointMixin,
   });
+
   await client.waitForInitialization();
 
   return client;
