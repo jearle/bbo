@@ -80,7 +80,6 @@ export const createApp = ({ authenticationService }: Options): Application => {
         username,
         password,
       });
-
       res.json(result);
     } catch (e) {
       res.status(401).json({

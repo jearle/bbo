@@ -7,6 +7,7 @@ esPassword: ${config.esPassword}
 esUrl: ${config.esUrl}
 rcaWebAccountsUri: ${config.rcaWebAccountsUri}
 launchDarklySdk: ${config.launchDarklySdk}
+segmentAccessKey: ${config.segmentAccessKey}
 cognitoRegion: ${config.cognitoRegion}
 cognitoUserPoolId: ${config.cognitoUserPoolId}
 cognitoAppClientId: ${config.cognitoAppClientId}
