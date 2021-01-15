@@ -16,10 +16,10 @@ export const EMPTY_LOGGER = {
   warn(): void {
     return;
   },
-  info(): void {
+  info(s): void {
     return;
   },
-  debug(): void {
+  debug(s): void {
     return;
   },
 };
@@ -30,14 +30,16 @@ export const createLaunchdarklyProvider = async ({
   logger = EMPTY_LOGGER,
   endpoint,
 }: CreateLaunchdarkleyProviderInput): Promise<LDClient> => {
-  const endpointMixin = endpoint ? { endpoint } : {};
-  console.log(`SDK KEY`, sdkKey);
-  console.log(`MIXIN`, endpointMixin);
-
-  const client = init(sdkKey, {
+  const options = {
     logger,
-    ...endpointMixin,
-  });
+    baseUri: endpoint ? endpoint : undefined,
+    streamUri: endpoint ? endpoint : undefined,
+    eventsUri: endpoint ? endpoint : undefined,
+  };
+
+  // console.log(options);
+
+  const client = init(sdkKey, options);
 
   await client.waitForInitialization();
 
