@@ -16,10 +16,10 @@ export const EMPTY_LOGGER = {
   warn(): void {
     return;
   },
-  info(s): void {
+  info(): void {
     return;
   },
-  debug(s): void {
+  debug(): void {
     return;
   },
 };
