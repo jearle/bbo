@@ -1,7 +1,7 @@
 {
-  "name": "virtual-cognito",
+  "name": "virtual-launchdarkly",
   "version": "0.0.0",
-  "description": "Virtualized Cognito service",
+  "description": "Virtualized LaunchDarkly service",
   "main": "./dist/index.js",
   "author": "Jesse Earle",
   "license": "UNLICENSED",

@@ -12,14 +12,16 @@ const {
   ELASTICSEARCH_NODE,
   MSSQL_URI,
   REDIS_URI,
-  LAUNCH_DARKLY_SDK,
+  LAUNCHDARKLY_SDK,
+  LAUNCHDARKLY_ENDPOINT,
   SEGMENT_ACCESS_KEY,
 } = process.env;
 
 const port = parseInt(PORT);
 
 const featureFlagOptions = {
-  sdkKey: LAUNCH_DARKLY_SDK,
+  sdkKey: LAUNCHDARKLY_SDK,
+  endpoint: LAUNCHDARKLY_ENDPOINT,
 };
 
 const permissionsFeatureOptions = {

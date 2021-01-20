@@ -9,6 +9,7 @@ import logger from '../logger';
 
 type CreateFeatureFlagInput = {
   readonly sdkKey: string;
+  readonly endpoint?: string;
 };
 
 type FeatureFlagFeatureInput = {
@@ -29,9 +30,11 @@ export type FeatureFlagFeature = ReturnType<typeof featureFlagFeature>;
 
 export const createFeatureFlagFeature = async ({
   sdkKey,
+  endpoint,
 }: CreateFeatureFlagInput): Promise<FeatureFlagFeature> => {
   const launchdarklyProvider = await createLaunchdarklyProvider({
     sdkKey,
+    endpoint,
     logger,
   });
   const featureFlagService = await createFeatureFlagService({
