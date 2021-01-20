@@ -35,11 +35,16 @@ $RSYNC $DIR/../../shared $DIR/cd-product-api/packages
 echo "Copying virtual launchdarkly"
 $RSYNC $DIR/.. $DIR/cd-product-api/packages/virtual-launchdarkly
 
-docker rmi -f rcanalytics/product-api-virtual-cognito:latest
-docker build --no-cache -t rcanalytics/product-api-virtual-cognito:latest .
+DOCKER_TAG="rcanalytics/product-api-virtual-launchdarkly:latest"
 
-echo "Pushing image to docker"
-docker push rcanalytics/product-api-virtual-launchdarkly:latest
+echo "Removing $DOCKER_TAGE"
+docker rmi -f $DOCKER_TAG
+
+echo "Building $DOCKER_TAGE"
+docker build --no-cache -t $DOCKER_TAG .
+
+echo "Pushing $DOCKET_TAG"
+docker push $DOCKER_TAG
 
 echo "Remove cd-product-api files"
 rm -rf $DIR/cd-product-api

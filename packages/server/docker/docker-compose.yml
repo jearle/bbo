@@ -1,6 +1,11 @@
 version: '3'
 
 services:
+  virtual-launchdarkly:
+    image: rcanalytics/product-api-virtual-launchdarkly:latest
+    ports:
+      - 20204:20204
+
   virtual-cognito:
     image: rcanalytics/product-api-virtual-cognito:latest
     ports:
