@@ -68,7 +68,6 @@ describe(`permissions service`, () => {
   test(`permissionModel`, async () => {
     app.get(`/`, (req, res) => {
       const { permissionsFilter } = req;
-
       res.send({ permissionsFilter });
     });
 

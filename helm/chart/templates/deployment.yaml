@@ -40,6 +40,8 @@ spec:
               value: "{{ .Values.rcaWebAccountsUri }}"
             - name: LAUNCH_DARKLY_SDK
               value: "{{ .Values.launchDarklySdk }}"
+            - name: SEGMENT_ACCESS_KEY
+              value: "{{ .Values.segmentAccessKey }}"
             - name: COGNITO_REGION
               value: "{{ .Values.cognitoRegion }}"
             - name: COGNITO_USER_POOL_ID
