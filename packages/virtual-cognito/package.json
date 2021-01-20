@@ -1,7 +1,7 @@
 {
-  "name": "cognito-service-virtualization",
+  "name": "virtual-cognito",
   "version": "0.0.0",
-  "description": "Cognito Service Virtualization",
+  "description": "Virtualized Cognito service",
   "main": "./dist/index.js",
   "author": "Jesse Earle",
   "license": "UNLICENSED",
