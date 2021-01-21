@@ -34,6 +34,8 @@ import {
   createUserActivityFeature,
 } from './features/user-activity';
 
+import { createGeographyFeature } from './features/geography';
+
 interface ServerOptions {
   readonly port?: number;
   readonly host?: string;
@@ -96,6 +98,8 @@ export const startServer = async ({
     transactionsSearchBasePath,
   } = createTransactionsSearchFeature(transactionsSearchOptions);
 
+  const { geographyApp, geographyBasePath } = await createGeographyFeature();
+
   // end features
 
   const mounts = express();
@@ -117,6 +121,7 @@ export const startServer = async ({
 
   // Apps
   mounts.use(transactionsSearchBasePath, transactionsSearchApp());
+  mounts.use(geographyBasePath, geographyApp());
 
   // Post Middleware
   mounts.use(loggerErrorMiddleware());
