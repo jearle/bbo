@@ -1,27 +1,42 @@
 import * as express from 'express';
 import { Application } from 'express';
+import { GeographyService } from '../../services/geography';
 
 export const VERSION = `v0`;
 export const DESCRIPTION = `Geography`;
 export const BASE_PATH = `/api/geography/${VERSION}`;
 
-export const createApp = (): Application => {
+type CreateAppInputs = {
+  readonly geographyService: GeographyService;
+};
+
+export const createApp = ({
+  geographyService,
+}: CreateAppInputs): Application => {
   const app = express();
 
   /**
    * @swagger
    *
-   * /ping:
    *   get:
-   *     description: Responds with 200 OK
+   *     description: Get list of geographies
    *     produces:
-   *       - text/plain
+   *       - application/json
+   *     parameters:
+   *       - name: limit
+   *         in: query
+   *         description: The response item limit
+   *         required: true
+   *         schema:
+   *           type: number
    *     responses:
    *       200:
-   *         description: OK
+   *         description: GeographyResponse
+   *
    */
-  app.get(`/ping`, async (req, res) => {
-    res.sendStatus(200);
+  app.get(`/geography`, async (req, res) => {
+    const result = await geographyService.fetchGeographies();
+    res.json(result);
   });
 
   return app;

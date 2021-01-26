@@ -21,6 +21,10 @@ import {
   createCognitoHealthService,
 } from './services/cognito';
 import { createCognitoProvider } from '../../providers/cognito';
+import {
+  createRCAAnalyticsDataHealthService,
+  RCAAnalyticsDataHealthService,
+} from './services/rca-analytics-data';
 
 type CreateElasticsearchProviderOptions = {
   readonly node: string;
@@ -47,12 +51,17 @@ type CreateCognitoProviderOptions = {
   readonly appClientSecret: string;
 };
 
+type CreateAnalyticsDataMssqlProviderOptions = {
+  readonly mssqlURI: string;
+};
+
 export type HealthCheckFeatureOptions = {
   readonly createElasticsearchProviderOptions: CreateElasticsearchProviderOptions;
   readonly createMssqlProviderOptions: CreateMssqlProviderOptions;
   readonly createRedisProviderOptions: CreateRedisProviderOptions;
   readonly createLaunchDarklyProviderOptions: CreateLaunchDarklyProviderOptions;
   readonly createCognitoProviderOptions: CreateCognitoProviderOptions;
+  readonly createAnalyticsDataMssqlProviderOptions: CreateAnalyticsDataMssqlProviderOptions;
 };
 
 type HealthCheckFeatureInputs = {
@@ -61,6 +70,7 @@ type HealthCheckFeatureInputs = {
   readonly redisHealthService: RedisHealthService;
   readonly launchDarklyHealthService: LaunchDarklyHealthService;
   readonly cognitoHealthService: CognitoHealthService;
+  readonly rcaAnalyticsDataHealthService: RCAAnalyticsDataHealthService;
 };
 
 const healtCheckFeature = ({
@@ -69,6 +79,7 @@ const healtCheckFeature = ({
   redisHealthService,
   launchDarklyHealthService,
   cognitoHealthService,
+  rcaAnalyticsDataHealthService,
 }: HealthCheckFeatureInputs) => ({
   healthCheckBasePath: BASE_PATH,
 
@@ -79,6 +90,7 @@ const healtCheckFeature = ({
       redisHealthService,
       launchDarklyHealthService,
       cognitoHealthService,
+      rcaAnalyticsDataHealthService,
     });
   },
 });
@@ -91,6 +103,7 @@ export const createHealthCheckFeature = async ({
   createRedisProviderOptions,
   createLaunchDarklyProviderOptions,
   createCognitoProviderOptions,
+  createAnalyticsDataMssqlProviderOptions,
 }: HealthCheckFeatureOptions): Promise<HealthCheckFeature> => {
   const elasticsearchProvider = createElasticsearchProvider(
     createElasticsearchProviderOptions
@@ -124,6 +137,14 @@ export const createHealthCheckFeature = async ({
   const cognitoHealthService = await createCognitoHealthService({
     createCognitoProvider: createCognitoProviderWrapper,
   });
+  const analyticsDataMssqlProvider = await createMSSQLProvider({
+    uri: createAnalyticsDataMssqlProviderOptions.mssqlURI,
+  });
+  const rcaAnalyticsDataHealthService = await createRCAAnalyticsDataHealthService(
+    {
+      mssqlProvider: analyticsDataMssqlProvider,
+    }
+  );
 
   return healtCheckFeature({
     elasticsearchHealthService,
@@ -131,5 +152,6 @@ export const createHealthCheckFeature = async ({
     redisHealthService,
     launchDarklyHealthService,
     cognitoHealthService,
+    rcaAnalyticsDataHealthService,
   });
 };
