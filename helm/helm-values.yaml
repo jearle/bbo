@@ -12,3 +12,4 @@ cognitoRegion: ${config.cognitoRegion}
 cognitoUserPoolId: ${config.cognitoUserPoolId}
 cognitoAppClientId: ${config.cognitoAppClientId}
 cognitoAppClientSecret: ${config.cognitoAppClientSecret}
+rcaAnalyticsDataUri: ${config.rcaAnalyticsDataUri}
