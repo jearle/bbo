@@ -15,6 +15,7 @@ const {
   LAUNCHDARKLY_SDK,
   LAUNCHDARKLY_ENDPOINT,
   SEGMENT_ACCESS_KEY,
+  ANALYTICSDATA_MSSQL_URI,
 } = process.env;
 
 const port = parseInt(PORT);
@@ -46,6 +47,10 @@ const userActivityFeatureOptions = {
   accessKey: SEGMENT_ACCESS_KEY,
 };
 
+const geographyFeatureOptions = {
+  mssqlURI: ANALYTICSDATA_MSSQL_URI,
+};
+
 startServer({
   port,
   host,
@@ -54,4 +59,5 @@ startServer({
   featureFlagOptions,
   transactionsSearchOptions,
   userActivityFeatureOptions,
+  geographyFeatureOptions,
 });

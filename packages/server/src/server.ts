@@ -34,6 +34,11 @@ import {
   createUserActivityFeature,
 } from './features/user-activity';
 
+import {
+  GeographyFeatureOptions,
+  createGeographyFeature,
+} from './features/geography';
+
 interface ServerOptions {
   readonly port?: number;
   readonly host?: string;
@@ -42,6 +47,7 @@ interface ServerOptions {
   readonly featureFlagOptions: FeatureFlagOptions;
   readonly transactionsSearchOptions: TransactionsSearchFeatureOptions;
   readonly userActivityFeatureOptions: UserActivityFeatureInputOptions;
+  readonly geographyFeatureOptions: GeographyFeatureOptions;
 }
 
 export const startServer = async ({
@@ -52,6 +58,7 @@ export const startServer = async ({
   featureFlagOptions,
   transactionsSearchOptions,
   userActivityFeatureOptions,
+  geographyFeatureOptions,
 }: ServerOptions): Promise<void> => {
   // features
   const {
@@ -89,12 +96,17 @@ export const startServer = async ({
     createRedisProviderOptions: permissionsFeatureOptions,
     createLaunchDarklyProviderOptions: featureFlagOptions,
     createCognitoProviderOptions: authenticationFeatureOptions,
+    createAnalyticsDataMssqlProviderOptions: geographyFeatureOptions,
   });
 
   const {
     transactionsSearchApp,
     transactionsSearchBasePath,
   } = createTransactionsSearchFeature(transactionsSearchOptions);
+
+  const { geographyApp, geographyBasePath } = await createGeographyFeature(
+    geographyFeatureOptions
+  );
 
   // end features
 
@@ -114,9 +126,11 @@ export const startServer = async ({
 
   mounts.use(transactionsSearchBasePath, authenticationMiddleware());
   mounts.use(transactionsSearchBasePath, permissionsMiddleware());
+  mounts.use(geographyBasePath, authenticationMiddleware());
 
   // Apps
   mounts.use(transactionsSearchBasePath, transactionsSearchApp());
+  mounts.use(geographyBasePath, geographyApp());
 
   // Post Middleware
   mounts.use(loggerErrorMiddleware());

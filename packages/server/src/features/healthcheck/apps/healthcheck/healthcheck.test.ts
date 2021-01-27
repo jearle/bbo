@@ -14,6 +14,7 @@ import { createRCAWebAccountsHealthService } from '../../services/rca-web-accoun
 import { createRedisHealthService } from '../../services/redis';
 import { createLaunchDarklyHealthService } from '../../services/launchdarkly';
 import { createCognitoHealthService } from '../../services/cognito';
+import { createRCAAnalyticsDataHealthService } from '../../services/rca-analytics-data';
 
 const {
   MSSQL_URI,
@@ -26,6 +27,7 @@ const {
   COGNITO_USER_POOL_ID,
   COGNITO_APP_CLIENT_ID,
   COGNITO_APP_CLIENT_SECRET,
+  ANALYTICSDATA_MSSQL_URI,
 } = process.env;
 
 describe(`transactions app`, () => {
@@ -80,6 +82,12 @@ describe(`transactions app`, () => {
     const cognitoHealthService = await createCognitoHealthService({
       createCognitoProvider: createCognitoProviderWrapper,
     });
+    const mssqlProviderAnalyticsData = await createMSSQLProvider({
+      uri: ANALYTICSDATA_MSSQL_URI,
+    });
+    const rcaAnalyticsDataHealthService = await createRCAAnalyticsDataHealthService(
+      { mssqlProvider: mssqlProviderAnalyticsData }
+    );
 
     app = express();
     healthyApp = createApp({
@@ -88,6 +96,7 @@ describe(`transactions app`, () => {
       redisHealthService,
       launchDarklyHealthService,
       cognitoHealthService,
+      rcaAnalyticsDataHealthService,
     });
     unhealthyApp = createApp({
       elasticsearchHealthService,
@@ -95,6 +104,7 @@ describe(`transactions app`, () => {
       redisHealthService,
       launchDarklyHealthService: unhealthyLaunchDarklyHealthService,
       cognitoHealthService,
+      rcaAnalyticsDataHealthService,
     });
   });
 

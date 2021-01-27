@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: {{ .Values.image }}
+          image: { { .Values.image } }
           imagePullPolicy: Always
           ports:
             - containerPort: 80
@@ -54,6 +54,8 @@ spec:
               value: "redis://cd-{{ .Values.environment }}-product-api-redis.cd:6379"
             - name: TRANSACTIONS_INDEX
               value: "{{ .Values.environment }}7_multi_pst"
+            - name: ANALYTICSDATA_MSSQL_URI
+              value: "{{ .Values.rcaAnalyticsDataUri }}"
         - name: redis
           image: redis
           resources:
