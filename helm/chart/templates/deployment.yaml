@@ -27,35 +27,35 @@ spec:
             - name: NODE_ENV
               value: "production"
             - name: HOST
-              value: '0.0.0.0'
+              value: "0.0.0.0"
             - name: PORT
-              value: '8080'
+              value: "8080"
             - name: ELASTICSEARCH_USERNAME
-              value: '{{ .Values.esUsername }}'
+              value: "{{ .Values.esUsername }}"
             - name: ELASTICSEARCH_PASSWORD
-              value: '{{ .Values.esPassword }}'
+              value: "{{ .Values.esPassword }}"
             - name: ELASTICSEARCH_NODE
-              value: '{{ .Values.esUrl }}'
+              value: "{{ .Values.esUrl }}"
             - name: MSSQL_URI
-              value: '{{ .Values.rcaWebAccountsUri }}'
+              value: "{{ .Values.rcaWebAccountsUri }}"
             - name: LAUNCH_DARKLY_SDK
-              value: '{{ .Values.launchDarklySdk }}'
+              value: "{{ .Values.launchDarklySdk }}"
             - name: SEGMENT_ACCESS_KEY
-              value: '{{ .Values.segmentAccessKey }}'
+              value: "{{ .Values.segmentAccessKey }}"
             - name: COGNITO_REGION
-              value: '{{ .Values.cognitoRegion }}'
+              value: "{{ .Values.cognitoRegion }}"
             - name: COGNITO_USER_POOL_ID
-              value: '{{ .Values.cognitoUserPoolId }}'
+              value: "{{ .Values.cognitoUserPoolId }}"
             - name: COGNITO_APP_CLIENT_ID
-              value: '{{ .Values.cognitoAppClientId }}'
+              value: "{{ .Values.cognitoAppClientId }}"
             - name: COGNITO_APP_CLIENT_SECRET
-              value: '{{ .Values.cognitoAppClientSecret }}'
+              value: "{{ .Values.cognitoAppClientSecret }}"
             - name: REDIS_URI
-              value: 'redis://cd-{{ .Values.environment }}-product-api-redis.cd:6379'
+              value: "redis://cd-{{ .Values.environment }}-product-api-redis.cd:6379"
             - name: TRANSACTIONS_INDEX
-              value: '{{ .Values.environment }}7_multi_pst'
+              value: "{{ .Values.environment }}7_multi_pst"
             - name: ANALYTICSDATA_MSSQL_URI
-              value: '{{ .Values.rcaAnalyticsDataUri }}'
+              value: "{{ .Values.rcaAnalyticsDataUri }}"
         - name: redis
           image: redis
           resources:
