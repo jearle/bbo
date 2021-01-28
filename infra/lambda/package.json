@@ -1,0 +1,19 @@
+{
+  "name": "cd-product-api-lambda",
+  "version": "1.0.0",
+  "description": "CD Product API Lambda Code",
+  "private": true,
+  "scripts": {
+    "build": "rm -rf dist && tsc",
+    "package": "sh package.sh"
+  },
+  "devDependencies": {
+    "@types/node": "^12.7.6",
+    "ts-node": "^8.1.0",
+    "typescript": "^3.3.3333"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.506.0",
+    "source-map-support": "^0.5.9"
+  }
+}

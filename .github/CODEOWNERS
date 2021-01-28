@@ -1,2 +1,4 @@
-*             @jearle @mcope-rca
-/.github/     @nickyhof
+/.github/             @nickyhof
+/helm/                @nickyhof
+/infra/terraform/     @nickyhof
+*                     @jearle @mcope-rca

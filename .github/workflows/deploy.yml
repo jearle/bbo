@@ -42,6 +42,34 @@ jobs:
       - name: Configure AWS Auth
         uses: ./.github-actions/aws/auth
 
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+
+      - name: Build Node Lambda Code
+        run: |
+          cd infra/lambda
+          npm install
+          npm run package
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 0.13.5
+          terraform_wrapper: false
+
+      - name: Setup Terraform Values
+        uses: ./.github-actions/workflow/eval
+        with:
+          inputPaths: infra/terraform/terraform.tfvars
+
+      - name: Terraform Deploy
+        run: |
+          cd infra/terraform
+          terraform init -backend-config="bucket=rca-shared-terraform" -backend-config="key=cd/product-api/${{ github.event.deployment.environment }}.tfstate" -backend-config="region=us-east-1"
+          terraform apply --auto-approve
+
       - name: Setup Helm Values
         uses: ./.github-actions/workflow/eval
         with:
