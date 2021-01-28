@@ -46,7 +46,8 @@ const mssqlProvider = ({ uri }) => ({
       database,
     });
 
-    const connection = await mssql.connect(mssqlConnectionOptions);
+    const connectionPool = new mssql.ConnectionPool(mssqlConnectionOptions);
+    const connection = await connectionPool.connect();
 
     return connection;
   },
