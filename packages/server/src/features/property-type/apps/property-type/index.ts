@@ -22,13 +22,6 @@ export const createApp = ({
    *     description: Get list of property types
    *     produces:
    *       - application/json
-   *     parameters:
-   *       - name: limit
-   *         in: query
-   *         description: The response item limit
-   *         required: true
-   *         schema:
-   *           type: number
    *     responses:
    *       200:
    *         description: PropertyTypeResponse
