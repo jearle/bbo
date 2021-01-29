@@ -1,30 +1,30 @@
 import * as express from 'express';
 import { createApp } from './apps/documentation';
 
+import * as AuthenticationApp from '../authentication/apps/authentication';
+import * as GeographyApp from '../geography/apps/geography';
+
 const documentationFeature = () => ({
   documentationApp() {
     const app = express();
-
-    // app.use(
-    //   `/documentation/transactions-search`,
-    //   createApp({
-    //     feature: `transactions-search`,
-    //     description: `Transactions Search Documentation`,
-    //     host: `localhost`,
-    //     port: `39000`,
-    //     basePath: `/api/transactions-search/v0`,
-    //   })
-    // );
 
     app.use(
       `/documentation/authentication`,
       createApp({
         feature: `authentication`,
-        description: `Authentication Documentation`,
-        host: `localhost`,
-        port: 39000,
-        basePath: `/api/authentication/v0`,
-        version: `v0`,
+        description: AuthenticationApp.DESCRIPTION,
+        basePath: AuthenticationApp.BASE_PATH,
+        version: AuthenticationApp.VERSION,
+      })
+    );
+
+    app.use(
+      `/documentation/geography`,
+      createApp({
+        feature: `geography`,
+        description: GeographyApp.DESCRIPTION,
+        basePath: GeographyApp.BASE_PATH,
+        version: GeographyApp.VERSION,
       })
     );
 

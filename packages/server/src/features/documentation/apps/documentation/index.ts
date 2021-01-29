@@ -10,8 +10,6 @@ export const BASE_PATH = `/api/documentation/${VERSION}`;
 type CreateAppInputs = {
   readonly feature: string;
   readonly description: string;
-  readonly host: string;
-  readonly port: number;
   readonly basePath: string;
   readonly version: string;
 };
@@ -19,8 +17,6 @@ type CreateAppInputs = {
 export const createApp = ({
   feature,
   description,
-  host,
-  port,
   basePath,
   version,
 }: CreateAppInputs): Application => {
@@ -28,7 +24,7 @@ export const createApp = ({
 
   app.use(
     serve,
-    setup(createSpec({ feature, description, host, port, basePath, version }))
+    setup(createSpec({ feature, description, basePath, version }))
   );
 
   return app;
