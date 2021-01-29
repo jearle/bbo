@@ -8,23 +8,25 @@ export const DESCRIPTION = `Documentation`;
 export const BASE_PATH = `/api/documentation/${VERSION}`;
 
 type CreateAppInputs = {
-  readonly feature: string;
+  readonly title: string;
   readonly description: string;
   readonly basePath: string;
   readonly version: string;
+  readonly apiPath: string;
 };
 
 export const createApp = ({
-  feature,
+  title,
   description,
   basePath,
   version,
+  apiPath,
 }: CreateAppInputs): Application => {
   const app = express();
 
   app.use(
     serve,
-    setup(createSpec({ feature, description, basePath, version }))
+    setup(createSpec({ title, description, basePath, version, apiPath }))
   );
 
   return app;

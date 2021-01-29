@@ -4,6 +4,14 @@ import { createApp } from './apps/documentation';
 import * as AuthenticationApp from '../authentication/apps/authentication';
 import * as GeographyApp from '../geography/apps/geography';
 
+type CreateApiPathInput = {
+  readonly feature: string;
+};
+
+const createApiPath = ({ feature }: CreateApiPathInput): string => {
+  return `${__dirname}/../${feature}/**/*.{js,ts}`;
+};
+
 const documentationFeature = () => ({
   documentationApp() {
     const app = express();
@@ -11,20 +19,22 @@ const documentationFeature = () => ({
     app.use(
       `/documentation/authentication`,
       createApp({
-        feature: `authentication`,
+        title: `Authentication API`,
         description: AuthenticationApp.DESCRIPTION,
         basePath: AuthenticationApp.BASE_PATH,
         version: AuthenticationApp.VERSION,
+        apiPath: createApiPath({ feature: `authentication` }),
       })
     );
 
     app.use(
       `/documentation/geography`,
       createApp({
-        feature: `geography`,
+        title: `Geography API`,
         description: GeographyApp.DESCRIPTION,
         basePath: GeographyApp.BASE_PATH,
         version: GeographyApp.VERSION,
+        apiPath: createApiPath({ feature: `geography` }),
       })
     );
 
