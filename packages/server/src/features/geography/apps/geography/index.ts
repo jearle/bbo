@@ -18,8 +18,9 @@ export const createApp = ({
   /**
    * @swagger
    *
+   * /geography:
    *   get:
-   *     description: Get list of geographies
+   *     summary: Get list of geographies
    *     produces:
    *       - application/json
    *     parameters:
@@ -32,7 +33,6 @@ export const createApp = ({
    *     responses:
    *       200:
    *         description: GeographyResponse
-   *
    */
   app.get(`/geography`, async (req, res) => {
     const result = await geographyService.fetchGeographies();

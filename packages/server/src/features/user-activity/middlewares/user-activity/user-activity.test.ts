@@ -1,6 +1,8 @@
 import * as express from 'express';
 import * as fetch from 'node-fetch';
 import { json } from 'body-parser';
+import { portListen } from 'shared/dist/helpers/express/port-listen';
+import { fetchTextOnRandomPort } from 'shared/dist/helpers/express/listen-fetch';
 import { userActivityMiddleWare } from './index';
 import {
   createUserActivityService,
@@ -11,7 +13,6 @@ import {
   createSegmentProvider,
   SegmentProvider,
 } from '../../providers/segment';
-import { portListen } from 'shared/dist/helpers/express/port-listen';
 import {
   CognitoProvider,
   createCognitoProvider,
@@ -89,6 +90,16 @@ describe(`SegmentProvider`, () => {
     app = express();
     app.use(userActivityMiddleware);
     app.use(json());
+  });
+
+  test(`middleware called without jwt token`, async () => {
+    app.get(`/`, (req, res) => {
+      res.send(`foo`);
+    });
+
+    const text = await fetchTextOnRandomPort(app);
+
+    expect(text).toBe(`foo`);
   });
 
   test(`Middleware calls the identify method when login or register endpoint`, async () => {
