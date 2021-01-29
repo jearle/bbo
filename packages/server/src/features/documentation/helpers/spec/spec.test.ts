@@ -17,8 +17,6 @@ test(`createSpec`, () => {
   const spec = createSpec({
     feature: `documentation`,
     description: `bar`,
-    host: `localhost`,
-    port: 8080,
     basePath: `/foo/bar`,
     version: `v0`,
   });

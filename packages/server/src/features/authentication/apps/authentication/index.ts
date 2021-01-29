@@ -30,29 +30,6 @@ export const createApp = ({ authenticationService }: Options): Application => {
   );
 
   /**
-
-  paths:
-    /login:
-      post:
-        summary: Retrieves access token
-        requestBody:
-          content:
-            application/json:
-              schema:     
-                type: object
-                properties:
-                  username:
-                    type: string
-                  password:
-                    type: string
-                example:
-                  username: foo
-                  password: bar
-      responses:
-        '200':
-          description: OK
-   */
-  /**
    * @swagger
    *
    * /login:
@@ -71,6 +48,22 @@ export const createApp = ({ authenticationService }: Options): Application => {
    *     responses:
    *       200:
    *         description: health
+   *       requestBody:
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 accessToken:
+   *                   type: string
+   *                 refreshToken:
+   *                   type: string
+   *                 idToken:
+   *                   type: string
+   *                 expiresIn:
+   *                   type: number
+   *                 tokenType:
+   *                   type: string
    */
   app.post(`/login`, async (req, res) => {
     const { username, password } = req.body;

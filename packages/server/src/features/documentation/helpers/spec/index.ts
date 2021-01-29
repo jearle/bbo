@@ -4,19 +4,17 @@ type CreateSpecInputs = {
   readonly feature: string;
   readonly description: string;
   readonly version: string;
-  readonly host: string;
-  readonly port: number;
   readonly basePath: string;
 };
 
-type CreateSpecResult = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+type CreateSpecResult = unknown & {
+  readonly paths?: { [key: string]: unknown };
+};
 
 export const createSpec = ({
   feature,
   description,
   version,
-  host,
-  port,
   basePath,
 }: CreateSpecInputs): CreateSpecResult => {
   return swaggerJSDoc({
@@ -24,24 +22,15 @@ export const createSpec = ({
       openapi: `3.0.0`,
       servers: [
         {
-          url: `http://{host}:{port}{basePath}`,
-          description,
+          url: `{basePath}`,
           variables: {
-            host: {
-              default: host,
-            },
-            port: {
-              default: port,
-            },
-            basePath: {
-              default: basePath,
-            },
+            basePath: { default: basePath },
           },
         },
       ],
       info: {
-        title: `Product API`,
-        description: `Product API`,
+        title: feature,
+        description: description,
         version,
       },
     },
