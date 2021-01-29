@@ -1,6 +1,5 @@
-import fetch from 'node-fetch';
 import * as express from 'express';
-import { portListen } from 'shared/dist/helpers/express/port-listen';
+import { fetchJSONOnRandomPort } from 'shared/dist/helpers/express/listen-fetch';
 
 import { createMSSQLProvider } from '../../../../providers/mssql';
 import { createPropertyTypeService } from '../../services/property-type';
@@ -9,9 +8,7 @@ import { createApp } from './';
 const { ANALYTICSDATA_MSSQL_URI } = process.env;
 
 describe('property type app', () => {
-  let server = null;
   let app = null;
-  let url = null;
   let propertyTypeService = null;
   let propertyTypeApp = null;
 
@@ -24,20 +21,15 @@ describe('property type app', () => {
     propertyTypeApp = createApp({ propertyTypeService });
   });
 
-  afterEach(() => {
-    server.close();
-  });
-
   afterAll(() => {
     propertyTypeService.close();
   });
 
   test(`/property-type`, async () => {
     app.use(propertyTypeApp);
-    server = await portListen(app);
-    url = `http://localhost:${server.address().port}`;
-    const result = await fetch(`${url}/property-type`);
-    const data = await result.json();
-    expect(Array.isArray(data)).toBe(true);
+
+    const json = await fetchJSONOnRandomPort(app, { path: `/property-type` });
+
+    expect(Array.isArray(json)).toBe(true);
   });
 });

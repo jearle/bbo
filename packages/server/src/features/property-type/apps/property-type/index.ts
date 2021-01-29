@@ -17,7 +17,7 @@ export const createApp = ({
 
   /**
    * @swagger
-   *
+   * /property-type
    *   get:
    *     description: Get list of property types
    *     produces:
