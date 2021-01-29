@@ -17,15 +17,15 @@ export const createApp = ({
 
   /**
    * @swagger
-   * /property-type
+   *
+   * /property-type:
    *   get:
-   *     description: Get list of property types
+   *     summary: Get list of property types
    *     produces:
    *       - application/json
    *     responses:
    *       200:
    *         description: PropertyTypeResponse
-   *
    */
   app.get(`/property-type`, async (req, res) => {
     const result = await propertyTypeService.fetchPropertyTypes();

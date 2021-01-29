@@ -3,6 +3,38 @@ import { createApp } from './apps/documentation';
 
 import * as AuthenticationApp from '../authentication/apps/authentication';
 import * as GeographyApp from '../geography/apps/geography';
+import * as PropertyTypeApp from '../property-type/apps/property-type';
+
+type FeatureApp = {
+  readonly DESCRIPTION: string;
+  readonly BASE_PATH: string;
+  readonly VERSION: string;
+};
+
+type DocumentationConfiguration = {
+  readonly title: string;
+  readonly feature: string;
+  readonly featureApp: FeatureApp;
+};
+
+const documentationConfigurations: Array<DocumentationConfiguration> = [
+  {
+    title: `Authentication API`,
+    feature: `authentication`,
+    featureApp: AuthenticationApp,
+  },
+  {
+    title: `Geography API`,
+    feature: `geography`,
+    featureApp: GeographyApp,
+  },
+
+  {
+    title: `Property Type API`,
+    feature: `property-type`,
+    featureApp: PropertyTypeApp,
+  },
+];
 
 type CreateApiPathInput = {
   readonly feature: string;
@@ -16,27 +48,18 @@ const documentationFeature = () => ({
   documentationApp() {
     const app = express();
 
-    app.use(
-      `/documentation/authentication`,
-      createApp({
-        title: `Authentication API`,
-        description: AuthenticationApp.DESCRIPTION,
-        basePath: AuthenticationApp.BASE_PATH,
-        version: AuthenticationApp.VERSION,
-        apiPath: createApiPath({ feature: `authentication` }),
-      })
-    );
-
-    app.use(
-      `/documentation/geography`,
-      createApp({
-        title: `Geography API`,
-        description: GeographyApp.DESCRIPTION,
-        basePath: GeographyApp.BASE_PATH,
-        version: GeographyApp.VERSION,
-        apiPath: createApiPath({ feature: `geography` }),
-      })
-    );
+    documentationConfigurations.forEach(({ title, feature, featureApp }) => {
+      app.use(
+        `/documentation/${feature}`,
+        createApp({
+          title,
+          description: featureApp.DESCRIPTION,
+          basePath: featureApp.BASE_PATH,
+          version: featureApp.VERSION,
+          apiPath: createApiPath({ feature }),
+        })
+      );
+    });
 
     return app;
   },
