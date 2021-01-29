@@ -39,7 +39,10 @@ import {
   createGeographyFeature,
 } from './features/geography';
 
-import { createPropertyTypeFeature } from './features/property-type';
+import {
+  createPropertyTypeFeature,
+  PropertyTypeFeatureOptions,
+} from './features/property-type';
 
 interface ServerOptions {
   readonly port?: number;
@@ -110,10 +113,11 @@ export const startServer = async ({
     geographyFeatureOptions
   );
 
+  const propertyTypeFeatureOptions: PropertyTypeFeatureOptions = geographyFeatureOptions;
   const {
     propertyTypeApp,
     propertyTypeBasePath,
-  } = await createPropertyTypeFeature(geographyFeatureOptions);
+  } = await createPropertyTypeFeature(propertyTypeFeatureOptions);
 
   // end features
 
