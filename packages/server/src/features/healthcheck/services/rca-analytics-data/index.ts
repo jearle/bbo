@@ -19,11 +19,13 @@ const rcaAnalyticsDataHealthService = ({
     let connection = null;
     try {
       connection = await createRcaAnalyticsDataConnection();
+
       await connection
         .request()
         .query(
           'SELECT TOP (1) 1 AS status FROM [dbRCAAnalyticsData].[dbo].[TrendtrackerData_Geography]'
         );
+
       return createHealthyStatus(SERVICE_NAME);
     } catch (error) {
       return createUnhealthyStatus(SERVICE_NAME);
