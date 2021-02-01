@@ -115,7 +115,7 @@ export const startServer = async ({
   // Pre Middleware
   mounts.use(loggerIdMiddleware());
   mounts.use(loggerMiddleware());
-  mounts.use(userActivityMiddleWare());
+  // mounts.use(userActivityMiddleWare());
   mounts.use(json());
 
   mounts.use(documentationApp());

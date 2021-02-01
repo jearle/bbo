@@ -64,5 +64,36 @@ export const createApp = ({
     res.json({ data });
   });
 
+  /**
+   * @swagger
+   *
+   * /transactions:
+   *   get:
+   *     description: Search property transactions
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - name: limit
+   *         in: query
+   *         description: The response item limit
+   *         required: true
+   *         schema:
+   *           type: number
+   *     responses:
+   *       200:
+   *         description: PropertyTransactionSearchResponse
+   */
+  app.get(`/transactions`, async (req, res) => {
+    const { query, permissionsFilter } = req;
+    const { page, limit } = cleanTransactionsSearchQuery(query);
+    const data = await transactionsSearchService.search({
+      page,
+      limit,
+      filter: permissionsFilter,
+    });
+
+    res.json({ data });
+  });
+
   return app;
 };

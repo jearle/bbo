@@ -50,6 +50,7 @@
     "chalk": "^4.1.0",
     "cognito-express": "^2.0.18",
     "express": "^5.0.0-alpha.8",
+    "express-interceptor": "^1.2.0",
     "ioredis": "^4.19.2",
     "jsonwebtoken": "^8.5.1",
     "jwk-to-pem": "^2.0.4",
@@ -60,7 +61,6 @@
     "swagger-jsdoc": "^5.0.0",
     "swagger-ui-express": "^4.1.4",
     "uuid": "^8.3.0",
-    "winston": "^3.3.3",
-    "express-interceptor": "^1.2.0"
+    "winston": "^3.3.3"
   }
 }
