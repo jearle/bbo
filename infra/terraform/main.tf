@@ -69,7 +69,7 @@ resource "aws_security_group_rule" "lambda_egress_all" {
 resource "aws_lambda_function" "cognito_pre_auth" {
   function_name = "cd_product_api_${var.environment}_cognito_pre_auth_lambda_function"
   role          = aws_iam_role.cognito.arn
-  handler       = "main.preAuthentication"
+  handler       = "cognito.preAuthentication"
 
   filename         = "../lambda/dist/package.zip"
   source_code_hash = base64sha256("../lambda/dist/package.zip")
@@ -92,7 +92,7 @@ resource "aws_lambda_function" "cognito_pre_auth" {
 resource "aws_lambda_function" "cognito_user_migration" {
   function_name = "cd_product_api_${var.environment}_cognito_user_migration_lambda_function"
   role          = aws_iam_role.cognito.arn
-  handler       = "main.userMigration"
+  handler       = "cognito.userMigration"
 
   filename         = "../lambda/dist/package.zip"
   source_code_hash = base64sha256("../lambda/dist/package.zip")
