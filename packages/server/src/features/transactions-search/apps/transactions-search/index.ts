@@ -67,9 +67,9 @@ export const createApp = ({
   /**
    * @swagger
    *
-   * /transactions:
+   * /excel-trends:
    *   get:
-   *     description: Search property transactions
+   *     description: Search property transactions to return trends data
    *     produces:
    *       - application/json
    *     parameters:
@@ -81,9 +81,9 @@ export const createApp = ({
    *           type: number
    *     responses:
    *       200:
-   *         description: PropertyTransactionSearchResponse
+   *         description: TrendsSearchResponse
    */
-  app.get(`/transactions`, async (req, res) => {
+  app.post(`/trends`, async (req, res) => {
     const { query, permissionsFilter } = req;
     const { page, limit } = cleanTransactionsSearchQuery(query);
     const data = await transactionsSearchService.search({
