@@ -59,8 +59,7 @@ export const createApp = ({
     const data = await transactionsSearchService.search({
       query: esQuery
     });
-
-    res.json(data);
+    res.json({ data });
   });
 
   /**

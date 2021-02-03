@@ -13,21 +13,29 @@ type TransactionsSearchServiceInputs = {
 
 type TransactionSearchInputs = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  query: any;
+  query?: any;
   responseHandler?: (results: Record<string, any>) => any
 };
 
-const DEFAULT_FILTER = { match_all: {} };
+const DEFAULT_SEARCH = {
+  query: {
+    bool: {
+      must: {
+        match_all: {}
+      }
+    }
+  }
+};
 const { TRANSACTIONS_INDEX } = process.env;
 
 const transactionsSearchService = ({
   elasticsearchClient,
 }: TransactionsSearchServiceInputs) => ({
   async search({
-    query = {},
+    query = DEFAULT_SEARCH,
     responseHandler = transactionsSearchResults
-  }: TransactionSearchInputs) {
-    console.log(JSON.stringify(query, null, 2))
+  }: TransactionSearchInputs = {}) {
+
     const result = await elasticsearchClient.search({
       index: TRANSACTIONS_INDEX,
       body: query
