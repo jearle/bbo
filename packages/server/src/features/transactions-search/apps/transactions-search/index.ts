@@ -55,13 +55,12 @@ export const createApp = ({
    */
   app.get(`/transactions`, async (req, res) => {
     const { query, permissionsFilter } = req;
-    const { page, limit } = cleanTransactionsSearchQuery(query);
+    const esQuery = cleanTransactionsSearchQuery(query);
     const data = await transactionsSearchService.search({
-      page,
-      limit
+      query: esQuery
     });
 
-    res.json({ data });
+    res.json(data);
   });
 
   /**

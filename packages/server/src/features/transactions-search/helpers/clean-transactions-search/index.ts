@@ -11,9 +11,19 @@ type CleanTransactionsSearchQueryResult = {
 export const cleanTransactionsSearchQuery = ({
   page: pageInput = 0,
   limit: limitInput = 10,
-}: CleanTransactionsSearchQueryInputs = {}): CleanTransactionsSearchQueryResult => {
+}: CleanTransactionsSearchQueryInputs = {}): any => {
   const page = parseInt(pageInput.toString());
   const limit = parseInt(limitInput.toString());
 
-  return { page, limit };
+  return {
+    size: limit,
+    from: page * limit,
+    query: {
+      bool: {
+        must: {
+          match_all: {}
+        }
+      }
+    }
+  };
 };

@@ -12,11 +12,9 @@ type TransactionsSearchServiceInputs = {
 };
 
 type TransactionSearchInputs = {
-  page?: number;
-  limit?: number;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  filter?: any;
-  query?: any;
+  query: any;
+  responseHandler?: (results: Record<string, any>) => any
 };
 
 const DEFAULT_FILTER = { match_all: {} };
@@ -27,40 +25,24 @@ const transactionsSearchService = ({
 }: TransactionsSearchServiceInputs) => ({
   async search({
     query = {},
-  }: TransactionSearchInputs = {}) {
+    responseHandler = transactionsSearchResults
+  }: TransactionSearchInputs) {
     console.log(JSON.stringify(query, null, 2))
     const result = await elasticsearchClient.search({
       index: TRANSACTIONS_INDEX,
       body: query
     });
-    return result;
+    return responseHandler(result);
   },
 });
 
-const transactionsSearchService_v1 = ({
-  elasticsearchClient,
-}: TransactionsSearchServiceInputs) => ({
-  async search({
-    page = 0,
-    limit = 10,
-    filter = DEFAULT_FILTER,
-  }: TransactionSearchInputs = {}) {
-    const result = await elasticsearchClient.search({
-      index: TRANSACTIONS_INDEX,
-      from: page * limit,
-      size: limit,
-      body: {
-        query: filter,
-      },
-    });
-    const { hits } = result.body.hits;
-    const sources = hits.map(({ _source }) => {
-      return _source;
-    });
+const transactionsSearchResults = (results: Record<string, any>) => {
+  const { hits } = results.body.hits;
+  return hits.map(({ _source }) => {
+    return _source;
+  });
+};
 
-    return sources;
-  },
-});
 
 export type TransactionsSearchService = ReturnType<
   typeof transactionsSearchService

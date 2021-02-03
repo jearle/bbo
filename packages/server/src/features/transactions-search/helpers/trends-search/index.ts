@@ -49,5 +49,9 @@ export const trendsSearchQuery = ({
   };
 };
 
-// const createTrendsPropertyTypeFilter = ()...
-// const createTrendsAggs ...
+
+export const trendsSearchResults = ({
+
+}) => {
+  // parse aggs
+};
