@@ -41,11 +41,18 @@ export const createUserMigrationTrigger = ({
   context: Context,
   callback: Callback
 ): Promise<any> => {
-  console.log('Cognito UserMigration Feature Trigger...');
-  console.log(fetchDoesAuthenticate);
-  console.log(event);
-  console.log(context);
-  console.log(callback);
+  const { username } = event;
+  const { password } = event.request;
+
+  const { doesAuthenticate, error } = await fetchDoesAuthenticate({
+    username,
+    password,
+  });
+
+  console.log(`username`, username);
+  console.log(`password`, password);
+  console.log(`doesAuthenticate`, doesAuthenticate);
+  console.log(`error`, error);
 
   return Promise.resolve();
 };
