@@ -16,7 +16,7 @@ type Response = {
 };
 
 type Event = {
-  readonly username: string;
+  readonly userName: string;
   readonly triggerSource:
     | `UserMigration_Authentication`
     | `UserMigration_ForgotPassword`;
@@ -28,7 +28,7 @@ type Context = {
   readonly succeed: (event: Event) => void;
 };
 
-type Callback = (error: String) => void;
+type Callback = (error?: string) => void;
 
 type CreateUserMigrationTriggerInput = {
   readonly fetchDoesAuthenticate: FetchDoesAuthenticate;
@@ -41,19 +41,41 @@ export const createUserMigrationTrigger = ({
   context: Context,
   callback: Callback
 ): Promise<any> => {
-  const { username } = event;
+  const { userName: username, triggerSource } = event;
   const { password } = event.request;
 
-  const { doesAuthenticate, error } = await fetchDoesAuthenticate({
-    username,
-    password,
-  });
+  if (triggerSource === `UserMigration_Authentication`) {
+    console.log(`UserMigration_Authentication`);
+    const { doesAuthenticate, error } = await fetchDoesAuthenticate({
+      username,
+      password,
+    });
 
-  console.log(`cognito!`);
-  console.log(`username`, username);
-  console.log(`password`, password);
-  console.log(`doesAuthenticate`, doesAuthenticate);
-  console.log(`error`, error);
+    console.log(`Does Authenticate`, doesAuthenticate);
+    if (!doesAuthenticate) {
+      console.log(`does not authenticate error`, error);
+      return callback(error);
+    }
 
-  return Promise.resolve();
+    event.response.userAttributes = {
+      email: username,
+      email_verified: `true`,
+    };
+    event.response.finalUserStatus = `CONFIRMED`;
+    event.response.messageAction = `SUPPRESS`;
+
+    console.log(`succeed`, event);
+
+    context.succeed(event);
+
+    return;
+  }
+
+  // console.log(`cognito!`);
+  // console.log(`username`, username);
+  // console.log(`password`, password);
+  // console.log(`doesAuthenticate`, doesAuthenticate);
+  // console.log(`error`, error);
+
+  return;
 };
