@@ -57,7 +57,6 @@ const createFetchAuthenticate = ({
   try {
     const response = await fetch(url, options);
     const json = await response.json();
-    console.log(`JSON`, json);
 
     return json;
   } catch (e) {

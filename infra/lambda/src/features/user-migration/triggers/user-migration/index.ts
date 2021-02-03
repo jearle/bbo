@@ -28,7 +28,7 @@ type Context = {
   readonly succeed: (event: Event) => void;
 };
 
-type Callback = (error?: string) => void;
+type Callback = (error?: string | null) => void;
 
 type CreateUserMigrationTriggerInput = {
   readonly fetchDoesAuthenticate: FetchDoesAuthenticate;
@@ -40,7 +40,7 @@ export const createUserMigrationTrigger = ({
   event: Event,
   context: Context,
   callback: Callback
-): Promise<any> => {
+) => {
   const { userName: username, triggerSource } = event;
   const { password } = event.request;
 
@@ -67,7 +67,7 @@ export const createUserMigrationTrigger = ({
     console.log(`succeed`, event);
 
     context.succeed(event);
-
+    callback(null);
     return;
   }
 
