@@ -1,7 +1,11 @@
-import { userMigrationTrigger } from './triggers/user-migration';
+import { createFetchDoesAuthenticate } from './services/authenticate';
+import { createUserMigrationTrigger } from './triggers/user-migration';
+
+const url = `https://test.rcanalytics.com/api/v2/authentication/login`;
+const fetchDoesAuthenticate = createFetchDoesAuthenticate({ url });
 
 const userMigrationFeature = () => ({
-  userMigrationTrigger,
+  userMigrationTrigger: createUserMigrationTrigger({ fetchDoesAuthenticate }),
 });
 
 type UserMigrationFeature = ReturnType<typeof userMigrationFeature>;

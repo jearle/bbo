@@ -4,16 +4,21 @@
   "description": "CD Product API Lambda Code",
   "private": true,
   "scripts": {
+    "test:development": "jest --detectOpenHandles --setupFiles dotenv/config --coverage --watchAll",
     "build": "rm -rf dist && tsc",
     "package": "sh package.sh"
   },
   "devDependencies": {
     "@types/node": "^12.7.6",
+    "jest": "^26.6.3",
+    "ts-jest": "^26.5.0",
     "ts-node": "^8.1.0",
     "typescript": "^3.3.3333"
   },
   "dependencies": {
+    "@types/node-fetch": "^2.5.8",
     "aws-sdk": "^2.506.0",
+    "node-fetch": "^2.6.1",
     "source-map-support": "^0.5.9"
   }
 }
