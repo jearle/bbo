@@ -49,6 +49,7 @@ export const createUserMigrationTrigger = ({
     password,
   });
 
+  console.log(`cognito!`);
   console.log(`username`, username);
   console.log(`password`, password);
   console.log(`doesAuthenticate`, doesAuthenticate);
