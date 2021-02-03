@@ -1,12 +1,11 @@
-
 export const preAuthentication = async (event: any): Promise<any> => {
-  console.log('Corgnito PreAuthentication Trigger...')
+  console.log('Cognito PreAuthentication Trigger...');
 
-  return Promise.resolve()
-}
+  return Promise.resolve();
+};
 
 export const userMigration = async (event: any): Promise<any> => {
-  console.log('Corgnito UserMigration Trigger...')
+  console.log('Cognito UserMigration Trigger...');
 
-  return Promise.resolve()
-}
+  return Promise.resolve();
+};
