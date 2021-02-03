@@ -1,5 +1,5 @@
-import { createGeographyFilterTerms } from './geography-filter-builder';
-import { Geography } from '../constants';
+import { Geography } from '../../constants';
+import { createGeographyFilterTerms } from './index';
 
 describe('geography-filter-builder', () => {
   const atlantaFilter: Geography.Filter = {

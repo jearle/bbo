@@ -3,6 +3,7 @@ import { Application } from 'express';
 
 import { TransactionsSearchService } from '../../services/transactions-search';
 import { cleanTransactionsSearchQuery } from '../../helpers/clean-transactions-search';
+import { trendsSearchQuery } from '../../helpers/trends-search';
 
 export const VERSION = `v0`;
 export const DESCRIPTION = `Transactions Search API`;
@@ -57,8 +58,7 @@ export const createApp = ({
     const { page, limit } = cleanTransactionsSearchQuery(query);
     const data = await transactionsSearchService.search({
       page,
-      limit,
-      filter: permissionsFilter,
+      limit
     });
 
     res.json({ data });
@@ -67,32 +67,33 @@ export const createApp = ({
   /**
    * @swagger
    *
-   * /excel-trends:
-   *   get:
-   *     description: Search property transactions to return trends data
+   * /trends:
+   *   post:
+   *     security:
+   *       - bearerAuth
+   *     description: Search property transactions to return trends aggregates
    *     produces:
    *       - application/json
-   *     parameters:
-   *       - name: limit
-   *         in: query
-   *         description: The response item limit
-   *         required: true
-   *         schema:
-   *           type: number
+   *     requestBody:
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               GeographyFilter:
+   *                 type: object
    *     responses:
    *       200:
    *         description: TrendsSearchResponse
    */
   app.post(`/trends`, async (req, res) => {
-    const { query, permissionsFilter } = req;
-    const { page, limit } = cleanTransactionsSearchQuery(query);
+    const { GeographyFilter } = req.body;
+    const query = trendsSearchQuery({ GeographyFilter, limit: 10 }); // todo: remove limit, can use default 0 once we have aggs
     const data = await transactionsSearchService.search({
-      page,
-      limit,
-      filter: permissionsFilter,
+      query
     });
 
-    res.json({ data });
+    res.json(data);
   });
 
   return app;

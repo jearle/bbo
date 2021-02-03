@@ -3,6 +3,7 @@ import { createApp } from './apps/documentation';
 
 import * as AuthenticationApp from '../authentication/apps/authentication';
 import * as GeographyApp from '../geography/apps/geography';
+import * as TransactionsSearchApp from '../transactions-search/apps/transactions-search';
 
 const documentationFeature = () => ({
   documentationApp() {
@@ -25,6 +26,16 @@ const documentationFeature = () => ({
         description: GeographyApp.DESCRIPTION,
         basePath: GeographyApp.BASE_PATH,
         version: GeographyApp.VERSION,
+      })
+    );
+
+    app.use(
+      `/documentation/transactions-search`,
+      createApp({
+        feature: `transactions-search`,
+        description: TransactionsSearchApp.DESCRIPTION,
+        basePath: TransactionsSearchApp.BASE_PATH,
+        version: TransactionsSearchApp.VERSION,
       })
     );
 
