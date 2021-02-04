@@ -39,6 +39,11 @@ import {
   createGeographyFeature,
 } from './features/geography';
 
+import {
+  createPropertyTypeFeature,
+  PropertyTypeFeatureOptions,
+} from './features/property-type';
+
 interface ServerOptions {
   readonly port?: number;
   readonly host?: string;
@@ -108,6 +113,12 @@ export const startServer = async ({
     geographyFeatureOptions
   );
 
+  const propertyTypeFeatureOptions: PropertyTypeFeatureOptions = geographyFeatureOptions;
+  const {
+    propertyTypeApp,
+    propertyTypeBasePath,
+  } = await createPropertyTypeFeature(propertyTypeFeatureOptions);
+
   // end features
 
   const mounts = express();
@@ -127,10 +138,12 @@ export const startServer = async ({
   mounts.use(transactionsSearchBasePath, authenticationMiddleware());
   mounts.use(transactionsSearchBasePath, permissionsMiddleware());
   mounts.use(geographyBasePath, authenticationMiddleware());
+  mounts.use(propertyTypeBasePath, authenticationMiddleware());
 
   // Apps
   mounts.use(transactionsSearchBasePath, transactionsSearchApp());
   mounts.use(geographyBasePath, geographyApp());
+  mounts.use(propertyTypeBasePath, propertyTypeApp());
 
   // Post Middleware
   mounts.use(loggerErrorMiddleware());

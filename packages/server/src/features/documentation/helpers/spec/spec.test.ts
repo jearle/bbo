@@ -14,11 +14,14 @@ import { createSpec } from '.';
  */
 
 test(`createSpec`, () => {
+  const apiPath = `${__dirname}/*.ts`;
+
   const spec = createSpec({
-    feature: `documentation`,
+    title: `createSpec Test`,
     description: `bar`,
     basePath: `/foo/bar`,
     version: `v0`,
+    apiPath,
   });
 
   expect(spec.paths[`/spec-test`]).not.toBeUndefined();

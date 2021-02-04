@@ -1,10 +1,11 @@
 import * as swaggerJSDoc from 'swagger-jsdoc';
 
 type CreateSpecInputs = {
-  readonly feature: string;
+  readonly title: string;
   readonly description: string;
   readonly version: string;
   readonly basePath: string;
+  readonly apiPath: string;
 };
 
 type CreateSpecResult = unknown & {
@@ -12,10 +13,11 @@ type CreateSpecResult = unknown & {
 };
 
 export const createSpec = ({
-  feature,
+  title,
   description,
   version,
   basePath,
+  apiPath,
 }: CreateSpecInputs): CreateSpecResult => {
   return swaggerJSDoc({
     definition: {
@@ -29,7 +31,7 @@ export const createSpec = ({
         },
       ],
       info: {
-        title: feature,
+        title,
         description: description,
         version,
       },
@@ -49,6 +51,6 @@ export const createSpec = ({
         },
       ],
     },
-    apis: [`./dist/features/${feature}/**/*.js`],
+    apis: [apiPath],
   });
 };
