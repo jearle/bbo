@@ -1,5 +1,6 @@
 import fetch from 'node-fetch';
 import * as express from 'express';
+import { every } from 'lodash';
 
 import { testHealthcheck } from 'shared/dist/helpers/unit/healthcheck';
 import { portListen } from 'shared/dist/helpers/express/port-listen';
@@ -11,7 +12,7 @@ import { createElasticsearchProvider } from '../../../../providers/elasticsearch
 import { createMSSQLProvider } from '../../../../providers/mssql';
 import { createRCAWebAccountsService } from '../../../permissions/services/rca-web-accounts';
 import { createPermissionsService } from '../../../permissions/services/permissions';
-import { permissionsMiddleware as createPermissionsMiddleware } from '../../../permissions/middlewares/permissions';
+// import { permissionsMiddleware as createPermissionsMiddleware } from '../../../permissions/middlewares/permissions';
 import { createRedisProvider } from '../../../../providers/redis';
 
 const {
@@ -24,7 +25,7 @@ const {
 
 describe(`transactions app`, () => {
   let permissionsService = null;
-  let permissionsMiddleware = null;
+  // let permissionsMiddleware = null;
   let server = null;
   let app = null;
   let url = null;
@@ -48,9 +49,9 @@ describe(`transactions app`, () => {
       redisProvider,
     });
 
-    permissionsMiddleware = createPermissionsMiddleware({
-      permissionsService,
-    });
+    // permissionsMiddleware = createPermissionsMiddleware({
+    //   permissionsService,
+    // });
 
     const transactionsSearchService = createTransactionsSearchService({
       elasticsearchProvider,
@@ -114,24 +115,27 @@ describe(`transactions app`, () => {
     const atlantaFilter = {
       id: 21,
       type: 6,
-      name: 'Atlanta'
+      name: 'Atlanta',
     };
     it(`searches trends with a geography filter`, async () => {
       app.use(transactionsSearchApp);
       server = await portListen(app);
       url = `http://localhost:${server.address().port}`;
-      const result = await fetch(`${url}/trends`, {
+      const result = await fetch(`${url}/trends?limit=4`, {
         method: 'POST',
         body: JSON.stringify({
-          GeographyFilter: atlantaFilter
+          GeographyFilter: atlantaFilter,
         }),
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
       });
 
-
       const { data } = await result.json();
+      const allPropsAtlanta = every(data, (item) => item.newMetro_id === 21);
       expect(Array.isArray(data)).toBe(true);
+      expect(allPropsAtlanta).toBe(true);
     });
   });
-
 });

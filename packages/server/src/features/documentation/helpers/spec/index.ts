@@ -39,13 +39,15 @@ export const createSpec = ({
             type: 'apiKey',
             name: 'accessToken',
             in: 'header',
-            description: 'request need accessToken for auth'
-          }
-        }
+            description: 'request need accessToken for auth',
+          },
+        },
       },
-      security: [{
-        ApiKeyAuth: []
-      }]
+      security: [
+        {
+          ApiKeyAuth: [],
+        },
+      ],
     },
     apis: [`./dist/features/${feature}/**/*.js`],
   });

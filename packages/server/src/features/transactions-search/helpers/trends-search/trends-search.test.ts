@@ -5,7 +5,7 @@ describe('trends-search', () => {
   const atlantaFilter: Geography.Filter = {
     id: 21,
     type: Geography.Types.Metro,
-    name: 'Atlanta'
+    name: 'Atlanta',
   };
   it('creates a query with a geography filter', () => {
     const esQuery = trendsSearchQuery({ GeographyFilter: atlantaFilter });
@@ -13,8 +13,8 @@ describe('trends-search', () => {
     expect(esQuery.query.bool.filter.bool.must.length).toBe(1);
     expect(esQuery.query.bool.filter.bool.must[0]).toEqual({
       terms: {
-        "newMetro_id": [21]
-      }
+        newMetro_id: [21],
+      },
     });
   });
-}); 
+});

@@ -1,34 +1,16 @@
 import { Filter as GeographyFilter } from 'shared/dist/helpers/types/geography';
 import { createGeographyFilterTerms } from 'shared/dist/helpers/elasticsearch/query-builders/geography-filters';
-import { Query as ElasticQuery } from 'shared/dist/helpers/types/elasticsearch';
+import { ElasticQuery } from 'shared/dist/helpers/types/elasticsearch';
 
 type TrendsSearchQueryInputs = {
   readonly limit?: number;
   readonly GeographyFilter: GeographyFilter;
 };
 
-type TrendsSearchQuery = {
-  query: {
-    bool: {
-      must: {
-        match_all: {}
-      };
-      filter: {
-        bool: {
-          must: any[];
-        };
-      };
-    };
-  };
-  size: number;
-  // aggs: any;
-};
-
 export const trendsSearchQuery = ({
   GeographyFilter,
-  limit = 0
+  limit = 0,
 }: TrendsSearchQueryInputs): ElasticQuery => {
-
   const geographyMust = createGeographyFilterTerms([GeographyFilter]);
   // const propertyTypeMust = createPropertyTypeFilterTerms();
   const mustArr = [...geographyMust];
@@ -37,19 +19,18 @@ export const trendsSearchQuery = ({
     query: {
       bool: {
         must: {
-          match_all: {}
+          match_all: {},
         },
         filter: {
           bool: {
-            must: mustArr
-          }
-        }
-      }
+            must: mustArr,
+          },
+        },
+      },
     },
-    size: limit
+    size: limit,
   };
 };
-
 
 // export const trendsSearchResults = ({
 

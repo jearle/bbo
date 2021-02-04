@@ -30,20 +30,11 @@ describe(`transactionsSearchService`, () => {
   });
 
   test(`search with query`, async () => {
+    const query = cleanTransactionsSearchQuery({ limit: 4 });
     const result = await transactionsSearchService.search({
-      esQuery: {
-        size: 4,
-        query: {
-          bool: {
-            must: {
-              match_all: {}
-            }
-          }
-        }
-      }
+      esQuery: query
     });
 
     expect(result).toHaveLength(4);
-  })
-
+  });
 });

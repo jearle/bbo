@@ -1,4 +1,4 @@
-import { Query as ElasticQuery } from 'shared/dist/helpers/types/elasticsearch';
+import { ElasticQuery } from 'shared/dist/helpers/types/elasticsearch';
 
 type CleanTransactionsSearchQueryInputs = {
   readonly page?: number | string;
@@ -18,9 +18,9 @@ export const cleanTransactionsSearchQuery = ({
     query: {
       bool: {
         must: {
-          match_all: {}
-        }
-      }
-    }
+          match_all: {},
+        },
+      },
+    },
   };
 };

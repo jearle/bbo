@@ -2,7 +2,7 @@ import {
   ElasticsearchProvider,
   ElasticsearchClient,
 } from '../../../../providers/elasticsearch';
-import { Query as ElasticQuery } from 'shared/dist/helpers/types/elasticsearch';
+import { ElasticQuery, EsClientRawResponse } from 'shared/dist/helpers/types/elasticsearch';
 import { getElasticHits } from 'shared/dist/helpers/elasticsearch/response-builders';
 
 type CreateTransactionsSearchServiceInputs = {
@@ -15,17 +15,18 @@ type TransactionsSearchServiceInputs = {
 
 type TransactionSearchInputs = {
   esQuery?: ElasticQuery;
-  responseHandler?: (results: Record<string, any>) => any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  responseHandler?: (results: EsClientRawResponse) => any;
 };
 
 const DEFAULT_SEARCH = {
   query: {
     bool: {
       must: {
-        match_all: {}
-      }
-    }
-  }
+        match_all: {},
+      },
+    },
+  },
 };
 const { TRANSACTIONS_INDEX } = process.env;
 
@@ -34,19 +35,15 @@ const transactionsSearchService = ({
 }: TransactionsSearchServiceInputs) => ({
   async search({
     esQuery = DEFAULT_SEARCH,
-    responseHandler = getElasticHits
+    responseHandler = getElasticHits,
   }: TransactionSearchInputs = {}) {
-
     const result = await elasticsearchClient.search({
       index: TRANSACTIONS_INDEX,
-      body: esQuery
+      body: esQuery,
     });
     return responseHandler(result);
   },
 });
-
-
-
 
 export type TransactionsSearchService = ReturnType<
   typeof transactionsSearchService

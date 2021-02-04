@@ -1,4 +1,4 @@
-import { map, chain, groupBy } from 'lodash';
+import { map, chain } from 'lodash';
 import * as Geography from '../../../types/geography';
 
 const parseStateProv = (id: number): string => {
@@ -12,7 +12,7 @@ const parseStateProv = (id: number): string => {
     default:
       // try as Adminlevel1, that's the best case scenario
       return 'adminLevel1_id';
-  };
+  }
 };
 
 const getKey = (item: Geography.Filter): string => {
@@ -33,13 +33,13 @@ const getValue = (item: Geography.Filter): number => {
   return item.type === Geography.Types.StateProv ? item.id % 1000000 : item.id;
 };
 
-// 
-/**
- * returns the mapped kv pairs of geography type and id
- * @param items array of GeographyFilters
- * @param prefixKey = ''. prefix could be company_ if we are searching investors index
- */
-export const createGeographyFilterTerms = (items: Geography.Filter[], prefixKey = '') => {
+type GeograpyFilterTerm = {
+  terms: {
+    [key: string]: number[]
+  }
+}
+
+export const createGeographyFilterTerms = (items: Geography.Filter[], prefixKey = ''): GeograpyFilterTerm[] => {
   return chain(items)
     .groupBy(getKey)
     .map((values, key) => {

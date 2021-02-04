@@ -55,10 +55,11 @@ export const createApp = ({
    *         description: PropertyTransactionSearchResponse
    */
   app.get(`/transactions`, async (req, res) => {
-    const { query, permissionsFilter } = req;
+    // const { query, permissionsFilter } = req; // todo: add back permissionfilter
+    const { query } = req;
     const esQuery = cleanTransactionsSearchQuery(query);
     const data = await transactionsSearchService.search({
-      esQuery: esQuery
+      esQuery: esQuery,
     });
     res.json({ data });
   });
@@ -71,6 +72,10 @@ export const createApp = ({
    *     description: Search property transactions to return trends aggregates
    *     produces:
    *       - application/json
+   *     parameters:
+   *       - name: limit
+   *         in: query
+   *         description: optional response item limit for debugging
    *     requestBody:
    *       content:
    *         application/json:
@@ -92,9 +97,10 @@ export const createApp = ({
    */
   app.post(`/trends`, async (req, res) => {
     const { GeographyFilter } = req.body;
-    const esQuery = trendsSearchQuery({ GeographyFilter, limit: 10 }); // todo: limit just for debugging, can use default 0 once we have aggs
+    const { query } = req;
+    const esQuery = trendsSearchQuery({ GeographyFilter, limit: query?.limit }); // todo: limit just for debugging, can use default 0 once we have aggs
     const data = await transactionsSearchService.search({
-      esQuery
+      esQuery,
     });
     res.json({ data });
   });

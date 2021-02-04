@@ -1,4 +1,5 @@
-export type Query = {
+/* eslint-disable */
+export type ElasticQuery = {
   _source?: string[];
   fields?: string[];
   script_fields?: any;
@@ -13,6 +14,6 @@ export type Query = {
 export type EsClientRawResponse = {
   body?: any;
   statusCode?: number;
-  headers?: any[];
+  headers?: any;
   meta?: any;
 }
