@@ -1,5 +1,5 @@
 import { trendsSearchQuery } from './index';
-import { Geography } from 'shared/dist/helpers/elasticsearch/constants';
+import * as Geography from 'shared/dist/helpers/types/geography';
 
 describe('trends-search', () => {
   const atlantaFilter: Geography.Filter = {

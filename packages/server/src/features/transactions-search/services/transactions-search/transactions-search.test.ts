@@ -29,4 +29,21 @@ describe(`transactionsSearchService`, () => {
     expect(result).toHaveLength(10);
   });
 
+  test(`search with query`, async () => {
+    const result = await transactionsSearchService.search({
+      esQuery: {
+        size: 4,
+        query: {
+          bool: {
+            must: {
+              match_all: {}
+            }
+          }
+        }
+      }
+    });
+
+    expect(result).toHaveLength(4);
+  })
+
 });

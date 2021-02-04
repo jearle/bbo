@@ -1,4 +1,4 @@
-import { Geography } from '../../constants';
+import * as Geography from '../../../types/geography';
 import { createGeographyFilterTerms } from './index';
 
 describe('geography-filter-builder', () => {

@@ -58,7 +58,7 @@ export const createApp = ({
     const { query, permissionsFilter } = req;
     const esQuery = cleanTransactionsSearchQuery(query);
     const data = await transactionsSearchService.search({
-      query: esQuery
+      esQuery: esQuery
     });
     res.json({ data });
   });
@@ -92,9 +92,9 @@ export const createApp = ({
    */
   app.post(`/trends`, async (req, res) => {
     const { GeographyFilter } = req.body;
-    const query = trendsSearchQuery({ GeographyFilter, limit: 10 }); // todo: remove limit, can use default 0 once we have aggs
+    const esQuery = trendsSearchQuery({ GeographyFilter, limit: 10 }); // todo: limit just for debugging, can use default 0 once we have aggs
     const data = await transactionsSearchService.search({
-      query
+      esQuery
     });
     res.json({ data });
   });

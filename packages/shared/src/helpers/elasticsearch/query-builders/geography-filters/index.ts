@@ -1,5 +1,5 @@
 import { map, chain, groupBy } from 'lodash';
-import { Geography } from '../../constants';
+import * as Geography from '../../../types/geography';
 
 const parseStateProv = (id: number): string => {
   switch (parseInt((id / 1000000).toString())) { // stateProv can be adminLevel 1,2, or 3 which we can determine based on its id value

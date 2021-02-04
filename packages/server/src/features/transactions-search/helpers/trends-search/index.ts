@@ -1,9 +1,10 @@
-import { Geography } from 'shared/dist/helpers/elasticsearch/constants';
+import { Filter as GeographyFilter } from 'shared/dist/helpers/types/geography';
 import { createGeographyFilterTerms } from 'shared/dist/helpers/elasticsearch/query-builders/geography-filters';
+import { Query as ElasticQuery } from 'shared/dist/helpers/types/elasticsearch';
 
 type TrendsSearchQueryInputs = {
   readonly limit?: number;
-  readonly GeographyFilter: Geography.Filter;
+  readonly GeographyFilter: GeographyFilter;
 };
 
 type TrendsSearchQuery = {
@@ -26,7 +27,7 @@ type TrendsSearchQuery = {
 export const trendsSearchQuery = ({
   GeographyFilter,
   limit = 0
-}: TrendsSearchQueryInputs): TrendsSearchQuery => {
+}: TrendsSearchQueryInputs): ElasticQuery => {
 
   const geographyMust = createGeographyFilterTerms([GeographyFilter]);
   // const propertyTypeMust = createPropertyTypeFilterTerms();
