@@ -17,6 +17,7 @@ export const createApp = ({
   transactionsSearchService,
 }: CreateAppInputs): Application => {
   const app = express();
+  app.use(express.json());
 
   /**
    * @swagger
@@ -67,8 +68,6 @@ export const createApp = ({
    *
    * /trends:
    *   post:
-   *     security:
-   *       - bearerAuth
    *     description: Search property transactions to return trends aggregates
    *     produces:
    *       - application/json
@@ -80,6 +79,13 @@ export const createApp = ({
    *             properties:
    *               GeographyFilter:
    *                 type: object
+   *                 properties:
+   *                   id:
+   *                     type: integer
+   *                   type:
+   *                     type: integer
+   *                   name:
+   *                     type: string
    *     responses:
    *       200:
    *         description: TrendsSearchResponse
@@ -90,8 +96,7 @@ export const createApp = ({
     const data = await transactionsSearchService.search({
       query
     });
-
-    res.json(data);
+    res.json({ data });
   });
 
   return app;

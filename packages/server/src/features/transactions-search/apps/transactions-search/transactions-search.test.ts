@@ -79,32 +79,59 @@ describe(`transactions app`, () => {
     await testHealthcheck(app);
   });
 
-  test(`/transactions`, async () => {
-    app.use(transactionsSearchApp);
-    server = await portListen(app);
-    url = `http://localhost:${server.address().port}`;
-    const result = await fetch(`${url}/transactions`);
-    const { data } = await result.json();
-    expect(Array.isArray(data)).toBe(true);
+  describe(`/transactions`, () => {
+    test(`/transactions`, async () => {
+      app.use(transactionsSearchApp);
+      server = await portListen(app);
+      url = `http://localhost:${server.address().port}`;
+      const result = await fetch(`${url}/transactions`);
+      const { data } = await result.json();
+      expect(Array.isArray(data)).toBe(true);
+    });
+
+    test(`/transactions with limit`, async () => {
+      app.use(transactionsSearchApp);
+      server = await portListen(app);
+      url = `http://localhost:${server.address().port}`;
+      const result = await fetch(`${url}/transactions?limit=5`);
+      const { data } = await result.json();
+      expect(data.length).toBe(5);
+    });
+
+    // todo: fix permissions
+    // test(`/transactions with filter from permissionsMiddleware`, async () => {
+    //   app.use(permissionsMiddleware);
+    //   app.use(transactionsSearchApp);
+    //   server = await portListen(app);
+    //   url = `http://localhost:${server.address().port}`;
+    //   const result = await fetch(`${url}/transactions`);
+    //   const { data } = await result.json();
+    //   expect(data.length).toBe(0);
+    // });
   });
 
-  test(`/transactions with limit`, async () => {
-    app.use(transactionsSearchApp);
-    server = await portListen(app);
-    url = `http://localhost:${server.address().port}`;
-    const result = await fetch(`${url}/transactions?limit=5`);
-    const { data } = await result.json();
-    expect(data.length).toBe(5);
+  describe(`/trends`, () => {
+    const atlantaFilter = {
+      id: 21,
+      type: 6,
+      name: 'Atlanta'
+    };
+    it(`searches trends with a geography filter`, async () => {
+      app.use(transactionsSearchApp);
+      server = await portListen(app);
+      url = `http://localhost:${server.address().port}`;
+      const result = await fetch(`${url}/trends`, {
+        method: 'POST',
+        body: JSON.stringify({
+          GeographyFilter: atlantaFilter
+        }),
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      });
+
+
+      const { data } = await result.json();
+      expect(Array.isArray(data)).toBe(true);
+    });
   });
 
-  // todo: fix permissions
-  // test(`/transactions with filter from permissionsMiddleware`, async () => {
-  //   app.use(permissionsMiddleware);
-  //   app.use(transactionsSearchApp);
-  //   server = await portListen(app);
-  //   url = `http://localhost:${server.address().port}`;
-  //   const result = await fetch(`${url}/transactions`);
-  //   const { data } = await result.json();
-  //   expect(data.length).toBe(0);
-  // });
 });

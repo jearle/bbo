@@ -29,11 +29,4 @@ describe(`transactionsSearchService`, () => {
     expect(result).toHaveLength(10);
   });
 
-  test(`search from page 1`, async () => {
-    const query = cleanTransactionsSearchQuery({ page: 1 });
-    const result = await transactionsSearchService.search(query);
-
-    if (/localhost/.test(ELASTICSEARCH_NODE)) expect(result).toHaveLength(1);
-    else expect(result).toHaveLength(10);
-  });
 });

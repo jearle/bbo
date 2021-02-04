@@ -1,5 +1,5 @@
 import * as express from 'express';
-import * as fetch from 'node-fetch';
+import fetch from 'node-fetch';
 
 import { permissionsMiddleware as createPermissionsMiddleware } from '.';
 

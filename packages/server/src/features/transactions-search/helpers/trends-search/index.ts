@@ -50,8 +50,8 @@ export const trendsSearchQuery = ({
 };
 
 
-export const trendsSearchResults = ({
+// export const trendsSearchResults = ({
 
-}) => {
-  // parse aggs
-};
+// }) => {
+//   // parse aggs
+// };
