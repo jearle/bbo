@@ -1,5 +1,6 @@
 import { createTransactionsSearchService, TransactionsSearchService } from '.';
 import { createElasticsearchProvider } from '../../../../providers/elasticsearch';
+import { cleanTransactionsSearchQuery } from '../../helpers/clean-transactions-search';
 
 const {
   ELASTICSEARCH_NODE,
@@ -28,10 +29,12 @@ describe(`transactionsSearchService`, () => {
     expect(result).toHaveLength(10);
   });
 
-  test(`search from page 1`, async () => {
-    const result = await transactionsSearchService.search({ page: 1 });
+  test(`search with query`, async () => {
+    const query = cleanTransactionsSearchQuery({ limit: 4 });
+    const result = await transactionsSearchService.search({
+      esQuery: query
+    });
 
-    if (/localhost/.test(ELASTICSEARCH_NODE)) expect(result).toHaveLength(1);
-    else expect(result).toHaveLength(10);
+    expect(result).toHaveLength(4);
   });
 });

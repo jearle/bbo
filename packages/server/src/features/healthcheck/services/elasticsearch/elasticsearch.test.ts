@@ -22,7 +22,7 @@ test('healthy elasticsearch health service', async () => {
 test('unhealthy elasticsearch health service', async () => {
   const healthService = await createElasticsearchHealthService({
     elasticsearchProvider: await createElasticsearchProvider({
-      node: 'http://wrong.example.com:9200',
+      node: 'http://wrong.example.com',
       username: ELASTICSEARCH_USERNAME,
       password: ELASTICSEARCH_PASSWORD,
     }),

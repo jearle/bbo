@@ -1,5 +1,5 @@
 import * as express from 'express';
-import * as fetch from 'node-fetch';
+import fetch from 'node-fetch';
 import { json } from 'body-parser';
 import { portListen } from 'shared/dist/helpers/express/port-listen';
 import { fetchTextOnRandomPort } from 'shared/dist/helpers/express/listen-fetch';

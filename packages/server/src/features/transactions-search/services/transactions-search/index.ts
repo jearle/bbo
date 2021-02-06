@@ -2,6 +2,8 @@ import {
   ElasticsearchProvider,
   ElasticsearchClient,
 } from '../../../../providers/elasticsearch';
+import { ElasticQuery, EsClientRawResponse } from 'shared/dist/helpers/types/elasticsearch';
+import { getElasticHits } from 'shared/dist/helpers/elasticsearch/response-builders';
 
 type CreateTransactionsSearchServiceInputs = {
   elasticsearchProvider: ElasticsearchProvider;
@@ -12,37 +14,34 @@ type TransactionsSearchServiceInputs = {
 };
 
 type TransactionSearchInputs = {
-  page?: number;
-  limit?: number;
+  esQuery?: ElasticQuery;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  filter?: any;
+  responseHandler?: (results: EsClientRawResponse) => any;
 };
 
-const DEFAULT_FILTER = { match_all: {} };
+const DEFAULT_SEARCH = {
+  query: {
+    bool: {
+      must: {
+        match_all: {},
+      },
+    },
+  },
+};
 const { TRANSACTIONS_INDEX } = process.env;
 
 const transactionsSearchService = ({
   elasticsearchClient,
 }: TransactionsSearchServiceInputs) => ({
   async search({
-    page = 0,
-    limit = 10,
-    filter = DEFAULT_FILTER,
+    esQuery = DEFAULT_SEARCH,
+    responseHandler = getElasticHits,
   }: TransactionSearchInputs = {}) {
     const result = await elasticsearchClient.search({
       index: TRANSACTIONS_INDEX,
-      from: page * limit,
-      size: limit,
-      body: {
-        query: filter,
-      },
+      body: esQuery,
     });
-    const { hits } = result.body.hits;
-    const sources = hits.map(({ _source }) => {
-      return _source;
-    });
-
-    return sources;
+    return responseHandler(result);
   },
 });
 

@@ -3,6 +3,7 @@ import { Application } from 'express';
 
 import { TransactionsSearchService } from '../../services/transactions-search';
 import { cleanTransactionsSearchQuery } from '../../helpers/clean-transactions-search';
+import { trendsSearchQuery } from '../../helpers/trends-search';
 
 export const VERSION = `v0`;
 export const DESCRIPTION = `Transactions Search API`;
@@ -16,6 +17,7 @@ export const createApp = ({
   transactionsSearchService,
 }: CreateAppInputs): Application => {
   const app = express();
+  app.use(express.json());
 
   /**
    * @swagger
@@ -53,14 +55,53 @@ export const createApp = ({
    *         description: PropertyTransactionSearchResponse
    */
   app.get(`/transactions`, async (req, res) => {
-    const { query, permissionsFilter } = req;
-    const { page, limit } = cleanTransactionsSearchQuery(query);
+    // const { query, permissionsFilter } = req; // todo: add back permissionfilter
+    const { query } = req;
+    const esQuery = cleanTransactionsSearchQuery(query);
     const data = await transactionsSearchService.search({
-      page,
-      limit,
-      filter: permissionsFilter,
+      esQuery: esQuery,
     });
+    res.json({ data });
+  });
 
+  /**
+   * @swagger
+   *
+   * /trends:
+   *   post:
+   *     description: Search property transactions to return trends aggregates
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - name: limit
+   *         in: query
+   *         description: optional response item limit for debugging
+   *     requestBody:
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               GeographyFilter:
+   *                 type: object
+   *                 properties:
+   *                   id:
+   *                     type: integer
+   *                   type:
+   *                     type: integer
+   *                   name:
+   *                     type: string
+   *     responses:
+   *       200:
+   *         description: TrendsSearchResponse
+   */
+  app.post(`/trends`, async (req, res) => {
+    const { GeographyFilter } = req.body;
+    const { query } = req;
+    const esQuery = trendsSearchQuery({ GeographyFilter, limit: query?.limit }); // todo: limit just for debugging, can use default 0 once we have aggs
+    const data = await transactionsSearchService.search({
+      esQuery,
+    });
     res.json({ data });
   });
 

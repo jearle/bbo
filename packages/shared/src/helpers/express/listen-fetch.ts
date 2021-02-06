@@ -1,5 +1,5 @@
 import { Application } from 'express';
-import * as fetch from 'node-fetch';
+import fetch from 'node-fetch';
 import { Response } from 'node-fetch';
 import { portListen } from './port-listen';
 
@@ -20,7 +20,7 @@ export const fetchResponseOnRandomPort = async (
     body = null,
     headers,
   }: FetchOnRandomPortOptions = {}
-): Response => {
+): Promise<Response> => {
   const server = await portListen(app);
   const { port } = server.address();
 

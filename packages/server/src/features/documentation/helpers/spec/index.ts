@@ -35,6 +35,21 @@ export const createSpec = ({
         description: description,
         version,
       },
+      components: {
+        securitySchemes: {
+          ApiKeyAuth: {
+            type: 'apiKey',
+            name: 'accessToken',
+            in: 'header',
+            description: 'request need accessToken for auth',
+          },
+        },
+      },
+      security: [
+        {
+          ApiKeyAuth: [],
+        },
+      ],
     },
     apis: [apiPath],
   });

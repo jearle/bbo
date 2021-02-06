@@ -1,18 +1,18 @@
 import { cleanTransactionsSearchQuery } from '.';
 
 test(`cleanTransactionsSearchQuery empty`, () => {
-  const { page, limit } = cleanTransactionsSearchQuery();
+  const { from, size } = cleanTransactionsSearchQuery();
 
-  expect(page).toBe(0);
-  expect(limit).toBe(10);
+  expect(from).toBe(0);
+  expect(size).toBe(10);
 });
 
 test(`cleanTransactionsSearchQuery limit string`, () => {
-  const { page, limit } = cleanTransactionsSearchQuery({
+  const { from, size } = cleanTransactionsSearchQuery({
     page: `1`,
     limit: `10`,
   });
 
-  expect(page).toBe(1);
-  expect(limit).toBe(10);
+  expect(from).toBe(10);
+  expect(size).toBe(10);
 });
