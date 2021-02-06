@@ -137,5 +137,25 @@ describe(`transactions app`, () => {
       expect(Array.isArray(data)).toBe(true);
       expect(allPropsAtlanta).toBe(true);
     });
+
+    it(`fails without a geography`, async () => {
+      app.use(transactionsSearchApp);
+      server = await portListen(app);
+      url = `http://localhost:${server.address().port}`;
+      const result = await fetch(`${url}/trends?limit=4`, {
+        method: 'POST',
+        body: JSON.stringify({
+          GeographyFilter: null,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
+
+      const status = await result.status;
+
+      expect(status).toBe(500);
+    });
   });
 });
