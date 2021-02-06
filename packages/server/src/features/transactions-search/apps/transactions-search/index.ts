@@ -96,9 +96,9 @@ export const createApp = ({
    *         description: TrendsSearchResponse
    */
   app.post(`/trends`, async (req, res) => {
-    const { GeographyFilter } = req.body;
+    const { GeographyFilter, aggregation } = req.body;
     const { query } = req;
-    const esQuery = trendsSearchQuery({ GeographyFilter, limit: query?.limit }); // todo: limit just for debugging, can use default 0 once we have aggs
+    const esQuery = trendsSearchQuery({ GeographyFilter, limit: query?.limit, aggregation }); // todo: limit just for debugging, can use default 0 once we have aggs
     const data = await transactionsSearchService.search({
       esQuery,
     });

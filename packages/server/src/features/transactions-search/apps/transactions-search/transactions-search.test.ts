@@ -117,6 +117,7 @@ describe(`transactions app`, () => {
       type: 6,
       name: 'Atlanta',
     };
+
     it(`searches trends with a geography filter`, async () => {
       app.use(transactionsSearchApp);
       server = await portListen(app);
@@ -138,6 +139,26 @@ describe(`transactions app`, () => {
       expect(allPropsAtlanta).toBe(true);
     });
 
+    it(`searches trends with a aggregation filter`, async () => {
+      app.use(transactionsSearchApp);
+      server = await portListen(app);
+      url = `http://localhost:${server.address().port}`;
+      const result = await fetch(`${url}/trends?limit=4`, {
+        method: 'POST',
+        body: JSON.stringify({
+          GeographyFilter: atlantaFilter,
+          aggregation: { aggregationType: 'price', currency: 'USD' }
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
+
+      const { data } = await result.json();
+      expect(data.length).toBe(0);
+    });
+
     it(`fails without a geography`, async () => {
       app.use(transactionsSearchApp);
       server = await portListen(app);
@@ -152,10 +173,9 @@ describe(`transactions app`, () => {
           Accept: 'application/json',
         },
       });
-
       const status = await result.status;
-
       expect(status).toBe(500);
     });
+
   });
 });

@@ -1,12 +1,21 @@
 import { trendsSearchQuery } from './index';
 import * as Geography from 'shared/dist/helpers/types/geography';
+import { Aggregation } from 'shared/dist/helpers/types/aggregations';
 
 describe('trends-search', () => {
+
   const atlantaFilter: Geography.Filter = {
     id: 21,
     type: Geography.Types.Metro,
     name: 'Atlanta',
   };
+
+  const aggregation: Aggregation = {
+    aggregationType: 'price',
+    currency: 'USD'
+  };
+
+
   it('creates a query with a geography filter', () => {
     const esQuery = trendsSearchQuery({ GeographyFilter: atlantaFilter });
     expect(esQuery.size).toEqual(0);
@@ -17,4 +26,41 @@ describe('trends-search', () => {
       },
     });
   });
+
+  it('creates a query with a geography filter and an aggregation', () => {
+    const esQuery = trendsSearchQuery({ GeographyFilter: atlantaFilter, aggregation });
+    expect(esQuery.aggs).toEqual({
+      sumPerQuarter: {
+        date_histogram: {
+          field: 'status_dt',
+          calendar_interval: 'quarter',
+          format: 'YYYY-MM-dd',
+          min_doc_count: 0,
+        },
+        aggs: {
+          filteredSum: {
+            filter: {
+              bool: {
+                must: [
+                  {
+                    term: {
+                      eligibleTTVolume_fg: true,
+                    },
+                  },
+                ],
+              },
+            },
+            aggs: {
+              sumResult: {
+                sum: {
+                  field: 'statusPriceAdjusted_amt.usd'
+                },
+              },
+            },
+          },
+        },
+      }
+    });
+  });
+
 });
