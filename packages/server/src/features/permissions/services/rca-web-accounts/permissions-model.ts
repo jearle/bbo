@@ -25,7 +25,7 @@ const createEmptyPermissionModel = (): PermissionsModel => ({
   marketTier: [],
   metro: [],
   transType: [],
-  propertyTypeSearch: [],
+  propertyTypeSearch: []
 });
 
 const createPermissionModelFromRaw = (
@@ -83,3 +83,24 @@ export const createPermissionsModelFromList = (
 
   return permissionsModel;
 };
+
+
+const splitStringIfNotNull = (input: string) => {
+  return input == null
+    ? []
+    : input.split(',').map((item: string) => parseInt(item));
+};
+
+interface IGeoPermissions {
+  countryIds?: number[];
+  metroIds?: number[];
+  stateProvIds?: number[];
+  marketTierIds?: number[];
+  searchIds: number[];
+  transTypeIds: number[];
+}
+
+interface IGeoPermissionsSet {
+  geoPermissions: IGeoPermissions[];
+  fullPermissions?: boolean;
+}

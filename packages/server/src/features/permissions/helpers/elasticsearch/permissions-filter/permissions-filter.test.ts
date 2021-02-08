@@ -31,7 +31,7 @@ describe(`RCAWebAccountsService`, () => {
     const {
       bool: { must },
     } = createPermissionsFilter({ permissionsModel });
-
+    console.log(JSON.stringify(must, null, 2))
     expect(must.length).toBeGreaterThan(0);
   });
 });
