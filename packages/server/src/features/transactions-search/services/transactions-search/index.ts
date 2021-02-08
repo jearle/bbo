@@ -35,6 +35,7 @@ const transactionsSearchService = ({
 }: TransactionsSearchServiceInputs) => ({
   async search({
     esQuery = DEFAULT_SEARCH,
+    //comment here
     responseHandler = getElasticHits,
   }: TransactionSearchInputs = {}) {
     const result = await elasticsearchClient.search({
