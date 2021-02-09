@@ -69,48 +69,6 @@ export const createApp = ({
    *     description: Search property transactions to return trends aggregates
    *     produces:
    *       - application/json
-   *     parameters:
-   *       - name: limit
-   *         in: query
-   *         description: optional response item limit for debugging
-   *     requestBody:
-   *       content:
-   *         application/json:
-   *           schema:
-   *             type: object
-   *             properties:
-   *               geographyFilter:
-   *                 type: object
-   *                 properties:
-   *                   id:
-   *                     type: integer
-   *                   type:
-   *                     type: integer
-   *                   name:
-   *                     type: string
-   *     responses:
-   *       200:
-   *         description: TrendsSearchResponse
-   */
-  app.post(`/trends`, async (req, res) => {
-    const { geographyFilter, aggregation } = req.body;
-    const { query } = req;
-    const data = await transactionsSearchService.searchForTrends({
-      geographyFilter,
-      aggregation,
-      limit: query?.limit
-    });
-    res.json({ data });
-  });
-
-  /**
-   * @swagger
-   *
-   * /trends/volume:
-   *   post:
-   *     description: Search property transactions to return trends aggregates
-   *     produces:
-   *       - application/json
    *     requestBody:
    *       content:
    *         application/json:
@@ -133,18 +91,15 @@ export const createApp = ({
    *                     type: string
    *     responses:
    *       200:
-   *         description: TrendsVolumeResponse
+   *         description: TrendsAggregationResponse
    */
-  app.post(`/trends/volume`, async (req, res) => {
+  app.post(`/trends`, async (req, res) => {
     const { geographyFilter, aggregation } = req.body;
     const data = await transactionsSearchService.getVolume({
       geographyFilter,
       aggregation,
     });
-    const formattedBuckets = data.aggregations.sumPerQuarter.buckets.map((bucket) => {
-      return { date: bucket.key_as_string, value: bucket.filteredSum.sumResult.value }
-    })
-    res.json({ data: formattedBuckets });
+    res.json({ data });
   });
 
   return app;

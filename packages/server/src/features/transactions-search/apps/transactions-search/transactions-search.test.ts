@@ -1,6 +1,5 @@
 import fetch from 'node-fetch';
 import * as express from 'express';
-import { every } from 'lodash';
 
 import { testHealthcheck } from 'shared/dist/helpers/unit/healthcheck';
 import { portListen } from 'shared/dist/helpers/express/port-listen';
@@ -119,29 +118,11 @@ describe(`transactions app`, () => {
       name: 'Atlanta',
     };
 
-    it(`searches trends with a geography filter`, async () => {
-      app.use(transactionsSearchApp);
-      const { data } = await fetchJSONOnRandomPort(app, {
-        method: 'POST',
-        path: `/trends?limit=4`,
-        body: JSON.stringify({
-          geographyFilter: atlantaFilter,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-      });
-      const allPropsAtlanta = every(data, (item) => item.newMetro_id === 21);
-      expect(Array.isArray(data)).toBe(true);
-      expect(allPropsAtlanta).toBe(true);
-    });
-
     it(`searches trends with a aggregation filter`, async () => {
       app.use(transactionsSearchApp);
       const { data } = await fetchJSONOnRandomPort(app, {
         method: 'POST',
-        path: `/trends/volume`,
+        path: `/trends`,
         body: JSON.stringify({
           geographyFilter: atlantaFilter,
           aggregation: { aggregationType: 'price', currency: 'USD' },

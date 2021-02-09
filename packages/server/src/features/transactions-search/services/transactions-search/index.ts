@@ -2,7 +2,7 @@ import {
   ElasticsearchProvider,
   ElasticsearchClient,
 } from '../../../../providers/elasticsearch';
-import { getElasticBody, getElasticHits } from 'shared/dist/helpers/elasticsearch/response-builders';
+import { getElasticBucket, getElasticHits } from 'shared/dist/helpers/elasticsearch/response-builders';
 import { Filter as GeographyFilter } from 'shared/dist/helpers/types/geography';
 import { Aggregation } from 'shared/dist/helpers/types/aggregations';
 import { createTrendSearchQuery } from 'shared/dist/helpers/elasticsearch/query-builders/queries';
@@ -55,18 +55,6 @@ const transactionsSearchService = ({
     return getElasticHits(result);
   },
 
-  async searchForTrends({
-    geographyFilter,
-    limit,
-  }: TransactionSearchForTrendInputs = {}) {
-    const esQuery = createTrendSearchQuery({ geographyFilter, limit });
-    const result = await elasticsearchClient.search({
-      index: TRANSACTIONS_INDEX,
-      body: esQuery,
-    });
-    return getElasticHits(result);
-  },
-
   async getVolume({
     geographyFilter,
     aggregation,
@@ -81,7 +69,7 @@ const transactionsSearchService = ({
       index: TRANSACTIONS_INDEX,
       body: esQuery,
     });
-    return getElasticBody(result);
+    return getElasticBucket(result);
   },
 });
 
