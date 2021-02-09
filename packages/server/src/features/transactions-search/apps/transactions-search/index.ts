@@ -95,7 +95,7 @@ export const createApp = ({
    */
   app.post(`/trends`, async (req, res) => {
     const { geographyFilter, aggregation } = req.body;
-    const data = await transactionsSearchService.getVolume({
+    const data = await transactionsSearchService.getTrends({
       geographyFilter,
       aggregation,
     });

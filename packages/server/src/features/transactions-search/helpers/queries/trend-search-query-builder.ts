@@ -1,9 +1,7 @@
-import { Aggregation } from '../../../types/aggregations';
-import { Filter } from '../../../types/geography';
-import { ElasticQuery } from '../../../types/elasticsearch';
-import { createGeographyFilterTerms } from '../geography-filters';
-import { createAggs } from '../aggregations';
-
+import { Aggregation, Filter } from 'shared/dist/helpers/types';
+import { createAggs } from 'shared/dist/helpers/elasticsearch/query-builders/aggregations';
+import { createGeographyFilterTerms } from 'shared/dist/helpers/elasticsearch/query-builders/geography-filters';
+import { ElasticQuery } from 'shared/dist/helpers/types/elasticsearch';
 
 type TrendsSearchQueryInputs = {
   readonly limit?: number;

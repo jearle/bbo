@@ -1,20 +1,18 @@
 import { createTrendSearchQuery } from './index';
-import * as Geography from '../../../types/geography';
-import { Aggregation } from '../../../types/aggregations';
+import { Aggregation, Filter, Types } from 'shared/dist/helpers/types';
 
 describe('trends-search', () => {
 
-  const atlantaFilter: Geography.Filter = {
+  const atlantaFilter: Filter = {
     id: 21,
-    type: Geography.Types.Metro,
+    type: Types.Metro,
     name: 'Atlanta',
   };
 
   const aggregation: Aggregation = {
     aggregationType: 'price',
-    currency: 'USD'
+    currency: 'USD',
   };
-
 
   it('creates a query with a geography filter', () => {
     const esQuery = createTrendSearchQuery({ geographyFilter: atlantaFilter });
@@ -28,7 +26,10 @@ describe('trends-search', () => {
   });
 
   it('creates a query with a geography filter and an aggregation', () => {
-    const esQuery = createTrendSearchQuery({ geographyFilter: atlantaFilter, aggregation });
+    const esQuery = createTrendSearchQuery({
+      geographyFilter: atlantaFilter,
+      aggregation,
+    });
     expect(esQuery.aggs).toEqual({
       sumPerQuarter: {
         date_histogram: {
@@ -53,14 +54,13 @@ describe('trends-search', () => {
             aggs: {
               sumResult: {
                 sum: {
-                  field: 'statusPriceAdjusted_amt.usd'
+                  field: 'statusPriceAdjusted_amt.usd',
                 },
               },
             },
           },
         },
-      }
+      },
     });
   });
-
 });

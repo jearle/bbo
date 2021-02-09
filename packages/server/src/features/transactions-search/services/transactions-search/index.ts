@@ -5,8 +5,8 @@ import {
 import { getElasticBucket, getElasticHits } from 'shared/dist/helpers/elasticsearch/response-builders';
 import { Filter as GeographyFilter } from 'shared/dist/helpers/types/geography';
 import { Aggregation } from 'shared/dist/helpers/types/aggregations';
-import { createTrendSearchQuery } from 'shared/dist/helpers/elasticsearch/query-builders/queries';
 import { cleanTransactionsSearchQuery } from '../../helpers/clean-transactions-search';
+import { createTrendSearchQuery } from '../../helpers/queries';
 
 type CreateTransactionsSearchServiceInputs = {
   elasticsearchProvider: ElasticsearchProvider;
@@ -55,7 +55,7 @@ const transactionsSearchService = ({
     return getElasticHits(result);
   },
 
-  async getVolume({
+  async getTrends({
     geographyFilter,
     aggregation,
     limit,
