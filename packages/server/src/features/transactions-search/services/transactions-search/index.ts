@@ -45,8 +45,6 @@ const transactionsSearchService = ({
   elasticsearchClient,
 }: TransactionsSearchServiceInputs) => ({
   async search({
-    page = 0,
-    limit = 10,
     query = DEFAULT_SEARCH,
   }: TransactionSearchInputs = {}) {
     const esQuery = cleanTransactionsSearchQuery(query);

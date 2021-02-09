@@ -128,7 +128,7 @@ export const createApp = ({
    *                     type: integer
    *                   name:
    *                     type: string
-   *                aggregation:
+   *                 aggregation:
    *                   aggregationType:
    *                     type: string
    *                   currency:

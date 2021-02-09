@@ -1,6 +1,5 @@
 import { createTransactionsSearchService, TransactionsSearchService } from '.';
 import { createElasticsearchProvider } from '../../../../providers/elasticsearch';
-import { cleanTransactionsSearchQuery } from '../../helpers/clean-transactions-search';
 
 const {
   ELASTICSEARCH_NODE,
