@@ -2,8 +2,6 @@ import * as express from 'express';
 import { Application } from 'express';
 
 import { TransactionsSearchService } from '../../services/transactions-search';
-import { cleanTransactionsSearchQuery } from '../../helpers/clean-transactions-search';
-import { trendsSearchQuery } from '../../helpers/trends-search';
 
 export const VERSION = `v0`;
 export const DESCRIPTION = `Transactions Search API`;
@@ -55,11 +53,12 @@ export const createApp = ({
    *         description: PropertyTransactionSearchResponse
    */
   app.get(`/transactions`, async (req, res) => {
-    // const { query, permissionsFilter } = req; // todo: add back permissionfilter
-    const { query } = req;
-    const esQuery = cleanTransactionsSearchQuery(query);
+    // const { permissionsFilter } = req; // todo: add back permissionfilter
+    const { query, page, limit } = req;
     const data = await transactionsSearchService.search({
-      esQuery: esQuery,
+      page,
+      limit,
+      query
     });
     res.json({ data });
   });
@@ -82,7 +81,7 @@ export const createApp = ({
    *           schema:
    *             type: object
    *             properties:
-   *               GeographyFilter:
+   *               geographyFilter:
    *                 type: object
    *                 properties:
    *                   id:
@@ -96,13 +95,58 @@ export const createApp = ({
    *         description: TrendsSearchResponse
    */
   app.post(`/trends`, async (req, res) => {
-    const { GeographyFilter, aggregation } = req.body;
+    const { geographyFilter, aggregation } = req.body;
     const { query } = req;
-    const esQuery = trendsSearchQuery({ GeographyFilter, limit: query?.limit, aggregation }); // todo: limit just for debugging, can use default 0 once we have aggs
-    const data = await transactionsSearchService.search({
-      esQuery,
+    const data = await transactionsSearchService.searchForTrends({
+      geographyFilter,
+      aggregation,
+      limit: query?.limit
     });
     res.json({ data });
+  });
+
+  /**
+   * @swagger
+   *
+   * /trends/volume:
+   *   post:
+   *     description: Search property transactions to return trends aggregates
+   *     produces:
+   *       - application/json
+   *     requestBody:
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               geographyFilter:
+   *                 type: object
+   *                 properties:
+   *                   id:
+   *                     type: integer
+   *                   type:
+   *                     type: integer
+   *                   name:
+   *                     type: string
+   *                aggregation:
+   *                   aggregationType:
+   *                     type: string
+   *                   currency:
+   *                     type: string
+   *     responses:
+   *       200:
+   *         description: TrendsVolumeResponse
+   */
+  app.post(`/trends/volume`, async (req, res) => {
+    const { geographyFilter, aggregation } = req.body;
+    const data = await transactionsSearchService.getVolume({
+      geographyFilter,
+      aggregation,
+    });
+    const formattedBuckets = data.aggregations.sumPerQuarter.buckets.map((bucket) => {
+      return { date: bucket.key_as_string, value: bucket.filteredSum.sumResult.value }
+    })
+    res.json({ data: formattedBuckets });
   });
 
   return app;

@@ -1,6 +1,6 @@
-import { trendsSearchQuery } from './index';
-import * as Geography from 'shared/dist/helpers/types/geography';
-import { Aggregation } from 'shared/dist/helpers/types/aggregations';
+import { createTrendSearchQuery } from './index';
+import * as Geography from '../../../types/geography';
+import { Aggregation } from '../../../types/aggregations';
 
 describe('trends-search', () => {
 
@@ -17,7 +17,7 @@ describe('trends-search', () => {
 
 
   it('creates a query with a geography filter', () => {
-    const esQuery = trendsSearchQuery({ GeographyFilter: atlantaFilter });
+    const esQuery = createTrendSearchQuery({ geographyFilter: atlantaFilter });
     expect(esQuery.size).toEqual(0);
     expect(esQuery.query.bool.filter.bool.must.length).toBe(1);
     expect(esQuery.query.bool.filter.bool.must[0]).toEqual({
@@ -28,7 +28,7 @@ describe('trends-search', () => {
   });
 
   it('creates a query with a geography filter and an aggregation', () => {
-    const esQuery = trendsSearchQuery({ GeographyFilter: atlantaFilter, aggregation });
+    const esQuery = createTrendSearchQuery({ geographyFilter: atlantaFilter, aggregation });
     expect(esQuery.aggs).toEqual({
       sumPerQuarter: {
         date_histogram: {

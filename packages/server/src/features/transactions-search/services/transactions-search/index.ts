@@ -2,8 +2,11 @@ import {
   ElasticsearchProvider,
   ElasticsearchClient,
 } from '../../../../providers/elasticsearch';
-import { ElasticQuery, EsClientRawResponse } from 'shared/dist/helpers/types/elasticsearch';
-import { getElasticHits } from 'shared/dist/helpers/elasticsearch/response-builders';
+import { getElasticBody, getElasticHits } from 'shared/dist/helpers/elasticsearch/response-builders';
+import { Filter as GeographyFilter } from 'shared/dist/helpers/types/geography';
+import { Aggregation } from 'shared/dist/helpers/types/aggregations';
+import { createTrendSearchQuery } from 'shared/dist/helpers/elasticsearch/query-builders/queries';
+import { cleanTransactionsSearchQuery } from '../../helpers/clean-transactions-search';
 
 type CreateTransactionsSearchServiceInputs = {
   elasticsearchProvider: ElasticsearchProvider;
@@ -14,9 +17,17 @@ type TransactionsSearchServiceInputs = {
 };
 
 type TransactionSearchInputs = {
-  esQuery?: ElasticQuery;
+  page?: number;
+  limit?: number;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  responseHandler?: (results: EsClientRawResponse) => any;
+  query?: any;
+};
+
+type TransactionSearchForTrendInputs = {
+  geographyFilter?: GeographyFilter;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  aggregation?: Aggregation,
+  limit?: number;
 };
 
 const DEFAULT_SEARCH = {
@@ -34,15 +45,45 @@ const transactionsSearchService = ({
   elasticsearchClient,
 }: TransactionsSearchServiceInputs) => ({
   async search({
-    esQuery = DEFAULT_SEARCH,
-    //comment here
-    responseHandler = getElasticHits,
+    page = 0,
+    limit = 10,
+    query = DEFAULT_SEARCH,
   }: TransactionSearchInputs = {}) {
+    const esQuery = cleanTransactionsSearchQuery(query);
     const result = await elasticsearchClient.search({
       index: TRANSACTIONS_INDEX,
       body: esQuery,
     });
-    return responseHandler(result);
+    return getElasticHits(result);
+  },
+
+  async searchForTrends({
+    geographyFilter,
+    limit,
+  }: TransactionSearchForTrendInputs = {}) {
+    const esQuery = createTrendSearchQuery({ geographyFilter, limit });
+    const result = await elasticsearchClient.search({
+      index: TRANSACTIONS_INDEX,
+      body: esQuery,
+    });
+    return getElasticHits(result);
+  },
+
+  async getVolume({
+    geographyFilter,
+    aggregation,
+    limit,
+  }: TransactionSearchForTrendInputs = {}) {
+    const esQuery = createTrendSearchQuery({
+      geographyFilter,
+      aggregation,
+      limit,
+    });
+    const result = await elasticsearchClient.search({
+      index: TRANSACTIONS_INDEX,
+      body: esQuery,
+    });
+    return getElasticBody(result);
   },
 });
 

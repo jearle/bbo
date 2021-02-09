@@ -29,12 +29,5 @@ describe(`transactionsSearchService`, () => {
     expect(result).toHaveLength(10);
   });
 
-  test(`search with query`, async () => {
-    const query = cleanTransactionsSearchQuery({ limit: 4 });
-    const result = await transactionsSearchService.search({
-      esQuery: query
-    });
 
-    expect(result).toHaveLength(4);
-  });
 });

@@ -14,6 +14,7 @@ import { createRCAWebAccountsService } from '../../../permissions/services/rca-w
 import { createPermissionsService } from '../../../permissions/services/permissions';
 // import { permissionsMiddleware as createPermissionsMiddleware } from '../../../permissions/middlewares/permissions';
 import { createRedisProvider } from '../../../../providers/redis';
+import { fetchJSONOnRandomPort } from 'shared/dist/helpers/express/listen-fetch';
 
 const {
   MSSQL_URI,
@@ -120,20 +121,17 @@ describe(`transactions app`, () => {
 
     it(`searches trends with a geography filter`, async () => {
       app.use(transactionsSearchApp);
-      server = await portListen(app);
-      url = `http://localhost:${server.address().port}`;
-      const result = await fetch(`${url}/trends?limit=4`, {
+      const { data } = await fetchJSONOnRandomPort(app, {
         method: 'POST',
+        path: `/trends?limit=4`,
         body: JSON.stringify({
-          GeographyFilter: atlantaFilter,
+          geographyFilter: atlantaFilter,
         }),
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
         },
       });
-
-      const { data } = await result.json();
       const allPropsAtlanta = every(data, (item) => item.newMetro_id === 21);
       expect(Array.isArray(data)).toBe(true);
       expect(allPropsAtlanta).toBe(true);
@@ -141,22 +139,23 @@ describe(`transactions app`, () => {
 
     it(`searches trends with a aggregation filter`, async () => {
       app.use(transactionsSearchApp);
-      server = await portListen(app);
-      url = `http://localhost:${server.address().port}`;
-      const result = await fetch(`${url}/trends?limit=4`, {
+      const { data } = await fetchJSONOnRandomPort(app, {
         method: 'POST',
+        path: `/trends/volume`,
         body: JSON.stringify({
-          GeographyFilter: atlantaFilter,
-          aggregation: { aggregationType: 'price', currency: 'USD' }
+          geographyFilter: atlantaFilter,
+          aggregation: { aggregationType: 'price', currency: 'USD' },
         }),
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
         },
       });
+      expect(Array.isArray(data)).toBe(true);
+      expect(Number.isInteger(data[0].value)).toBe(true);
+      expect(data[0]).toHaveProperty('value');
+      expect(data[0]).toHaveProperty('date');
 
-      const { data } = await result.json();
-      expect(data.length).toBe(0);
     });
 
     it(`fails without a geography`, async () => {

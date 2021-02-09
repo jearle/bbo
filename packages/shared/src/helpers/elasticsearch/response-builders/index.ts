@@ -7,3 +7,9 @@ export const getElasticHits = (response: EsClientRawResponse): any[] => {
     return _source;
   });
 };
+
+export const getElasticBody = (response: EsClientRawResponse) => {
+  return response.body;
+};
+
+
