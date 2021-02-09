@@ -1,4 +1,4 @@
-import { ElasticQuery } from 'shared/dist/helpers/types/elasticsearch';
+import { ElasticQuery } from 'shared/dist/helpers/types';
 
 type CleanTransactionsSearchQueryInputs = {
   readonly page?: number | string;

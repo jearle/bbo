@@ -56,7 +56,7 @@ export const createApp = ({
     // const { permissionsFilter } = req; // todo: add back permissionfilter
     const { query } = req;
     const data = await transactionsSearchService.search({
-      query
+      query,
     });
     res.json({ data });
   });

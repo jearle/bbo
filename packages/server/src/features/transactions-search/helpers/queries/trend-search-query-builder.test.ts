@@ -2,7 +2,6 @@ import { createTrendSearchQuery } from './index';
 import { Aggregation, Filter, Types } from 'shared/dist/helpers/types';
 
 describe('trends-search', () => {
-
   const atlantaFilter: Filter = {
     id: 21,
     type: Types.Metro,

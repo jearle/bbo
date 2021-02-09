@@ -136,7 +136,6 @@ describe(`transactions app`, () => {
       expect(Number.isInteger(data[0].value)).toBe(true);
       expect(data[0]).toHaveProperty('value');
       expect(data[0]).toHaveProperty('date');
-
     });
 
     it(`fails without a geography`, async () => {
@@ -156,6 +155,5 @@ describe(`transactions app`, () => {
       const status = await result.status;
       expect(status).toBe(500);
     });
-
   });
 });

@@ -10,10 +10,10 @@ type TrendsSearchQueryInputs = {
 };
 
 export const createTrendSearchQuery = ({
-                                    geographyFilter,
-                                    limit = 0,
-                                    aggregation,
-                                  }: TrendsSearchQueryInputs): ElasticQuery => {
+  geographyFilter,
+  limit = 0,
+  aggregation,
+}: TrendsSearchQueryInputs): ElasticQuery => {
   const geographyMust = createGeographyFilterTerms([geographyFilter]);
   // const propertyTypeMust = createPropertyTypeFilterTerms();
   const mustArr = [...geographyMust];
@@ -30,15 +30,15 @@ export const createTrendSearchQuery = ({
         },
       },
     },
-    size: limit
-  }
+    size: limit,
+  };
   if (aggregation?.aggregationType) {
     const aggs = createAggs(aggregation);
     const queryWithAggs = {
       query: query.query,
       aggs,
       size: 0,
-    }
+    };
     return queryWithAggs;
   }
   return query;

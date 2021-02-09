@@ -2,7 +2,10 @@ import {
   ElasticsearchProvider,
   ElasticsearchClient,
 } from '../../../../providers/elasticsearch';
-import { getElasticBucket, getElasticHits } from 'shared/dist/helpers/elasticsearch/response-builders';
+import {
+  getElasticBucket,
+  getElasticHits,
+} from 'shared/dist/helpers/elasticsearch/response-builders';
 import { Filter as GeographyFilter } from 'shared/dist/helpers/types/geography';
 import { Aggregation } from 'shared/dist/helpers/types/aggregations';
 import { cleanTransactionsSearchQuery } from '../../helpers/clean-transactions-search';
@@ -26,7 +29,7 @@ type TransactionSearchInputs = {
 type TransactionSearchForTrendInputs = {
   geographyFilter?: GeographyFilter;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  aggregation?: Aggregation,
+  aggregation?: Aggregation;
   limit?: number;
 };
 
@@ -44,9 +47,7 @@ const { TRANSACTIONS_INDEX } = process.env;
 const transactionsSearchService = ({
   elasticsearchClient,
 }: TransactionsSearchServiceInputs) => ({
-  async search({
-    query = DEFAULT_SEARCH,
-  }: TransactionSearchInputs = {}) {
+  async search({ query = DEFAULT_SEARCH }: TransactionSearchInputs = {}) {
     const esQuery = cleanTransactionsSearchQuery(query);
     const result = await elasticsearchClient.search({
       index: TRANSACTIONS_INDEX,

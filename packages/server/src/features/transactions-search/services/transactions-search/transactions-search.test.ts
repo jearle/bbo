@@ -27,6 +27,4 @@ describe(`transactionsSearchService`, () => {
 
     expect(result).toHaveLength(10);
   });
-
-
 });
