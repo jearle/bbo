@@ -11,9 +11,7 @@ type CreateAppInputs = {
   readonly transactionsSearchService: TransactionsSearchService;
 };
 
-export const createApp = ({
-  transactionsSearchService,
-}: CreateAppInputs): Application => {
+export const createApp = ({ transactionsSearchService }: CreateAppInputs): Application => {
   const app = express();
   app.use(express.json());
 
@@ -75,7 +73,7 @@ export const createApp = ({
    *           schema:
    *             type: object
    *             properties:
-   *               geographyFilter:
+   *                geographyFilter:
    *                 type: object
    *                 properties:
    *                   id:
@@ -89,6 +87,15 @@ export const createApp = ({
    *                     type: string
    *                   currency:
    *                     type: string
+   *                 propertyTypeFilter:
+   *                   propertyTypeId:
+   *                     type: number
+   *                   allPropertySubTypes:
+   *                     type: boolean
+   *                   propertySubTypeIds:
+   *                     type: array
+   *                     items:
+   *                      type: number
    *     responses:
    *       200:
    *         description: TrendsAggregationResponse

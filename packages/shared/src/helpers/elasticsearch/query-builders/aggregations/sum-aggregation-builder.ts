@@ -1,4 +1,8 @@
-import { Aggregation, AggregationType, Currency } from '../../../types/aggregations';
+import {
+  Aggregation,
+  AggregationType,
+  Currency,
+} from '../../../types/aggregations';
 
 const currencyMapper = {
   USD: 'usd',
@@ -25,27 +29,33 @@ const filter = {
   },
 };
 
-const determineWhatFieldToSumOn = (aggregationType, currency) => {
-  if (aggregationType === 'price') {
+const determineWhatFieldToSumOn = (aggregationTypeUpperCase, currency) => {
+  if (aggregationTypeUpperCase === 'PRICE') {
     if (currencyMapper[currency]) {
       return `statusPriceAdjusted_amt.${currencyMapper[currency]}`;
-    }
-    else {
+    } else {
       throw 'currency does not exist for aggregation';
     }
-  } else if (aggregationType === 'property') {
+  } else if (aggregationTypeUpperCase === 'PROPERTY') {
     return 'numberOfProperties_nb';
+  } else if (aggregationTypeUpperCase === 'UNITS') {
+    return 'units_dbl';
+  } else if (aggregationTypeUpperCase === 'SQFT') {
+    return 'sqFt_dbl';
   } else {
     throw 'field does not exist for aggregation';
   }
 };
 
-export const createAggs = ({aggregationType, currency = 'USD'}: Aggregation) => {
+export const createAggs = ({
+  aggregationType,
+  currency = 'USD',
+}: Aggregation) => {
   let field;
+  const aggregationTypeUpperCase = aggregationType.toUpperCase();
   try {
-    field = determineWhatFieldToSumOn(aggregationType, currency);
-  }
-  catch {
+    field = determineWhatFieldToSumOn(aggregationTypeUpperCase, currency);
+  } catch {
     field = undefined;
   }
 

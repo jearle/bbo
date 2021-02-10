@@ -4,5 +4,5 @@ export type Aggregation = {
   currency?: Currency
 }
 
-export type AggregationType = 'price' | 'property'
+export type AggregationType = 'price' | 'property'| 'units'| 'sqft'
 export type Currency = 'USD' | 'EUR'| null

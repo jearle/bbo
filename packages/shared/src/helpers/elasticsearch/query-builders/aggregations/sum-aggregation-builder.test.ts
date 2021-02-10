@@ -79,6 +79,80 @@ describe('sum aggregation builder', () => {
     expect(result).toEqual(expected);
   });
 
+  it('create quarterly (sum) aggregation for number of units', () => {
+    const expected = {
+      sumPerQuarter: {
+        date_histogram: {
+          field: 'status_dt',
+          calendar_interval: 'quarter',
+          format: 'YYYY-MM-dd',
+          min_doc_count: 0,
+        },
+        aggs: {
+          filteredSum: {
+            filter: {
+              bool: {
+                must: [
+                  {
+                    term: {
+                      eligibleTTVolume_fg: true,
+                    },
+                  },
+                ],
+              },
+            },
+            aggs: {
+              sumResult: {
+                sum: {
+                  field: 'units_dbl'
+                },
+              },
+            },
+          },
+        },
+      },
+    }
+    const result  = createAggs({ aggregationType: 'units' });
+    expect(result).toEqual(expected);
+  });
+
+  it('create quarterly (sum) aggregation for number of units', () => {
+    const expected = {
+      sumPerQuarter: {
+        date_histogram: {
+          field: 'status_dt',
+          calendar_interval: 'quarter',
+          format: 'YYYY-MM-dd',
+          min_doc_count: 0,
+        },
+        aggs: {
+          filteredSum: {
+            filter: {
+              bool: {
+                must: [
+                  {
+                    term: {
+                      eligibleTTVolume_fg: true,
+                    },
+                  },
+                ],
+              },
+            },
+            aggs: {
+              sumResult: {
+                sum: {
+                  field: 'sqFt_dbl'
+                },
+              },
+            },
+          },
+        },
+      },
+    }
+    const result  = createAggs({ aggregationType: 'sqft' });
+    expect(result).toEqual(expected);
+  });
+
   it('aggregationType error', () => {
    try {
       createAggs({ aggregationType: 'random' } as any);

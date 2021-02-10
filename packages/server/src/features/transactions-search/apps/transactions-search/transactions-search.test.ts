@@ -123,7 +123,7 @@ describe(`transactions app`, () => {
       propertySubTypeIds: [102, 107],
     };
 
-    it(`searches trends with a aggregation filter`, async () => {
+    it(`searches trends with a price aggregation filter`, async () => {
       app.use(transactionsSearchApp);
       const { data } = await fetchJSONOnRandomPort(app, {
         method: 'POST',
@@ -141,6 +141,32 @@ describe(`transactions app`, () => {
       expect(Array.isArray(data)).toBe(true);
       expect(Number.isInteger(data[0].value)).toBe(true);
       expect(data[0]).toHaveProperty('value');
+      expect(data[0]).toHaveProperty('date');
+    });
+
+    it(`searches trends with a units aggregation filter`, async () => {
+      const officeFilter = {
+        propertyTypeId: 1,
+        allPropertySubTypes: true,
+      };
+
+      app.use(transactionsSearchApp);
+      const { data } = await fetchJSONOnRandomPort(app, {
+        method: 'POST',
+        path: `/trends`,
+        body: JSON.stringify({
+          geographyFilter: atlantaFilter,
+          propertyTypeFilter: officeFilter,
+          aggregation: { aggregationType: 'units' },
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
+      console.log(data);
+      expect(Array.isArray(data)).toBe(true);
+      expect(Number.isInteger(data[0].value)).toBe(true);
       expect(data[0]).toHaveProperty('date');
     });
 
