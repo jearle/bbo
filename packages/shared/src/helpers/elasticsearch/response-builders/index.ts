@@ -16,7 +16,7 @@ export const getElasticBody = (response: EsClientRawResponse) => {
 */
 
 export const getElasticBucket = (response: EsClientRawResponse) => {
-  const data = response.body.aggregations.sumPerQuarter.buckets.map((bucket) => {
+  const data = response.body.aggregations?.sumPerQuarter?.buckets?.map((bucket) => {
     return { date: bucket.key_as_string, value: bucket.filteredSum.sumResult.value }
   })
   return data
