@@ -117,6 +117,11 @@ describe(`transactions app`, () => {
       type: 6,
       name: 'Atlanta',
     };
+    const officeFilter = {
+      propertyTypeId: 96,
+      allPropertySubTypes: true,
+      propertySubTypeIds: [102, 107],
+    };
 
     it(`searches trends with a aggregation filter`, async () => {
       app.use(transactionsSearchApp);
@@ -125,6 +130,7 @@ describe(`transactions app`, () => {
         path: `/trends`,
         body: JSON.stringify({
           geographyFilter: atlantaFilter,
+          propertyTypeFilter: officeFilter,
           aggregation: { aggregationType: 'price', currency: 'USD' },
         }),
         headers: {
@@ -145,7 +151,27 @@ describe(`transactions app`, () => {
       const result = await fetch(`${url}/trends?limit=4`, {
         method: 'POST',
         body: JSON.stringify({
-          GeographyFilter: null,
+          geographyFilter: null,
+          propertyTypeFilter: officeFilter,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
+      const status = await result.status;
+      expect(status).toBe(500);
+    });
+
+    it(`fails without a property type`, async () => {
+      app.use(transactionsSearchApp);
+      server = await portListen(app);
+      url = `http://localhost:${server.address().port}`;
+      const result = await fetch(`${url}/trends?limit=4`, {
+        method: 'POST',
+        body: JSON.stringify({
+          geographyFilter: atlantaFilter,
+          propertyTypeFilter: null,
         }),
         headers: {
           'Content-Type': 'application/json',

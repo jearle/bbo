@@ -6,7 +6,7 @@ import {
   getElasticBucket,
   getElasticHits,
 } from 'shared/dist/helpers/elasticsearch/response-builders';
-import { Filter as GeographyFilter } from 'shared/dist/helpers/types/geography';
+import { Geography, PropertyType } from 'shared/dist/helpers/types';
 import { Aggregation } from 'shared/dist/helpers/types/aggregations';
 import { cleanTransactionsSearchQuery } from '../../helpers/clean-transactions-search';
 import { createTrendSearchQuery } from '../../helpers/queries';
@@ -27,7 +27,8 @@ type TransactionSearchInputs = {
 };
 
 type TransactionSearchForTrendInputs = {
-  geographyFilter?: GeographyFilter;
+  geographyFilter?: Geography.Filter;
+  propertyTypeFilter?: PropertyType.Filter;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   aggregation?: Aggregation;
   limit?: number;
@@ -58,11 +59,13 @@ const transactionsSearchService = ({
 
   async getTrends({
     geographyFilter,
+    propertyTypeFilter,
     aggregation,
     limit,
   }: TransactionSearchForTrendInputs = {}) {
     const esQuery = createTrendSearchQuery({
       geographyFilter,
+      propertyTypeFilter,
       aggregation,
       limit,
     });

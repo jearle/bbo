@@ -94,9 +94,10 @@ export const createApp = ({
    *         description: TrendsAggregationResponse
    */
   app.post(`/trends`, async (req, res) => {
-    const { geographyFilter, aggregation } = req.body;
+    const { geographyFilter, propertyTypeFilter, aggregation } = req.body;
     const data = await transactionsSearchService.getTrends({
       geographyFilter,
+      propertyTypeFilter,
       aggregation,
     });
     res.json({ data });
