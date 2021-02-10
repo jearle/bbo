@@ -1,4 +1,5 @@
 export * from './aggregations';
 export * from './awaited';
 export * from './elasticsearch';
-export * from './geography';
+export * as Geography from './geography';
+export * as PropertyType from './property-type';

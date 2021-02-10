@@ -1,11 +1,17 @@
 import { createTrendSearchQuery } from './index';
-import { Aggregation, Filter, Types } from 'shared/dist/helpers/types';
+import { Aggregation, Geography } from 'shared/dist/helpers/types';
 
 describe('trends-search', () => {
-  const atlantaFilter: Filter = {
+  const atlantaFilter: Geography.Filter = {
     id: 21,
-    type: Types.Metro,
+    type: Geography.Types.Metro,
     name: 'Atlanta',
+  };
+
+  const officeFilter = {
+    propertyTypeId: 96,
+    allPropertySubTypes: true,
+    propertySubTypeIds: [102, 107],
   };
 
   const aggregation: Aggregation = {
@@ -13,20 +19,29 @@ describe('trends-search', () => {
     currency: 'USD',
   };
 
-  it('creates a query with a geography filter', () => {
-    const esQuery = createTrendSearchQuery({ geographyFilter: atlantaFilter });
+  it('creates a query with a geography and property type filter', () => {
+    const esQuery = createTrendSearchQuery({
+      geographyFilter: atlantaFilter,
+      propertyTypeFilter: officeFilter,
+    });
     expect(esQuery.size).toEqual(0);
-    expect(esQuery.query.bool.filter.bool.must.length).toBe(1);
+    expect(esQuery.query.bool.filter.bool.must.length).toBe(2);
     expect(esQuery.query.bool.filter.bool.must[0]).toEqual({
       terms: {
         newMetro_id: [21],
       },
     });
+    expect(esQuery.query.bool.filter.bool.must[1]).toEqual({
+      terms: {
+        propertyTypeSearch_id: [96],
+      },
+    });
   });
 
-  it('creates a query with a geography filter and an aggregation', () => {
+  it('creates a query with a geography and property type filter and an aggregation', () => {
     const esQuery = createTrendSearchQuery({
       geographyFilter: atlantaFilter,
+      propertyTypeFilter: officeFilter,
       aggregation,
     });
     expect(esQuery.aggs).toEqual({
