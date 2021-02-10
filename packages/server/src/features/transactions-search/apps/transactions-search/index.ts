@@ -2,8 +2,6 @@ import * as express from 'express';
 import { Application } from 'express';
 
 import { TransactionsSearchService } from '../../services/transactions-search';
-import { cleanTransactionsSearchQuery } from '../../helpers/clean-transactions-search';
-import { trendsSearchQuery } from '../../helpers/trends-search';
 
 export const VERSION = `v0`;
 export const DESCRIPTION = `Transactions Search API`;
@@ -55,11 +53,10 @@ export const createApp = ({
    *         description: PropertyTransactionSearchResponse
    */
   app.get(`/transactions`, async (req, res) => {
-    // const { query, permissionsFilter } = req; // todo: add back permissionfilter
+    // const { permissionsFilter } = req; // todo: add back permissionfilter
     const { query } = req;
-    const esQuery = cleanTransactionsSearchQuery(query);
     const data = await transactionsSearchService.search({
-      esQuery: esQuery,
+      query,
     });
     res.json({ data });
   });
@@ -72,17 +69,13 @@ export const createApp = ({
    *     description: Search property transactions to return trends aggregates
    *     produces:
    *       - application/json
-   *     parameters:
-   *       - name: limit
-   *         in: query
-   *         description: optional response item limit for debugging
    *     requestBody:
    *       content:
    *         application/json:
    *           schema:
    *             type: object
    *             properties:
-   *               GeographyFilter:
+   *               geographyFilter:
    *                 type: object
    *                 properties:
    *                   id:
@@ -91,16 +84,20 @@ export const createApp = ({
    *                     type: integer
    *                   name:
    *                     type: string
+   *                 aggregation:
+   *                   aggregationType:
+   *                     type: string
+   *                   currency:
+   *                     type: string
    *     responses:
    *       200:
-   *         description: TrendsSearchResponse
+   *         description: TrendsAggregationResponse
    */
   app.post(`/trends`, async (req, res) => {
-    const { GeographyFilter } = req.body;
-    const { query } = req;
-    const esQuery = trendsSearchQuery({ GeographyFilter, limit: query?.limit }); // todo: limit just for debugging, can use default 0 once we have aggs
-    const data = await transactionsSearchService.search({
-      esQuery,
+    const { geographyFilter, aggregation } = req.body;
+    const data = await transactionsSearchService.getTrends({
+      geographyFilter,
+      aggregation,
     });
     res.json({ data });
   });

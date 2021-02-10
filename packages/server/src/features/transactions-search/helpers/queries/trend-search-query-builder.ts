@@ -1,21 +1,23 @@
-import { Filter as GeographyFilter } from 'shared/dist/helpers/types/geography';
+import { Aggregation, Filter } from 'shared/dist/helpers/types';
+import { createAggs } from 'shared/dist/helpers/elasticsearch/query-builders/aggregations';
 import { createGeographyFilterTerms } from 'shared/dist/helpers/elasticsearch/query-builders/geography-filters';
 import { ElasticQuery } from 'shared/dist/helpers/types/elasticsearch';
 
 type TrendsSearchQueryInputs = {
   readonly limit?: number;
-  readonly GeographyFilter: GeographyFilter;
+  readonly geographyFilter: Filter;
+  readonly aggregation?: Aggregation;
 };
 
-export const trendsSearchQuery = ({
-  GeographyFilter,
+export const createTrendSearchQuery = ({
+  geographyFilter,
   limit = 0,
+  aggregation,
 }: TrendsSearchQueryInputs): ElasticQuery => {
-  const geographyMust = createGeographyFilterTerms([GeographyFilter]);
+  const geographyMust = createGeographyFilterTerms([geographyFilter]);
   // const propertyTypeMust = createPropertyTypeFilterTerms();
   const mustArr = [...geographyMust];
-  // const aggs = createAggs(resultType) // something to specify if it's volume, # props, etc
-  return {
+  const query = {
     query: {
       bool: {
         must: {
@@ -30,10 +32,14 @@ export const trendsSearchQuery = ({
     },
     size: limit,
   };
+  if (aggregation?.aggregationType) {
+    const aggs = createAggs(aggregation);
+    const queryWithAggs = {
+      query: query.query,
+      aggs,
+      size: 0,
+    };
+    return queryWithAggs;
+  }
+  return query;
 };
-
-// export const trendsSearchResults = ({
-
-// }) => {
-//   // parse aggs
-// };
