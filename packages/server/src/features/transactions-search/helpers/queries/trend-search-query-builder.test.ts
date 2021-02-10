@@ -1,5 +1,9 @@
 import { createTrendSearchQuery } from './index';
-import { Aggregation, Geography } from 'shared/dist/helpers/types';
+import {
+  Aggregation,
+  Geography,
+  PropertyType,
+} from 'shared/dist/helpers/types';
 
 describe('trends-search', () => {
   const atlantaFilter: Geography.Filter = {
@@ -8,7 +12,7 @@ describe('trends-search', () => {
     name: 'Atlanta',
   };
 
-  const officeFilter = {
+  const officeFilter: PropertyType.Filter = {
     propertyTypeId: 96,
     allPropertySubTypes: true,
     propertySubTypeIds: [102, 107],
