@@ -142,10 +142,11 @@ describe(`transactions app`, () => {
       expect(Number.isInteger(data[0].value)).toBe(true);
       expect(data[0]).toHaveProperty('value');
       expect(data[0]).toHaveProperty('date');
+      expect(data.length).toBeGreaterThanOrEqual(1);
     });
 
     it(`searches trends with a units aggregation filter`, async () => {
-      const officeFilter = {
+      const apartmentFilter = {
         propertyTypeId: 1,
         allPropertySubTypes: true,
       };
@@ -156,7 +157,7 @@ describe(`transactions app`, () => {
         path: `/trends`,
         body: JSON.stringify({
           geographyFilter: atlantaFilter,
-          propertyTypeFilter: officeFilter,
+          propertyTypeFilter: apartmentFilter,
           aggregation: { aggregationType: 'units' },
         }),
         headers: {
@@ -164,10 +165,36 @@ describe(`transactions app`, () => {
           Accept: 'application/json',
         },
       });
-      console.log(data);
       expect(Array.isArray(data)).toBe(true);
       expect(Number.isInteger(data[0].value)).toBe(true);
       expect(data[0]).toHaveProperty('date');
+      expect(data.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it(`searches trends with a sqft aggregation filter`, async () => {
+      const officeFilter = {
+        propertyTypeId: 96,
+        allPropertySubTypes: true,
+      };
+
+      app.use(transactionsSearchApp);
+      const { data } = await fetchJSONOnRandomPort(app, {
+        method: 'POST',
+        path: `/trends`,
+        body: JSON.stringify({
+          geographyFilter: atlantaFilter,
+          propertyTypeFilter: officeFilter,
+          aggregation: { aggregationType: 'sqft' },
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
+      expect(Array.isArray(data)).toBe(true);
+      expect(Number.isInteger(data[0].value)).toBe(true);
+      expect(data[0]).toHaveProperty('date');
+      expect(data.length).toBeGreaterThanOrEqual(1);
     });
 
     it(`fails without a geography`, async () => {
