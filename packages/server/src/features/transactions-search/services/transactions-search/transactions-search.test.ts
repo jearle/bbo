@@ -1,6 +1,5 @@
 import { createTransactionsSearchService, TransactionsSearchService } from '.';
 import { createElasticsearchProvider } from '../../../../providers/elasticsearch';
-import { cleanTransactionsSearchQuery } from '../../helpers/clean-transactions-search';
 
 const {
   ELASTICSEARCH_NODE,
@@ -27,14 +26,5 @@ describe(`transactionsSearchService`, () => {
     const result = await transactionsSearchService.search();
 
     expect(result).toHaveLength(10);
-  });
-
-  test(`search with query`, async () => {
-    const query = cleanTransactionsSearchQuery({ limit: 4 });
-    const result = await transactionsSearchService.search({
-      esQuery: query
-    });
-
-    expect(result).toHaveLength(4);
   });
 });

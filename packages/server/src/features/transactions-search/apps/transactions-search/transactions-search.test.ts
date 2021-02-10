@@ -1,6 +1,5 @@
 import fetch from 'node-fetch';
 import * as express from 'express';
-import { every } from 'lodash';
 
 import { testHealthcheck } from 'shared/dist/helpers/unit/healthcheck';
 import { portListen } from 'shared/dist/helpers/express/port-listen';
@@ -14,6 +13,7 @@ import { createRCAWebAccountsService } from '../../../permissions/services/rca-w
 import { createPermissionsService } from '../../../permissions/services/permissions';
 // import { permissionsMiddleware as createPermissionsMiddleware } from '../../../permissions/middlewares/permissions';
 import { createRedisProvider } from '../../../../providers/redis';
+import { fetchJSONOnRandomPort } from 'shared/dist/helpers/express/listen-fetch';
 
 const {
   MSSQL_URI,
@@ -117,25 +117,25 @@ describe(`transactions app`, () => {
       type: 6,
       name: 'Atlanta',
     };
-    it(`searches trends with a geography filter`, async () => {
+
+    it(`searches trends with a aggregation filter`, async () => {
       app.use(transactionsSearchApp);
-      server = await portListen(app);
-      url = `http://localhost:${server.address().port}`;
-      const result = await fetch(`${url}/trends?limit=4`, {
+      const { data } = await fetchJSONOnRandomPort(app, {
         method: 'POST',
+        path: `/trends`,
         body: JSON.stringify({
-          GeographyFilter: atlantaFilter,
+          geographyFilter: atlantaFilter,
+          aggregation: { aggregationType: 'price', currency: 'USD' },
         }),
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
         },
       });
-
-      const { data } = await result.json();
-      const allPropsAtlanta = every(data, (item) => item.newMetro_id === 21);
       expect(Array.isArray(data)).toBe(true);
-      expect(allPropsAtlanta).toBe(true);
+      expect(Number.isInteger(data[0].value)).toBe(true);
+      expect(data[0]).toHaveProperty('value');
+      expect(data[0]).toHaveProperty('date');
     });
 
     it(`fails without a geography`, async () => {
@@ -152,9 +152,7 @@ describe(`transactions app`, () => {
           Accept: 'application/json',
         },
       });
-
       const status = await result.status;
-
       expect(status).toBe(500);
     });
   });
