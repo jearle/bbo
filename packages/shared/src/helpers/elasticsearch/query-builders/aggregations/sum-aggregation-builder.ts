@@ -1,8 +1,4 @@
-import {
-  Aggregation,
-  AggregationType,
-  Currency,
-} from '../../../types/aggregations';
+import { Aggregation } from '../../../types';
 
 const currencyMapper = {
   USD: 'usd',
