@@ -84,20 +84,24 @@ export const createApp = ({
    *                     type: integer
    *                   name:
    *                     type: string
-   *                 aggregation:
+   *                aggregation:
+   *                 type: object
+   *                 properties:
    *                   aggregationType:
    *                     type: string
    *                   currency:
    *                     type: string
-   *                 propertyTypeFilter:
+   *                propertyTypeFilter:
+   *                 type: object
+   *                 properties:
    *                   propertyTypeId:
-   *                     type: number
+   *                     type: integer
    *                   allPropertySubTypes:
    *                     type: boolean
    *                   propertySubTypeIds:
    *                     type: array
    *                     items:
-   *                      type: number
+   *                      type: integer
    *     responses:
    *       200:
    *         description: TrendsAggregationResponse
