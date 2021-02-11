@@ -2,9 +2,7 @@ import * as Geography from '../../../types/geography';
 import { createGeographyFilterTerms } from '../geography-filters';
 import { createAggs } from './sum-aggregation-builder';
 
-
 describe('sum aggregation builder', () => {
-
   it('create quarterly (sum) aggregation for price (CRE volume) in default currency USD', () => {
     const expected = {
       sumPerQuarter: {
@@ -30,14 +28,14 @@ describe('sum aggregation builder', () => {
             aggs: {
               sumResult: {
                 sum: {
-                  field: 'statusPriceAdjusted_amt.usd'
+                  field: 'statusPriceAdjusted_amt.usd',
                 },
               },
             },
           },
         },
       },
-    }
+    };
     const result = createAggs({ aggregationType: 'price' });
     expect(result).toEqual(expected);
   });
@@ -67,15 +65,15 @@ describe('sum aggregation builder', () => {
             aggs: {
               sumResult: {
                 sum: {
-                  field: 'numberOfProperties_nb'
+                  field: 'numberOfProperties_nb',
                 },
               },
             },
           },
         },
       },
-    }
-    const result  = createAggs({ aggregationType: 'property' });
+    };
+    const result = createAggs({ aggregationType: 'property' });
     expect(result).toEqual(expected);
   });
 
@@ -104,15 +102,15 @@ describe('sum aggregation builder', () => {
             aggs: {
               sumResult: {
                 sum: {
-                  field: 'units_dbl'
+                  field: 'units_dbl',
                 },
               },
             },
           },
         },
       },
-    }
-    const result  = createAggs({ aggregationType: 'units' });
+    };
+    const result = createAggs({ aggregationType: 'units' });
     expect(result).toEqual(expected);
   });
 
@@ -141,34 +139,31 @@ describe('sum aggregation builder', () => {
             aggs: {
               sumResult: {
                 sum: {
-                  field: 'sqFt_dbl'
+                  field: 'sqFt_dbl',
                 },
               },
             },
           },
         },
       },
-    }
-    const result  = createAggs({ aggregationType: 'sqft' });
+    };
+    const result = createAggs({ aggregationType: 'sqft' });
     expect(result).toEqual(expected);
   });
 
   it('aggregationType error', () => {
-   try {
-      createAggs({ aggregationType: 'random' } as any);
-    }
-    catch (e) {
-      expect(e).toEqual('field does not exist for aggregation');
-    }
-  })
-
-  it('currencyType error', () => {
     try {
-      createAggs({ aggregationType: 'price', currency: 'Bitcoin' } as any );
-    }
-    catch (e) {
+      createAggs({ aggregationType: 'random' } as any);
+    } catch (e) {
       expect(e).toEqual('field does not exist for aggregation');
     }
   });
 
+  it('currencyType error', () => {
+    try {
+      createAggs({ aggregationType: 'price', currency: 'Bitcoin' } as any);
+    } catch (e) {
+      expect(e).toEqual('field does not exist for aggregation');
+    }
+  });
 });
