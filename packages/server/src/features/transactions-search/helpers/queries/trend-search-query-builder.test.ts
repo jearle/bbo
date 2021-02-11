@@ -19,7 +19,7 @@ describe('trends-search', () => {
   };
 
   const aggregation: Aggregation = {
-    aggregationType: 'price',
+    aggregationType: 'PRICE',
     currency: 'USD',
   };
 

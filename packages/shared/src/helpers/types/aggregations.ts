@@ -3,5 +3,5 @@ export type Aggregation = {
   currency?: Currency;
 };
 
-export type AggregationType = 'price' | 'property' | 'units' | 'sqft';
+export type AggregationType = 'PRICE' | 'PROPERTY' | 'UNITS' | 'SQFT';
 export type Currency = 'USD' | 'EUR' | null;

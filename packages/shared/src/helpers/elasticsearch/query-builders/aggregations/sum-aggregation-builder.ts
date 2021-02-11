@@ -1,4 +1,4 @@
-import { Aggregation } from '../../../types';
+import { Aggregation, AggregationType, Currency } from '../../../types';
 
 const currencyMapper = {
   USD: 'usd',
@@ -25,7 +25,8 @@ const filter = {
   },
 };
 
-const determineWhatFieldToSumOn = (aggregationTypeUpperCase, currency) => {
+const determineWhatFieldToSumOn = (aggregationType: AggregationType, currency: Currency) => {
+  const aggregationTypeUpperCase = aggregationType.toUpperCase();
   if (aggregationTypeUpperCase === 'PRICE') {
     if (currencyMapper[currency]) {
       return `statusPriceAdjusted_amt.${currencyMapper[currency]}`;
@@ -48,9 +49,8 @@ export const createAggs = ({
   currency = 'USD',
 }: Aggregation) => {
   let field;
-  const aggregationTypeUpperCase = aggregationType.toUpperCase();
   try {
-    field = determineWhatFieldToSumOn(aggregationTypeUpperCase, currency);
+    field = determineWhatFieldToSumOn(aggregationType, currency);
   } catch {
     field = undefined;
   }

@@ -36,7 +36,7 @@ describe('sum aggregation builder', () => {
         },
       },
     };
-    const result = createAggs({ aggregationType: 'price' });
+    const result = createAggs({ aggregationType: 'PRICE' });
     expect(result).toEqual(expected);
   });
 
@@ -73,7 +73,7 @@ describe('sum aggregation builder', () => {
         },
       },
     };
-    const result = createAggs({ aggregationType: 'property' });
+    const result = createAggs({ aggregationType: 'PROPERTY' });
     expect(result).toEqual(expected);
   });
 
@@ -110,7 +110,7 @@ describe('sum aggregation builder', () => {
         },
       },
     };
-    const result = createAggs({ aggregationType: 'units' });
+    const result = createAggs({ aggregationType: 'UNITS' });
     expect(result).toEqual(expected);
   });
 
@@ -147,7 +147,7 @@ describe('sum aggregation builder', () => {
         },
       },
     };
-    const result = createAggs({ aggregationType: 'sqft' });
+    const result = createAggs({ aggregationType: 'SQFT' });
     expect(result).toEqual(expected);
   });
 
