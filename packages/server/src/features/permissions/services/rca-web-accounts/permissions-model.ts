@@ -1,13 +1,19 @@
-import { csvToArray } from 'shared/dist/helpers/csv';
+import { csvToIntArray } from 'shared/dist/helpers/csv';
 import { unique } from 'shared/dist/helpers/array';
+import { map, filter } from 'lodash';
+
+export type PermissionsSet = {
+  permissionModels: PermissionsModel[]; // a user can have multilpe subscriptions each with their own combo of geo/propertype permissions
+  fullPermissions?: boolean; // if true they are permissioned for all geo and prop types and we can skip the more granular permissions
+};
 
 export type PermissionsModel = {
-  readonly stateProvidence: string[];
-  readonly country: string[];
-  readonly marketTier: string[];
-  readonly metro: string[];
-  readonly transType: string[];
-  readonly propertyTypeSearch: string[];
+  readonly stateProvidence: number[];
+  readonly country: number[];
+  readonly marketTier: number[];
+  readonly metro: number[];
+  readonly transType: number[];
+  readonly propertyTypeSearch: number[];
 };
 
 export type RawPermissionsModel = {
@@ -17,16 +23,8 @@ export type RawPermissionsModel = {
   readonly Metro_csv: string | null;
   readonly TransType_csv: string | null;
   readonly PtsMenu_csv: string | null;
+  readonly FullPermission_fg: boolean | null;
 };
-
-const createEmptyPermissionModel = (): PermissionsModel => ({
-  stateProvidence: [],
-  country: [],
-  marketTier: [],
-  metro: [],
-  transType: [],
-  propertyTypeSearch: []
-});
 
 const createPermissionModelFromRaw = (
   rawPermissionModel: RawPermissionsModel
@@ -38,15 +36,17 @@ const createPermissionModelFromRaw = (
     Metro_csv,
     TransType_csv,
     PtsMenu_csv,
+    FullPermission_fg
   } = rawPermissionModel;
 
   const permissionModel = {
-    stateProvidence: csvToArray(StateProv_csv),
-    country: csvToArray(Country_csv),
-    marketTier: csvToArray(MarketTier_csv),
-    metro: csvToArray(Metro_csv),
-    transType: csvToArray(TransType_csv),
-    propertyTypeSearch: csvToArray(PtsMenu_csv),
+    stateProvidence: csvToIntArray(StateProv_csv),
+    country: csvToIntArray(Country_csv),
+    marketTier: csvToIntArray(MarketTier_csv),
+    metro: csvToIntArray(Metro_csv),
+    transType: csvToIntArray(TransType_csv),
+    propertyTypeSearch: csvToIntArray(PtsMenu_csv),
+    fullPermissions: FullPermission_fg
   };
 
   return permissionModel;
@@ -54,53 +54,15 @@ const createPermissionModelFromRaw = (
 
 export const createPermissionsModelFromList = (
   rawPermissionModels: RawPermissionsModel[]
-): PermissionsModel => {
-  const permissionsModel = rawPermissionModels.reduce(
-    (acc, rawPermissionModel) => {
-      const {
-        stateProvidence,
-        country,
-        marketTier,
-        metro,
-        transType,
-        propertyTypeSearch,
-      } = createPermissionModelFromRaw(rawPermissionModel);
+): PermissionsSet => {
+  let hasFullPermissions = false;
+  const permissions = rawPermissionModels.map((rawPermissionModel) => {
+    hasFullPermissions = rawPermissionModel.FullPermission_fg || hasFullPermissions; // if any subscription has FullPermission_fg = true, set to true
+    return createPermissionModelFromRaw(rawPermissionModel);
+  });
 
-      return {
-        stateProvidence: unique([...acc.stateProvidence, ...stateProvidence]),
-        country: unique([...acc.country, ...country]),
-        marketTier: unique([...acc.marketTier, ...marketTier]),
-        metro: unique([...acc.metro, ...metro]),
-        transType: unique([...acc.transType, ...transType]),
-        propertyTypeSearch: unique([
-          ...acc.propertyTypeSearch,
-          ...propertyTypeSearch,
-        ]),
-      };
-    },
-    createEmptyPermissionModel()
-  );
-
-  return permissionsModel;
+  return {
+    permissionModels: permissions,
+    fullPermissions: hasFullPermissions
+  };
 };
-
-
-const splitStringIfNotNull = (input: string) => {
-  return input == null
-    ? []
-    : input.split(',').map((item: string) => parseInt(item));
-};
-
-interface IGeoPermissions {
-  countryIds?: number[];
-  metroIds?: number[];
-  stateProvIds?: number[];
-  marketTierIds?: number[];
-  searchIds: number[];
-  transTypeIds: number[];
-}
-
-interface IGeoPermissionsSet {
-  geoPermissions: IGeoPermissions[];
-  fullPermissions?: boolean;
-}
