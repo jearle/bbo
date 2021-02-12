@@ -18,13 +18,13 @@ export const permissionsMiddleware = ({
   return async (req, res, next) => {
     const { username } = req.jwtPayload;
 
-    const permissionsModel = await permissionsService.fetchPermissionsModel({
+    const permissionsSet = await permissionsService.fetchPermissionsModel({
       username,
     });
 
-    const permissionFilter = createPermissionsFilter({ permissionsModel });
+    const permissionFilter = createPermissionsFilter({ permissionsSet });
 
-    req.permissionsModel = permissionsModel;
+    req.permissionsSet = permissionsSet;
     req.permissionsFilter = permissionFilter;
 
     next();

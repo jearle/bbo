@@ -24,14 +24,14 @@ describe(`RCAWebAccountsService`, () => {
   });
 
   test(`fetchPermissionsModel`, async () => {
-    const permissionsModel = await rcaWebAccountsService.fetchPermissionsModel({
+    const permissionsSet = await rcaWebAccountsService.fetchPermissionsModel({
       userId: USER_ID,
     });
 
     const {
-      bool: { must },
-    } = createPermissionsFilter({ permissionsModel });
-    console.log(JSON.stringify(must, null, 2))
-    expect(must.length).toBeGreaterThan(0);
+      bool: { should },
+    } = createPermissionsFilter({ permissionsSet });
+    console.log(JSON.stringify(should, null, 2))
+    expect(should.length).toBeGreaterThan(0);
   });
 });
