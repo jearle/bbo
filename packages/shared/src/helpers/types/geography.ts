@@ -33,7 +33,7 @@ export const FieldMappings: Map<Types, string> = new Map([
   [Types.County, 'adminLevel2_id'],
   [Types.City, 'newCity_id'],
   [Types.MarketTier, 'newMarketTier_id'],
-  [Types.Neighborhood, 'neighborhood_id']
+  [Types.Neighborhood, 'neighborhood_id'],
 ]);
 
 export type Filter = {

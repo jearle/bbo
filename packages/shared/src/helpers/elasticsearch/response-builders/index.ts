@@ -1,4 +1,4 @@
-import { EsClientRawResponse } from "../../types/elasticsearch";
+import { EsClientRawResponse } from '../../types/elasticsearch';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getElasticHits = (response: EsClientRawResponse): any[] => {
@@ -16,11 +16,13 @@ export const getElasticBody = (response: EsClientRawResponse) => {
 */
 
 export const getElasticBucket = (response: EsClientRawResponse) => {
-  const data = response.body.aggregations?.sumPerQuarter?.buckets?.map((bucket) => {
-    return { date: bucket.key_as_string, value: bucket.filteredSum.sumResult.value }
-  })
-  return data
+  const data = response.body.aggregations?.sumPerQuarter?.buckets?.map(
+    (bucket) => {
+      return {
+        date: bucket.key_as_string,
+        value: bucket.filteredSum.sumResult.value,
+      };
+    }
+  );
+  return data;
 };
-
-
-
