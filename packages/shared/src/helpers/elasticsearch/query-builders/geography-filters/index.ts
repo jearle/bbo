@@ -2,7 +2,9 @@ import { map, chain } from 'lodash';
 import * as Geography from '../../../types/geography';
 
 const parseStateProv = (id: number): string => {
-  switch (parseInt((id / 1000000).toString())) { // stateProv can be adminLevel 1,2, or 3 which we can determine based on its id value
+  switch (
+    parseInt((id / 1000000).toString()) // stateProv can be adminLevel 1,2, or 3 which we can determine based on its id value
+  ) {
     case 1:
       return 'adminLevel1_id';
     case 2:
@@ -35,20 +37,23 @@ const getValue = (item: Geography.Filter): number => {
 
 type GeograpyFilterTerm = {
   terms: {
-    [key: string]: number[]
-  }
-}
+    [key: string]: number[];
+  };
+};
 
-export const createGeographyFilterTerms = (items: Geography.Filter[], prefixKey = ''): GeograpyFilterTerm[] => {
+export const createGeographyFilterTerms = (
+  items: Geography.Filter[],
+  prefixKey = ''
+): GeograpyFilterTerm[] => {
   return chain(items)
     .groupBy(getKey)
     .map((values, key) => {
       const mappedValues = map(values, (value) => getValue(value));
       return {
         terms: {
-          [prefixKey + key]: mappedValues
-        }
-      }
-    }).value();
+          [prefixKey + key]: mappedValues,
+        },
+      };
+    })
+    .value();
 };
-

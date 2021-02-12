@@ -16,4 +16,4 @@ export type EsClientRawResponse = {
   statusCode?: number;
   headers?: any;
   meta?: any;
-}
+};

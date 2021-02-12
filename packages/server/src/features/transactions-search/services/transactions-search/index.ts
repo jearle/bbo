@@ -6,8 +6,11 @@ import {
   getElasticBucket,
   getElasticHits,
 } from 'shared/dist/helpers/elasticsearch/response-builders';
-import { Geography, PropertyType } from 'shared/dist/helpers/types';
-import { Aggregation } from 'shared/dist/helpers/types/aggregations';
+import {
+  Geography,
+  PropertyType,
+  Aggregation,
+} from 'shared/dist/helpers/types';
 import { cleanTransactionsSearchQuery } from '../../helpers/clean-transactions-search';
 import { createTrendSearchQuery } from '../../helpers/queries';
 

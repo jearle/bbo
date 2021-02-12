@@ -75,7 +75,7 @@ export const createApp = ({
    *           schema:
    *             type: object
    *             properties:
-   *               geographyFilter:
+   *                geographyFilter:
    *                 type: object
    *                 properties:
    *                   id:
@@ -84,11 +84,24 @@ export const createApp = ({
    *                     type: integer
    *                   name:
    *                     type: string
-   *                 aggregation:
+   *                aggregation:
+   *                 type: object
+   *                 properties:
    *                   aggregationType:
    *                     type: string
    *                   currency:
    *                     type: string
+   *                propertyTypeFilter:
+   *                 type: object
+   *                 properties:
+   *                   propertyTypeId:
+   *                     type: integer
+   *                   allPropertySubTypes:
+   *                     type: boolean
+   *                   propertySubTypeIds:
+   *                     type: array
+   *                     items:
+   *                      type: integer
    *     responses:
    *       200:
    *         description: TrendsAggregationResponse
