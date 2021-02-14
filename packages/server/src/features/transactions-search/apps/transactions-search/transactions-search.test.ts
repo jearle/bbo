@@ -13,7 +13,7 @@ import { createRCAWebAccountsService } from '../../../permissions/services/rca-w
 import { createPermissionsService } from '../../../permissions/services/permissions';
 import { permissionsMiddleware as createPermissionsMiddleware } from '../../../permissions/middlewares/permissions';
 import { createRedisProvider } from '../../../../providers/redis';
-import { fetchJSONOnRandomPort } from 'shared/dist/helpers/express/listen-fetch';
+import { fetchJSONOnRandomPort, fetchResponseOnRandomPort } from 'shared/dist/helpers/express/listen-fetch';
 
 const {
   MSSQL_URI,
@@ -199,40 +199,38 @@ describe(`transactions app`, () => {
 
     it(`fails without a geography`, async () => {
       app.use(transactionsSearchApp);
-      server = await portListen(app);
-      url = `http://localhost:${server.address().port}`;
-      const result = await fetch(`${url}/trends?limit=4`, {
+      const response = await fetchResponseOnRandomPort(app, {
         method: 'POST',
+        path: `/trends?limit=4`,
         body: JSON.stringify({
           geographyFilter: null,
           propertyTypeFilter: officeFilter,
+          aggregation: { aggregationType: 'sqft' },
         }),
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
         },
       });
-      const status = await result.status;
-      expect(status).toBe(500);
+      expect(response.status).toBe(500);
     });
 
     it(`fails without a property type`, async () => {
       app.use(transactionsSearchApp);
-      server = await portListen(app);
-      url = `http://localhost:${server.address().port}`;
-      const result = await fetch(`${url}/trends?limit=4`, {
+      const response = await fetchResponseOnRandomPort(app, {
         method: 'POST',
+        path: `/trends?limit=4`,
         body: JSON.stringify({
           geographyFilter: atlantaFilter,
           propertyTypeFilter: null,
+          aggregation: { aggregationType: 'sqft' },
         }),
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
         },
       });
-      const status = await result.status;
-      expect(status).toBe(500);
+      expect(response.status).toBe(500);
     });
   });
 });
