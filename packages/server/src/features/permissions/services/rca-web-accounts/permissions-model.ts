@@ -1,6 +1,4 @@
 import { csvToIntArray } from 'shared/dist/helpers/csv';
-import { unique } from 'shared/dist/helpers/array';
-import { map, filter } from 'lodash';
 
 export type PermissionsSet = {
   permissionModels: PermissionsModel[]; // a user can have multilpe subscriptions each with their own combo of geo/propertype permissions

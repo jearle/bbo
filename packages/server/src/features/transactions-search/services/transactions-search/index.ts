@@ -13,6 +13,7 @@ import {
 } from 'shared/dist/helpers/types';
 import { cleanTransactionsSearchQuery } from '../../helpers/clean-transactions-search';
 import { createTrendSearchQuery } from '../../helpers/queries';
+import { CreatePermissionsFilterResult } from '../../../permissions/helpers/elasticsearch/permissions-filter';
 
 type CreateTransactionsSearchServiceInputs = {
   elasticsearchProvider: ElasticsearchProvider;
@@ -27,13 +28,14 @@ type TransactionSearchInputs = {
   limit?: number;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   query?: any;
+  permissionsFilter?: CreatePermissionsFilterResult;
 };
 
 type TransactionSearchForTrendInputs = {
   geographyFilter?: Geography.Filter;
   propertyTypeFilter?: PropertyType.Filter;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   aggregation?: Aggregation;
+  permissionsFilter?: CreatePermissionsFilterResult;
   limit?: number;
 };
 
@@ -51,7 +53,7 @@ const { TRANSACTIONS_INDEX } = process.env;
 const transactionsSearchService = ({
   elasticsearchClient,
 }: TransactionsSearchServiceInputs) => ({
-  async search({ query = DEFAULT_SEARCH }: TransactionSearchInputs = {}) {
+  async searchTransactions({ query = DEFAULT_SEARCH, permissionsFilter = null }: TransactionSearchInputs = {}) {
     const esQuery = cleanTransactionsSearchQuery(query);
     const result = await elasticsearchClient.search({
       index: TRANSACTIONS_INDEX,
@@ -60,22 +62,25 @@ const transactionsSearchService = ({
     return getElasticHits(result);
   },
 
-  async getTrends({
+  async searchTrends({
     geographyFilter,
     propertyTypeFilter,
     aggregation,
+    permissionsFilter,
     limit,
   }: TransactionSearchForTrendInputs = {}) {
     const esQuery = createTrendSearchQuery({
       geographyFilter,
       propertyTypeFilter,
       aggregation,
+      permissionsFilter,
       limit,
     });
     const result = await elasticsearchClient.search({
       index: TRANSACTIONS_INDEX,
       body: esQuery,
     });
+    console.log(JSON.stringify(result));
     return getElasticBucket(result);
   },
 });

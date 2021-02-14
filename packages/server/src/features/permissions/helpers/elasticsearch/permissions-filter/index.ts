@@ -1,20 +1,26 @@
 import { size } from 'lodash';
 import { PermissionsSet } from '../../../services/rca-web-accounts/permissions-model';
 
-type MatchObject = {
-  match: { [key: string]: string };
+type MustObject = {
+  bool: {
+    must: [
+      {
+        [key: string]: any
+      }
+    ]
+  }
 };
 
-type CreateMatchObjectsResult = MatchObject[];
+type CreateMustObjectsResult = MustObject[];
 
 
 type CreatePermissionsFilterInputs = {
   permissionsSet: PermissionsSet;
 };
 
-type CreatePermissionsFilterResult = {
+export type CreatePermissionsFilterResult = {
   bool: {
-    should: CreateMatchObjectsResult;
+    should: CreateMustObjectsResult;
   };
 };
 
@@ -46,7 +52,7 @@ export const createPermissionsFilter = ({
       });
     }
 
-    let geoPermissionsQuery: { bool: { should?: {}[] } } = {
+    const geoPermissionsQuery: { bool: { should?: {}[] } } = {
       bool: { should: [] },
     };
     let geoPermissionsPush = false;

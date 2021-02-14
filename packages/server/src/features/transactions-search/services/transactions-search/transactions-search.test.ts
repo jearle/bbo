@@ -23,7 +23,7 @@ describe(`transactionsSearchService`, () => {
   });
 
   test(`search`, async () => {
-    const result = await transactionsSearchService.search();
+    const result = await transactionsSearchService.searchTransactions();
 
     expect(result).toHaveLength(10);
   });

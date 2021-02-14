@@ -11,7 +11,7 @@ import { createElasticsearchProvider } from '../../../../providers/elasticsearch
 import { createMSSQLProvider } from '../../../../providers/mssql';
 import { createRCAWebAccountsService } from '../../../permissions/services/rca-web-accounts';
 import { createPermissionsService } from '../../../permissions/services/permissions';
-// import { permissionsMiddleware as createPermissionsMiddleware } from '../../../permissions/middlewares/permissions';
+import { permissionsMiddleware as createPermissionsMiddleware } from '../../../permissions/middlewares/permissions';
 import { createRedisProvider } from '../../../../providers/redis';
 import { fetchJSONOnRandomPort } from 'shared/dist/helpers/express/listen-fetch';
 
@@ -25,7 +25,7 @@ const {
 
 describe(`transactions app`, () => {
   let permissionsService = null;
-  // let permissionsMiddleware = null;
+  let permissionsMiddleware = null;
   let server = null;
   let app = null;
   let url = null;
@@ -49,9 +49,9 @@ describe(`transactions app`, () => {
       redisProvider,
     });
 
-    // permissionsMiddleware = createPermissionsMiddleware({
-    //   permissionsService,
-    // });
+    permissionsMiddleware = createPermissionsMiddleware({
+      permissionsService,
+    });
 
     const transactionsSearchService = createTransactionsSearchService({
       elasticsearchProvider,
@@ -99,16 +99,16 @@ describe(`transactions app`, () => {
       expect(data.length).toBe(5);
     });
 
-    // todo: fix permissions
-    // test(`/transactions with filter from permissionsMiddleware`, async () => {
-    //   app.use(permissionsMiddleware);
-    //   app.use(transactionsSearchApp);
-    //   server = await portListen(app);
-    //   url = `http://localhost:${server.address().port}`;
-    //   const result = await fetch(`${url}/transactions`);
-    //   const { data } = await result.json();
-    //   expect(data.length).toBe(0);
-    // });
+    test(`/transactions with filter from permissionsMiddleware`, async () => {
+      app.use(permissionsMiddleware);
+      app.use(transactionsSearchApp);
+      server = await portListen(app);
+      url = `http://localhost:${server.address().port}`;
+      const result = await fetch(`${url}/transactions`);
+      console.log(result);
+      const { data } = await result.json();
+      expect(data.length).toBe(10);
+    });
   });
 
   describe(`/trends`, () => {

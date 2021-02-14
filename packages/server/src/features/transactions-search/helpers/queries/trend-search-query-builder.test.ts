@@ -27,6 +27,7 @@ describe('trends-search', () => {
     const esQuery = createTrendSearchQuery({
       geographyFilter: atlantaFilter,
       propertyTypeFilter: officeFilter,
+      permissionsFilter: null
     });
     expect(esQuery.size).toEqual(0);
     expect(esQuery.query.bool.filter.bool.must.length).toBe(2);
@@ -46,6 +47,7 @@ describe('trends-search', () => {
     const esQuery = createTrendSearchQuery({
       geographyFilter: atlantaFilter,
       propertyTypeFilter: officeFilter,
+      permissionsFilter: null,
       aggregation,
     });
     expect(esQuery.aggs).toEqual({
