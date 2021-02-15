@@ -23,14 +23,14 @@ describe('trends-search', () => {
     currency: 'USD',
   };
 
-  it('creates a query with a geography and property type filter', () => {
+  it('creates a query with a permissions, geography, and property type filter', () => {
     const esQuery = createTrendSearchQuery({
       geographyFilter: atlantaFilter,
       propertyTypeFilter: officeFilter,
       permissionsFilter: null
     });
     expect(esQuery.size).toEqual(0);
-    expect(esQuery.query.bool.filter.bool.must.length).toBe(2);
+    expect(esQuery.query.bool.filter.bool.must.length).toBe(3);
     expect(esQuery.query.bool.filter.bool.must[0]).toEqual({
       terms: {
         newMetro_id: [21],
@@ -43,7 +43,7 @@ describe('trends-search', () => {
     });
   });
 
-  it('creates a query with a geography and property type filter and an aggregation', () => {
+  it('creates a query with filters and an aggregation', () => {
     const esQuery = createTrendSearchQuery({
       geographyFilter: atlantaFilter,
       propertyTypeFilter: officeFilter,

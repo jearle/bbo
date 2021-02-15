@@ -105,7 +105,6 @@ describe(`transactions app`, () => {
       server = await portListen(app);
       url = `http://localhost:${server.address().port}`;
       const result = await fetch(`${url}/transactions`);
-      console.log(result);
       const { data } = await result.json();
       expect(data.length).toBe(10);
     });
@@ -125,7 +124,7 @@ describe(`transactions app`, () => {
 
     it(`searches trends with a price aggregation filter`, async () => {
       app.use(transactionsSearchApp);
-      const { data } = await fetchJSONOnRandomPort(app, {
+      const result = await fetchJSONOnRandomPort(app, {
         method: 'POST',
         path: `/trends`,
         body: JSON.stringify({
@@ -138,6 +137,7 @@ describe(`transactions app`, () => {
           Accept: 'application/json',
         },
       });
+      const { data } = await result.json()
       expect(Array.isArray(data)).toBe(true);
       expect(Number.isInteger(data[0].value)).toBe(true);
       expect(data[0]).toHaveProperty('value');
