@@ -76,7 +76,12 @@ const transactionsSearchService = ({
       index: TRANSACTIONS_INDEX,
       body: esQuery,
     });
-    return getElasticBucket(result);
+    return {
+      data: getElasticBucket(result),
+      index: TRANSACTIONS_INDEX,
+      request: esQuery,
+      response: result,
+    };
   },
 });
 

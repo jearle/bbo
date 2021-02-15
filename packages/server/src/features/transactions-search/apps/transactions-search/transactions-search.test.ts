@@ -234,5 +234,34 @@ describe(`transactions app`, () => {
       const status = await result.status;
       expect(status).toBe(500);
     });
+
+    it(`returns es index, request and response when debug flag is set`, async () => {
+      app.use(transactionsSearchApp);
+      const { data, index, request, response } = await fetchJSONOnRandomPort(
+        app,
+        {
+          method: 'POST',
+          path: `/trends?debug=true`,
+          body: JSON.stringify({
+            geographyFilter: atlantaFilter,
+            propertyTypeFilter: officeFilter,
+            aggregation: { aggregationType: 'price', currency: 'USD' },
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+        }
+      );
+
+      expect(Array.isArray(data)).toBe(true);
+      expect(Number.isInteger(data[0].value)).toBe(true);
+      expect(data[0]).toHaveProperty('value');
+      expect(data[0]).toHaveProperty('date');
+      expect(data.length).toBeGreaterThanOrEqual(1);
+      expect(index).toEqual(expect.stringContaining('multi_pst'));
+      expect(request).toHaveProperty('query');
+      expect(response).toHaveProperty('body');
+    });
   });
 });
