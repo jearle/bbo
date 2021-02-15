@@ -109,15 +109,19 @@ export const createApp = ({
   app.post(`/trends`, async (req, res) => {
     const { geographyFilter, propertyTypeFilter, aggregation } = req.body;
     const { debug } = req.query;
-    const result = await transactionsSearchService.getTrends({
+    const {
+      data,
+      index,
+      request,
+      response,
+    } = await transactionsSearchService.getTrends({
       geographyFilter,
       propertyTypeFilter,
       aggregation,
     });
     if (debug === 'true') {
-      res.json(result);
+      res.json({ data, index, request, response });
     } else {
-      const { data } = result;
       res.json({ data });
     }
   });
