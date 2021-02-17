@@ -80,7 +80,7 @@ const transactionsSearchService = ({
       data: getElasticBucket(result),
       index: TRANSACTIONS_INDEX,
       request: esQuery,
-      response: result,
+      response: result.body,
     };
   },
 });

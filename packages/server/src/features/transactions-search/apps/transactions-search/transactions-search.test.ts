@@ -261,7 +261,7 @@ describe(`transactions app`, () => {
       expect(data.length).toBeGreaterThanOrEqual(1);
       expect(index).toEqual(expect.stringContaining('multi_pst'));
       expect(request).toHaveProperty('query');
-      expect(response).toHaveProperty('body');
+      expect(response).toHaveProperty('hits');
     });
   });
 });
