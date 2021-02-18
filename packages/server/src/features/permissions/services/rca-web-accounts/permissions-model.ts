@@ -6,12 +6,13 @@ export type PermissionsSet = {
 };
 
 export type PermissionsModel = {
-  readonly stateProvidence: number[];
-  readonly country: number[];
-  readonly marketTier: number[];
-  readonly metro: number[];
-  readonly transType: number[];
-  readonly propertyTypeSearch: number[];
+  readonly StateProv: number[];
+  readonly Country: number[];
+  readonly MarketTier: number[];
+  readonly Metro: number[];
+  readonly TransType: number[];
+  readonly PropertyTypeSearch: number[];
+  readonly FullPermissions?: boolean;
 };
 
 export type RawPermissionsModel = {
@@ -38,13 +39,13 @@ const createPermissionModelFromRaw = (
   } = rawPermissionModel;
 
   const permissionModel = {
-    stateProvidence: csvToIntArray(StateProv_csv),
-    country: csvToIntArray(Country_csv),
-    marketTier: csvToIntArray(MarketTier_csv),
-    metro: csvToIntArray(Metro_csv),
-    transType: csvToIntArray(TransType_csv),
-    propertyTypeSearch: csvToIntArray(PtsMenu_csv),
-    fullPermissions: FullPermission_fg
+    StateProv: csvToIntArray(StateProv_csv),
+    Country: csvToIntArray(Country_csv),
+    MarketTier: csvToIntArray(MarketTier_csv),
+    Metro: csvToIntArray(Metro_csv),
+    TransType: csvToIntArray(TransType_csv),
+    PropertyTypeSearch: csvToIntArray(PtsMenu_csv),
+    FullPermissions: FullPermission_fg
   };
 
   return permissionModel;

@@ -44,7 +44,7 @@ describe(`PermissionsService`, () => {
       userId: USER_ID,
     });
     expect(Array.isArray(permissionsSet.permissionModels)).toBe(true);
-    expect(Array.isArray(permissionsSet.permissionModels[0].stateProvidence)).toBe(true);
+    expect(Array.isArray(permissionsSet.permissionModels[0].StateProv)).toBe(true);
   });
 
   test(`fetchPermissionsModel with username`, async () => {
@@ -52,7 +52,7 @@ describe(`PermissionsService`, () => {
       username: USERNAME,
     });
 
-    expect(Array.isArray(permissionsSet.permissionModels[0].stateProvidence)).toBe(true);
+    expect(Array.isArray(permissionsSet.permissionModels[0].StateProv)).toBe(true);
   });
 
   test(`fetchPermissionsModel ensure cache works with userId`, async () => {

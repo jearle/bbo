@@ -1,5 +1,6 @@
 import { size } from 'lodash';
-import { PermissionsSet } from '../../../services/rca-web-accounts/permissions-model';
+import { PermissionsSet, PermissionsModel } from '../../../services/rca-web-accounts/permissions-model';
+import { getGeographySearchFieldByTx } from 'shared/dist/helpers/types/geography';
 
 type MustObject = {
   bool: {
@@ -32,19 +33,18 @@ export const createPermissionsFilter = ({
     return null;
   }
 
-  const permissionSetResults = permissionsSet.permissionModels.map((geoPermissions) => {
+  const permissionSetResults = permissionsSet.permissionModels.map((geoPermissions: PermissionsModel) => {
     const permissionResults: any[] = [
       {
         terms: {
-          propertyTypeSearch_id: geoPermissions.propertyTypeSearch,
+          propertyTypeSearch_id: geoPermissions.PropertyTypeSearch,
         },
       },
     ];
 
-    const transType = geoPermissions.transType;
+    const transType = geoPermissions.TransType;
     if (size(transType) > 0) {
       // removed known holdings filter since not a part of trends, reference cd-stack if needed later
-
       permissionResults.push({
         terms: {
           transType_id: transType,
@@ -55,48 +55,22 @@ export const createPermissionsFilter = ({
     const geoPermissionsQuery: { bool: { should?: {}[] } } = {
       bool: { should: [] },
     };
-    let geoPermissionsPush = false;
-    if (size(geoPermissions.country) > 0) {
-      geoPermissionsPush = true;
-      geoPermissionsQuery.bool.should.push({
-        terms: {
-          adminLevel0_id: geoPermissions.country,
-        },
-      });
-    }
+    const geoTypes = ['Country', 'Metro', 'StateProv', 'MarketTier'];
+    geoTypes.forEach(key => {
+      if (size(geoPermissions[key]) > 0) {
+        geoPermissionsQuery.bool.should.push({
+          terms: {
+            [getGeographySearchFieldByTx(key)]: geoPermissions[key],
+          },
+        });
+      }
+    });
 
-    if (size(geoPermissions.metro) > 0) {
-      geoPermissionsPush = true;
-      geoPermissionsQuery.bool.should.push({
-        terms: {
-          newMetro_id: geoPermissions.metro,
-        },
-      });
-    }
-
-    if (size(geoPermissions.stateProvidence) > 0) {
-      geoPermissionsPush = true;
-      geoPermissionsQuery.bool.should.push({
-        terms: {
-          adminLevel1_id: geoPermissions.stateProvidence,
-        },
-      });
-    }
-
-    if (size(geoPermissions.marketTier) > 0) {
-      geoPermissionsPush = true;
-      geoPermissionsQuery.bool.should.push({
-        terms: {
-          newMarketTier_id: geoPermissions.marketTier,
-        },
-      });
-    }
-
-    if (geoPermissionsPush) {
+    if (geoPermissionsQuery.bool.should.length > 0) {
       permissionResults.push(geoPermissionsQuery);
     }
 
-    if (permissionResults.length > 0) {
+    if (permissionResults.length > 1) {
       return { bool: { must: permissionResults } };
     } else {
       return permissionResults[0];
@@ -111,4 +85,6 @@ export const createPermissionsFilter = ({
   } else {
     return { bool: { should: permissionSetResults } };
   }
-}
+};
+
+
