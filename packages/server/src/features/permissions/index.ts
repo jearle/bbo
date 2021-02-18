@@ -3,6 +3,7 @@ import { createMSSQLProvider } from '../../providers/mssql';
 import { createRedisProvider } from '../../providers/redis';
 import { createRCAWebAccountsService } from './services/rca-web-accounts';
 import { permissionsMiddleware } from './middlewares/permissions';
+import { createApp, BASE_PATH } from './apps/permissions';
 
 type CreatePermissionsFeatureInput = {
   readonly mssqlURI: string;
@@ -12,8 +13,14 @@ type CreatePermissionsFeatureInput = {
 export type PermissionsFeatureOptions = CreatePermissionsFeatureInput;
 
 const permissionsFeature = ({ permissionsService }) => ({
+  permissionsBasePath: BASE_PATH,
+
   permissionsMiddleware() {
     return permissionsMiddleware({ permissionsService });
+  },
+
+  permissionsApp() {
+    return createApp({ permissionsService });
   },
 });
 
