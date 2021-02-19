@@ -71,9 +71,11 @@ export const startServer = async ({
     loggerMiddleware,
     loggerErrorMiddleware,
   } = createLoggerFeature();
-  const { permissionsMiddleware } = await createPermissionsFeature(
-    permissionsFeatureOptions
-  );
+  const {
+    permissionsMiddleware,
+    permissionsApp,
+    permissionsBasePath,
+  } = await createPermissionsFeature(permissionsFeatureOptions);
 
   const { userActivityMiddleWare } = await createUserActivityFeature(
     userActivityFeatureOptions
@@ -132,6 +134,7 @@ export const startServer = async ({
   mounts.use(documentationApp());
 
   mounts.use(healthCheckBasePath, healthCheckApp());
+  mounts.use(permissionsBasePath, permissionsApp());
 
   mounts.use(authenticationBasePath, authenticationApp());
 
