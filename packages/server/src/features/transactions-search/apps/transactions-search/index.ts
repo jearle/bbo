@@ -69,6 +69,13 @@ export const createApp = ({
    *     description: Search property transactions to return trends aggregates
    *     produces:
    *       - application/json
+   *     parameters:
+   *       - name: debug
+   *         in: query
+   *         description: optional | returns the raw ES request/response if true
+   *         required: false
+   *         schema:
+   *           type: boolean
    *     requestBody:
    *       content:
    *         application/json:
