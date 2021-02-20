@@ -27,7 +27,25 @@ describe('trends-search', () => {
     const esQuery = createTrendSearchQuery({
       geographyFilter: atlantaFilter,
       propertyTypeFilter: officeFilter,
-      permissionsFilter: null
+      permissionsFilter: {
+        bool: {
+          should: [
+            {
+              "bool": {
+                "must": [
+                  {
+                    "terms": {
+                      "propertyTypeSearch_id": [
+                        5
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
     });
     expect(esQuery.size).toEqual(0);
     expect(esQuery.query.bool.filter.bool.must.length).toBe(3);

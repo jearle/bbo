@@ -27,7 +27,10 @@ export const createTrendSearchQuery = ({
 }: TrendsSearchQueryInputs): ElasticQuery => {
   const geographyMust = createGeographyFilterTerms([geographyFilter]);
   const propertyTypeMust = createPropertyTypeFilterTerms([propertyTypeFilter]);
-  const mustArr = [...geographyMust, ...propertyTypeMust, permissionsFilter];
+  const mustArr = [...geographyMust, ...propertyTypeMust];
+  if (permissionsFilter) {
+    mustArr.push(permissionsFilter);
+  }
   const query = {
     query: {
       bool: {
