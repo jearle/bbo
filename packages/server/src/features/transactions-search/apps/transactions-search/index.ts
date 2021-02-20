@@ -122,7 +122,7 @@ export const createApp = ({
       index,
       request,
       response,
-    } = await transactionsSearchService.getTrends({
+    } = await transactionsSearchService.searchTrends({
       geographyFilter,
       propertyTypeFilter,
       aggregation,
