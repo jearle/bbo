@@ -40,13 +40,8 @@ type TransactionSearchForTrendInputs = {
 };
 
 const DEFAULT_SEARCH = {
-  query: {
-    bool: {
-      must: {
-        match_all: {},
-      },
-    },
-  },
+  page: 0,
+  limit: 10
 };
 const { TRANSACTIONS_INDEX } = process.env;
 
@@ -54,7 +49,7 @@ const transactionsSearchService = ({
   elasticsearchClient,
 }: TransactionsSearchServiceInputs) => ({
   async searchTransactions({ query = DEFAULT_SEARCH, permissionsFilter = null }: TransactionSearchInputs = {}) {
-    const esQuery = cleanTransactionsSearchQuery(query);
+    const esQuery = cleanTransactionsSearchQuery({ ...query, permissionsFilter });
     const result = await elasticsearchClient.search({
       index: TRANSACTIONS_INDEX,
       body: esQuery,

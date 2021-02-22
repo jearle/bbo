@@ -6,9 +6,11 @@ type MustObject = {
   bool: {
     must: [
       {
+        //eslint-disable-next-line @typescript-eslint/no-explicit-any
         [key: string]: any
       }
     ] | {
+      //eslint-disable-next-line @typescript-eslint/no-explicit-any
       [key: string]: any
     }
   }
@@ -36,6 +38,8 @@ export const createPermissionsFilter = ({
   }
 
   const permissionSetResults = permissionsSet.permissionModels.map((geoPermissions: PermissionsModel) => {
+
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     const permissionResults: any[] = [
       {
         terms: {
@@ -54,7 +58,8 @@ export const createPermissionsFilter = ({
       });
     }
 
-    const geoPermissionsQuery: { bool: { should?: {}[] } } = {
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const geoPermissionsQuery: { bool: { should?: any[] } } = {
       bool: { should: [] },
     };
     const geoTypes = ['Country', 'Metro', 'StateProv', 'MarketTier'];
