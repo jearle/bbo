@@ -73,7 +73,7 @@ describe(`transactionsSearchService`, () => {
       const results = await transactionsSearchService.searchTrends({
         geographyFilter: atlantaFilter,
         propertyTypeFilter: officeFilter,
-        aggregation: { aggregationType: 'price', currency: 'USD' },
+        aggregation: { aggregationType: 'PRICE', currency: 'USD' },
       });
       expect(results.data.length).toBeGreaterThan(0);
     });
@@ -82,7 +82,7 @@ describe(`transactionsSearchService`, () => {
         geographyFilter: atlantaFilter,
         propertyTypeFilter: officeFilter,
         permissionsFilter: permissionsFilter,
-        aggregation: { aggregationType: 'price', currency: 'USD' },
+        aggregation: { aggregationType: 'PRICE', currency: 'USD' },
       });
       expect(results.data.length).toBeGreaterThan(0);
     });
@@ -92,7 +92,7 @@ describe(`transactionsSearchService`, () => {
         geographyFilter: austinFilter,
         propertyTypeFilter: officeFilter,
         permissionsFilter: permissionsFilter,
-        aggregation: { aggregationType: 'price', currency: 'USD' },
+        aggregation: { aggregationType: 'PRICE', currency: 'USD' },
       });
       expect(results.data.length).toBe(0);
     });
