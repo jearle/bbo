@@ -43,6 +43,40 @@ describe('trends-search', () => {
   });
 
   it('creates a query with a geography and property type filter and an aggregation', () => {
+
+    const bool = {
+      bool: {
+        should: [
+          {
+            bool: {
+              must: [
+                {
+                  range: {
+                    dealStatusPriceUSD_amt: {
+                      gte: 10000000
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            bool: {
+              must: [
+                {
+                  range: {
+                    dealStatusPriceUSD_amt: {
+                      gte: 2500000
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    };
+
     const esQuery = createTrendSearchQuery({
       geographyFilter: atlantaFilter,
       propertyTypeFilter: officeFilter,
@@ -63,11 +97,17 @@ describe('trends-search', () => {
                 must: [
                   {
                     term: {
+                      eligibleForStats_fg: true,
+                    },
+                  },
+                  {
+                    term: {
                       eligibleTTVolume_fg: true,
                     },
                   },
+                  bool,
                 ],
-              },
+              }
             },
             aggs: {
               sumResult: {

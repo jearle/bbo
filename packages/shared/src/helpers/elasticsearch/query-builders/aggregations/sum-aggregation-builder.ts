@@ -13,19 +13,43 @@ const date_histogram = {
   min_doc_count: 0,
 };
 
-const filter = {
+const bool = {
   bool: {
-    must: [
+    should: [
       {
-        term: {
-          eligibleTTVolume_fg: true,
-        },
+        bool: {
+          must: [
+            {
+              range: {
+                dealStatusPriceUSD_amt: {
+                  gte: 10000000
+                }
+              }
+            }
+          ]
+        }
       },
-    ],
-  },
+      {
+        bool: {
+          must: [
+            {
+              range: {
+                dealStatusPriceUSD_amt: {
+                  gte: 2500000
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
 };
 
-const determineWhatFieldToSumOn = (aggregationType: AggregationType, currency: Currency) => {
+const determineWhatFieldToSumOn = (
+  aggregationType: AggregationType,
+  currency: Currency
+) => {
   const aggregationTypeUpperCase = aggregationType.toUpperCase();
   if (aggregationTypeUpperCase === 'PRICE') {
     if (currencyMapper[currency]) {
@@ -44,17 +68,61 @@ const determineWhatFieldToSumOn = (aggregationType: AggregationType, currency: C
   }
 };
 
+const generateFilter = (aggregationType: AggregationType) => {
+  const aggregationTypeUpperCase = aggregationType.toUpperCase();
+  if (
+    ['PRICE', 'UNITS', 'PROPERTY', 'SQFT'].includes(aggregationTypeUpperCase)
+  ) {
+    return {
+      bool: {
+        must: [
+          {
+            term: {
+              eligibleForStats_fg: true,
+            },
+          },
+          {
+            term: {
+              eligibleTTVolume_fg: true,
+            },
+          },
+          bool,
+        ],
+      },
+    };
+  } else {
+    return {
+      bool: {
+        must: [
+          {
+            term: {
+              eligibleForStats_fg: true,
+            },
+          },
+          {
+            term: {
+              eligibleTTVolume_fg: true,
+            },
+          },
+        ],
+      },
+    };
+  }
+};
+
 export const createAggs = ({
   aggregationType,
   currency = 'USD',
 }: Aggregation) => {
   let field;
+  let filter;
   try {
     field = determineWhatFieldToSumOn(aggregationType, currency);
+    filter = generateFilter(aggregationType);
   } catch {
     field = undefined;
+    filter= undefined;
   }
-
   return {
     sumPerQuarter: {
       date_histogram,

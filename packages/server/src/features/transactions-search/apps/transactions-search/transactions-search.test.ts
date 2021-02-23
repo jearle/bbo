@@ -118,21 +118,22 @@ describe(`transactions app`, () => {
       name: 'Atlanta',
     };
     const officeFilter = {
-      propertyTypeId: 96,
+      propertyTypeId: 1,
       allPropertySubTypes: true,
       propertySubTypeIds: [102, 107],
     };
 
     it(`searches trends with a price aggregation filter`, async () => {
       app.use(transactionsSearchApp);
+      const body = JSON.stringify({
+        geographyFilter: atlantaFilter,
+        propertyTypeFilter: officeFilter,
+        aggregation: { aggregationType: 'price', currency: 'USD' },
+      })
       const { data } = await fetchJSONOnRandomPort(app, {
         method: 'POST',
         path: `/trends`,
-        body: JSON.stringify({
-          geographyFilter: atlantaFilter,
-          propertyTypeFilter: officeFilter,
-          aggregation: { aggregationType: 'price', currency: 'USD' },
-        }),
+        body: body,
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
@@ -173,7 +174,7 @@ describe(`transactions app`, () => {
 
     it(`searches trends with a sqft aggregation filter`, async () => {
       const officeFilter = {
-        propertyTypeId: 96,
+        propertyTypeId: 1,
         allPropertySubTypes: true,
       };
 
@@ -185,6 +186,32 @@ describe(`transactions app`, () => {
           geographyFilter: atlantaFilter,
           propertyTypeFilter: officeFilter,
           aggregation: { aggregationType: 'sqft' },
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
+      expect(Array.isArray(data)).toBe(true);
+      expect(Number.isInteger(data[0].value)).toBe(true);
+      expect(data[0]).toHaveProperty('date');
+      expect(data.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it(`searches trends with a number of properties aggregation filter`, async () => {
+      const officeFilter = {
+        propertyTypeId: 1,
+        allPropertySubTypes: true,
+      };
+
+      app.use(transactionsSearchApp);
+      const { data } = await fetchJSONOnRandomPort(app, {
+        method: 'POST',
+        path: `/trends`,
+        body: JSON.stringify({
+          geographyFilter: atlantaFilter,
+          propertyTypeFilter: officeFilter,
+          aggregation: { aggregationType: 'PROPERTY' },
         }),
         headers: {
           'Content-Type': 'application/json',

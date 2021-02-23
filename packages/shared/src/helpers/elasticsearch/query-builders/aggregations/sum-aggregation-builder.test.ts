@@ -4,6 +4,40 @@ import { createAggs } from './sum-aggregation-builder';
 
 describe('sum aggregation builder', () => {
   it('create quarterly (sum) aggregation for price (CRE volume) in default currency USD', () => {
+
+    const bool = {
+      bool: {
+      should: [
+        {
+          bool: {
+            must: [
+              {
+                range: {
+                  dealStatusPriceUSD_amt: {
+                    gte: 10000000
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          bool: {
+            must: [
+              {
+                range: {
+                  dealStatusPriceUSD_amt: {
+                    gte: 2500000
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }};
+
+
     const expected = {
       sumPerQuarter: {
         date_histogram: {
@@ -22,8 +56,9 @@ describe('sum aggregation builder', () => {
                       eligibleTTVolume_fg: true,
                     },
                   },
+                  bool,
                 ],
-              },
+              }
             },
             aggs: {
               sumResult: {
