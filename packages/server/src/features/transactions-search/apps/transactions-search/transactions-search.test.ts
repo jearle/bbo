@@ -117,17 +117,16 @@ describe(`transactions app`, () => {
       type: 6,
       name: 'Atlanta',
     };
-    const officeFilter = {
+    const apartmentFilter = {
       propertyTypeId: 1,
       allPropertySubTypes: true,
-      propertySubTypeIds: [102, 107],
     };
 
     it(`searches trends with a price aggregation filter`, async () => {
       app.use(transactionsSearchApp);
       const body = JSON.stringify({
         geographyFilter: atlantaFilter,
-        propertyTypeFilter: officeFilter,
+        propertyTypeFilter: apartmentFilter,
         aggregation: { aggregationType: 'price', currency: 'USD' },
       })
       const { data } = await fetchJSONOnRandomPort(app, {
@@ -147,11 +146,6 @@ describe(`transactions app`, () => {
     });
 
     it(`searches trends with a units aggregation filter`, async () => {
-      const apartmentFilter = {
-        propertyTypeId: 1,
-        allPropertySubTypes: true,
-      };
-
       app.use(transactionsSearchApp);
       const { data } = await fetchJSONOnRandomPort(app, {
         method: 'POST',
@@ -174,8 +168,9 @@ describe(`transactions app`, () => {
 
     it(`searches trends with a sqft aggregation filter`, async () => {
       const officeFilter = {
-        propertyTypeId: 1,
+        propertyTypeId: 96,
         allPropertySubTypes: true,
+        propertySubTypeIds: [102, 107],
       };
 
       app.use(transactionsSearchApp);
@@ -199,18 +194,13 @@ describe(`transactions app`, () => {
     });
 
     it(`searches trends with a number of properties aggregation filter`, async () => {
-      const officeFilter = {
-        propertyTypeId: 1,
-        allPropertySubTypes: true,
-      };
-
       app.use(transactionsSearchApp);
       const { data } = await fetchJSONOnRandomPort(app, {
         method: 'POST',
         path: `/trends`,
         body: JSON.stringify({
           geographyFilter: atlantaFilter,
-          propertyTypeFilter: officeFilter,
+          propertyTypeFilter: apartmentFilter,
           aggregation: { aggregationType: 'PROPERTY' },
         }),
         headers: {
@@ -231,7 +221,7 @@ describe(`transactions app`, () => {
         path: `/trends?limit=4`,
         body: JSON.stringify({
           geographyFilter: null,
-          propertyTypeFilter: officeFilter,
+          propertyTypeFilter: apartmentFilter,
           aggregation: { aggregationType: 'sqft' },
         }),
         headers: {
@@ -269,7 +259,7 @@ describe(`transactions app`, () => {
           path: `/trends?debug=true`,
           body: JSON.stringify({
             geographyFilter: atlantaFilter,
-            propertyTypeFilter: officeFilter,
+            propertyTypeFilter: apartmentFilter,
             aggregation: { aggregationType: 'price', currency: 'USD' },
           }),
           headers: {
