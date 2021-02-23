@@ -3,10 +3,9 @@ import { createGeographyFilterTerms } from '../geography-filters';
 import { createAggs } from './sum-aggregation-builder';
 
 describe('sum aggregation builder', () => {
-  it('create quarterly (sum) aggregation for price (CRE volume) in default currency USD', () => {
 
-    const bool = {
-      bool: {
+  const bool = {
+    bool: {
       should: [
         {
           bool: {
@@ -37,6 +36,7 @@ describe('sum aggregation builder', () => {
       ]
     }};
 
+  it('create quarterly (sum) aggregation for price (CRE volume) in default currency USD', () => {
 
     const expected = {
       sumPerQuarter: {
@@ -51,6 +51,11 @@ describe('sum aggregation builder', () => {
             filter: {
               bool: {
                 must: [
+                  {
+                    term: {
+                      eligibleForStats_fg: true,
+                    },
+                  },
                   {
                     term: {
                       eligibleTTVolume_fg: true,
@@ -91,9 +96,15 @@ describe('sum aggregation builder', () => {
                 must: [
                   {
                     term: {
+                      eligibleForStats_fg: true,
+                    },
+                  },
+                  {
+                    term: {
                       eligibleTTVolume_fg: true,
                     },
                   },
+                  bool,
                 ],
               },
             },
@@ -128,9 +139,15 @@ describe('sum aggregation builder', () => {
                 must: [
                   {
                     term: {
+                      eligibleForStats_fg: true,
+                    },
+                  },
+                  {
+                    term: {
                       eligibleTTVolume_fg: true,
                     },
                   },
+                  bool
                 ],
               },
             },
@@ -165,9 +182,15 @@ describe('sum aggregation builder', () => {
                 must: [
                   {
                     term: {
+                      eligibleForStats_fg: true,
+                    },
+                  },
+                  {
+                    term: {
                       eligibleTTVolume_fg: true,
                     },
                   },
+                  bool
                 ],
               },
             },
