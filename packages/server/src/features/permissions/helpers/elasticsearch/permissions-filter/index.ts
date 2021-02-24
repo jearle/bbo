@@ -2,22 +2,20 @@ import { size } from 'lodash';
 import { PermissionsSet, PermissionsModel } from '../../../services/rca-web-accounts/permissions-model';
 import { getGeographySearchFieldByTx } from 'shared/dist/helpers/types/geography';
 
-type MustObject = {
+export type boolShouldArray = {
   bool: {
-    must: [
-      {
-        //eslint-disable-next-line @typescript-eslint/no-explicit-any
-        [key: string]: any
-      }
-    ] | {
-      //eslint-disable-next-line @typescript-eslint/no-explicit-any
-      [key: string]: any
-    }
+    should: termsSubQuery[]
   }
-};
+}
 
-type CreateMustObjectsResult = MustObject[];
+type termsSubQuery = {
+  terms: {
+    [key: string]: number[]
+  }
+}
 
+export type PermissionResultsType = boolShouldArray | termsSubQuery;
+type PermissionsSetResultsType = { bool: { must: PermissionResultsType[] } } | PermissionResultsType;
 
 type CreatePermissionsFilterInputs = {
   permissionsSet: PermissionsSet;
@@ -25,9 +23,9 @@ type CreatePermissionsFilterInputs = {
 
 export type CreatePermissionsFilterResult = {
   bool: {
-    should: CreateMustObjectsResult;
-  };
-};
+    should: PermissionsSetResultsType[];
+  }
+} | PermissionsSetResultsType;
 
 export const createPermissionsFilter = ({
   permissionsSet,
@@ -37,10 +35,9 @@ export const createPermissionsFilter = ({
     return null;
   }
 
-  const permissionSetResults = permissionsSet.permissionModels.map((geoPermissions: PermissionsModel) => {
+  const permissionSetResults: PermissionsSetResultsType[] = permissionsSet.permissionModels.map((geoPermissions: PermissionsModel) => {
 
-    //eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const permissionResults: any[] = [
+    const permissionResults: PermissionResultsType[] = [
       {
         terms: {
           propertyTypeSearch_id: geoPermissions.PropertyTypeSearch,
@@ -58,8 +55,7 @@ export const createPermissionsFilter = ({
       });
     }
 
-    //eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const geoPermissionsQuery: { bool: { should?: any[] } } = {
+    const geoPermissionsQuery: boolShouldArray = {
       bool: { should: [] },
     };
     const geoTypes = ['Country', 'Metro', 'StateProv', 'MarketTier'];
@@ -77,11 +73,7 @@ export const createPermissionsFilter = ({
       permissionResults.push(geoPermissionsQuery);
     }
 
-    if (permissionResults.length > 1) {
-      return { bool: { must: permissionResults } };
-    } else {
-      return permissionResults[0];
-    }
+    return permissionResults.length > 1 ? { bool: { must: permissionResults } } : permissionResults[0];
   },
   );
 
@@ -93,5 +85,3 @@ export const createPermissionsFilter = ({
     return { bool: { should: permissionSetResults } };
   }
 };
-
-

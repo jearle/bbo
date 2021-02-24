@@ -26,8 +26,7 @@ type TransactionsSearchServiceInputs = {
 type TransactionSearchInputs = {
   page?: number;
   limit?: number;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  query?: any;
+  query?: unknown;
   permissionsFilter?: CreatePermissionsFilterResult;
 };
 

@@ -1,4 +1,4 @@
-import { createPermissionsFilter } from '.';
+import { boolShouldArray, createPermissionsFilter, PermissionResultsType } from '.';
 import {
   createRCAWebAccountsService,
   RCAWebAccountsService,
@@ -28,10 +28,9 @@ describe(`RCAWebAccountsService`, () => {
     const permissionsSet = await rcaWebAccountsService.fetchPermissionsModel({
       userId: USER_ID,
     });
-
     const {
       bool: { should },
-    } = createPermissionsFilter({ permissionsSet });
+    } = <boolShouldArray>createPermissionsFilter({ permissionsSet });
     expect(should.length).toBeGreaterThan(0);
   });
 
@@ -65,7 +64,7 @@ describe(`RCAWebAccountsService`, () => {
         }
       ]
     }
-    const permissionsFilter = createPermissionsFilter({ permissionsSet });
+    const permissionsFilter = <{ bool: { must: PermissionResultsType[] } }>createPermissionsFilter({ permissionsSet });
     expect(permissionsFilter.bool).not.toBeNull();
   });
 
@@ -83,7 +82,7 @@ describe(`RCAWebAccountsService`, () => {
         }
       ]
     }
-    const permissionsFilter = createPermissionsFilter({ permissionsSet });
+    const permissionsFilter = <{ bool: { must: PermissionResultsType[] } }>createPermissionsFilter({ permissionsSet });
     expect(permissionsFilter.bool).not.toBeNull();
   });
 

@@ -1,6 +1,6 @@
 export type SignUpResponse = {
   readonly statusCode: number;
-  readonly body: any; // eslint-disable-line
+  readonly body: unknown;
 };
 
 type CreateSignUpSuccessInput = {

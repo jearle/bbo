@@ -55,8 +55,7 @@ export const fetchTextOnRandomPort = async (
 export const fetchJSONOnRandomPort = async (
   app: Application,
   { path, method, query, body, headers }: FetchOnRandomPortOptions = {}
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): Promise<any> => {
+): Promise<unknown> => {
   const response = await fetchResponseOnRandomPort(app, {
     path,
     method,

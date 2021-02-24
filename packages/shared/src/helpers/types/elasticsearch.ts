@@ -1,19 +1,18 @@
-/* eslint-disable */
 export type ElasticQuery = {
   _source?: string[];
   fields?: string[];
-  script_fields?: any;
-  query?: any;
+  script_fields?: unknown;
+  query?: unknown;
   size?: number;
-  aggs?: any;
-  sort?: any;
-  from?: any;
-  highlight?: any;
+  aggs?: unknown;
+  sort?: unknown;
+  from?: unknown;
+  highlight?: unknown;
 };
 
 export type EsClientRawResponse = {
-  body?: any;
+  body?: unknown;
   statusCode?: number;
-  headers?: any;
-  meta?: any;
+  headers?: unknown;
+  meta?: unknown;
 };

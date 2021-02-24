@@ -27,11 +27,9 @@ export const createTrendSearchQuery = ({
 }: TrendsSearchQueryInputs): ElasticQuery => {
   const geographyMust = createGeographyFilterTerms([geographyFilter]);
   const propertyTypeMust = createPropertyTypeFilterTerms([propertyTypeFilter]);
-  //eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const mustArr: any = [...geographyMust, ...propertyTypeMust];
-  if (permissionsFilter) {
-    mustArr.push(permissionsFilter);
-  }
+  const mustArr: unknown[] = [...geographyMust, ...propertyTypeMust];
+  permissionsFilter && mustArr.push(permissionsFilter);
+
   const query = {
     query: {
       bool: {
