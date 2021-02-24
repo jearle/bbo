@@ -13,6 +13,7 @@ import {
 } from 'shared/dist/helpers/types';
 import { cleanTransactionsSearchQuery } from '../../helpers/clean-transactions-search';
 import { createTrendSearchQuery } from '../../helpers/queries';
+import { CreatePermissionsFilterResult } from '../../../permissions/helpers/elasticsearch/permissions-filter';
 
 type CreateTransactionsSearchServiceInputs = {
   elasticsearchProvider: ElasticsearchProvider;
@@ -25,34 +26,24 @@ type TransactionsSearchServiceInputs = {
 type TransactionSearchInputs = {
   page?: number;
   limit?: number;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  query?: any;
+  permissionsFilter?: CreatePermissionsFilterResult;
 };
 
 type TransactionSearchForTrendInputs = {
   geographyFilter?: Geography.Filter;
   propertyTypeFilter?: PropertyType.Filter;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   aggregation?: Aggregation;
+  permissionsFilter?: CreatePermissionsFilterResult;
   limit?: number;
 };
 
-const DEFAULT_SEARCH = {
-  query: {
-    bool: {
-      must: {
-        match_all: {},
-      },
-    },
-  },
-};
 const { TRANSACTIONS_INDEX } = process.env;
 
 const transactionsSearchService = ({
   elasticsearchClient,
 }: TransactionsSearchServiceInputs) => ({
-  async search({ query = DEFAULT_SEARCH }: TransactionSearchInputs = {}) {
-    const esQuery = cleanTransactionsSearchQuery(query);
+  async searchTransactions({ page = 0, limit = 10, permissionsFilter = null }: TransactionSearchInputs = {}) {
+    const esQuery = cleanTransactionsSearchQuery({ page, limit, permissionsFilter });
     const result = await elasticsearchClient.search({
       index: TRANSACTIONS_INDEX,
       body: esQuery,
@@ -60,16 +51,18 @@ const transactionsSearchService = ({
     return getElasticHits(result);
   },
 
-  async getTrends({
+  async searchTrends({
     geographyFilter,
     propertyTypeFilter,
     aggregation,
+    permissionsFilter,
     limit,
   }: TransactionSearchForTrendInputs = {}) {
     const esQuery = createTrendSearchQuery({
       geographyFilter,
       propertyTypeFilter,
       aggregation,
+      permissionsFilter,
       limit,
     });
     const result = await elasticsearchClient.search({

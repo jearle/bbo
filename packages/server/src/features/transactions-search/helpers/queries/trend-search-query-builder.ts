@@ -7,23 +7,29 @@ import { createAggs } from 'shared/dist/helpers/elasticsearch/query-builders/agg
 import { createGeographyFilterTerms } from 'shared/dist/helpers/elasticsearch/query-builders/geography-filters';
 import { createPropertyTypeFilterTerms } from 'shared/dist/helpers/elasticsearch/query-builders/property-type-filters';
 import { ElasticQuery } from 'shared/dist/helpers/types/elasticsearch';
+import { CreatePermissionsFilterResult } from '../../../permissions/helpers/elasticsearch/permissions-filter';
 
 type TrendsSearchQueryInputs = {
   readonly limit?: number;
   readonly geographyFilter: Geography.Filter;
   readonly propertyTypeFilter: PropertyType.Filter;
   readonly aggregation?: Aggregation;
+  readonly permissionsFilter: CreatePermissionsFilterResult;
+
 };
 
 export const createTrendSearchQuery = ({
   geographyFilter,
   propertyTypeFilter,
+  permissionsFilter,
   limit = 0,
   aggregation,
 }: TrendsSearchQueryInputs): ElasticQuery => {
   const geographyMust = createGeographyFilterTerms([geographyFilter]);
   const propertyTypeMust = createPropertyTypeFilterTerms([propertyTypeFilter]);
-  const mustArr = [...geographyMust, ...propertyTypeMust];
+  const mustArr: unknown[] = [...geographyMust, ...propertyTypeMust];
+  permissionsFilter && mustArr.push(permissionsFilter);
+
   const query = {
     query: {
       bool: {

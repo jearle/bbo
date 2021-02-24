@@ -1,7 +1,7 @@
 import {
   RawPermissionsModel,
-  PermissionsModel,
   createPermissionsModelFromList,
+  PermissionsSet,
 } from './permissions-model';
 import { MSSQLProvider } from '../../../../providers/mssql';
 
@@ -26,7 +26,7 @@ const rcaWebAccountsService = ({
 }) => ({
   async fetchPermissionsModel({
     userId,
-  }: FetchPermissionModelsInput): Promise<PermissionsModel> {
+  }: FetchPermissionModelsInput): Promise<PermissionsSet> {
     const result = await rcaWebAccountsConnection
       .request()
       .input(`AccountUser_id`, mssqlProvider.types().Int, userId)

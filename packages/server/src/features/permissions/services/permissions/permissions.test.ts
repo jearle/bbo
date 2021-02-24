@@ -40,39 +40,39 @@ describe(`PermissionsService`, () => {
   });
 
   test(`fetchPermissionsModel`, async () => {
-    const permissionsModel = await permissionsService.fetchPermissionsModel({
+    const permissionsSet = await permissionsService.fetchPermissionsSet({
       userId: USER_ID,
     });
-
-    expect(Array.isArray(permissionsModel.stateProvidence)).toBe(true);
+    expect(Array.isArray(permissionsSet.permissionModels)).toBe(true);
+    expect(Array.isArray(permissionsSet.permissionModels[0].StateProv)).toBe(true);
   });
 
   test(`fetchPermissionsModel with username`, async () => {
-    const permissionsModel = await permissionsService.fetchPermissionsModel({
+    const permissionsSet = await permissionsService.fetchPermissionsSet({
       username: USERNAME,
     });
 
-    expect(Array.isArray(permissionsModel.stateProvidence)).toBe(true);
+    expect(Array.isArray(permissionsSet.permissionModels[0].StateProv)).toBe(true);
   });
 
   test(`fetchPermissionsModel ensure cache works with userId`, async () => {
-    await permissionsService.fetchPermissionsModel({
+    await permissionsService.fetchPermissionsSet({
       userId: USER_ID,
     });
 
     // hit again to ensure caching via istanbul code coverage
-    await permissionsService.fetchPermissionsModel({
+    await permissionsService.fetchPermissionsSet({
       userId: USER_ID,
     });
   });
 
   test(`fetchPermissionsModel ensure cache works with username`, async () => {
-    await permissionsService.fetchPermissionsModel({
+    await permissionsService.fetchPermissionsSet({
       username: USERNAME,
     });
 
     // hit again to ensure caching via istanbul code coverage
-    await permissionsService.fetchPermissionsModel({
+    await permissionsService.fetchPermissionsSet({
       username: USERNAME,
     });
   });

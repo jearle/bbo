@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const unique = (array: any[]): any[] => {
+export const unique = (array: unknown[]): unknown[] => {
   return [...new Set(array)];
 };

@@ -1,9 +1,10 @@
-import { createPermissionsFilter } from '.';
+import { boolShouldArray, createPermissionsFilter, PermissionResultsType } from '.';
 import {
   createRCAWebAccountsService,
   RCAWebAccountsService,
 } from '../../../services/rca-web-accounts';
 import { createMSSQLProvider } from '../../../../../providers/mssql';
+import { PermissionsSet } from '../../../services/rca-web-accounts/permissions-model';
 
 const { MSSQL_URI: uri } = process.env;
 
@@ -24,14 +25,65 @@ describe(`RCAWebAccountsService`, () => {
   });
 
   test(`fetchPermissionsModel`, async () => {
-    const permissionsModel = await rcaWebAccountsService.fetchPermissionsModel({
+    const permissionsSet = await rcaWebAccountsService.fetchPermissionsModel({
       userId: USER_ID,
     });
-
     const {
-      bool: { must },
-    } = createPermissionsFilter({ permissionsModel });
-
-    expect(must.length).toBeGreaterThan(0);
+      bool: { should },
+    } = <boolShouldArray>createPermissionsFilter({ permissionsSet });
+    expect(should.length).toBeGreaterThan(0);
   });
+
+  test(`createPermissionsFilter returns null for full permissions`, () => {
+    const permissionsSet: PermissionsSet = {
+      fullPermissions: true,
+      permissionModels: []
+    };
+    expect(createPermissionsFilter({ permissionsSet })).toBe(null);
+  });
+
+  test(`createPermissionsFilter returns null if no geo permissions`, () => {
+    const permissionsSet: PermissionsSet = {
+      fullPermissions: false,
+      permissionModels: []
+    };
+    expect(createPermissionsFilter({ permissionsSet })).toBe(null);
+  });
+
+  test(`createPermissionsFilter returns a single must filter for user with only one geo`, () => {
+    const permissionsSet: PermissionsSet = {
+      fullPermissions: false,
+      permissionModels: [
+        {
+          StateProv: [],
+          Country: [],
+          MarketTier: [],
+          Metro: [99],
+          TransType: [1],
+          PropertyTypeSearch: [1]
+        }
+      ]
+    }
+    const permissionsFilter = <{ bool: { must: PermissionResultsType[] } }>createPermissionsFilter({ permissionsSet });
+    expect(permissionsFilter.bool).not.toBeNull();
+  });
+
+  test(`createPermissionsFilter returns a single must filter when user has propertyType but no geoPermissions`, () => {
+    const permissionsSet: PermissionsSet = {
+      fullPermissions: false,
+      permissionModels: [
+        {
+          StateProv: [],
+          Country: [],
+          MarketTier: [],
+          Metro: [],
+          TransType: [],
+          PropertyTypeSearch: [1]
+        }
+      ]
+    }
+    const permissionsFilter = <{ bool: { must: PermissionResultsType[] } }>createPermissionsFilter({ permissionsSet });
+    expect(permissionsFilter.bool).not.toBeNull();
+  });
+
 });

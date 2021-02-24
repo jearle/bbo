@@ -51,22 +51,6 @@ describe(`permissions service`, () => {
 
   test(`permissionModel`, async () => {
     app.get(`/`, (req, res) => {
-      const { permissionsModel } = req;
-
-      res.send({ permissionsModel });
-    });
-
-    const server = await portListen(app);
-    const { port } = server.address();
-
-    const response = await fetch(`http://localhost:${port}`);
-    const { permissionsModel } = await response.json();
-    expect(typeof permissionsModel).toBe(`object`);
-    server.close();
-  });
-
-  test(`permissionModel`, async () => {
-    app.get(`/`, (req, res) => {
       const { permissionsFilter } = req;
       res.send({ permissionsFilter });
     });

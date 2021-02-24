@@ -41,3 +41,7 @@ export type Filter = {
   id: number;
   type: Types;
 };
+
+export const getGeographySearchFieldByTx = (field: string): string => {
+  return FieldMappings.get(Types[field]);
+};
