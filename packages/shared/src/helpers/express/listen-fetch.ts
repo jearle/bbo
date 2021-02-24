@@ -55,7 +55,7 @@ export const fetchTextOnRandomPort = async (
 export const fetchJSONOnRandomPort = async (
   app: Application,
   { path, method, query, body, headers }: FetchOnRandomPortOptions = {}
-): Promise<unknown> => {
+): Promise<any> => {
   const response = await fetchResponseOnRandomPort(app, {
     path,
     method,
