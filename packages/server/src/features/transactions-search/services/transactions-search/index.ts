@@ -26,7 +26,6 @@ type TransactionsSearchServiceInputs = {
 type TransactionSearchInputs = {
   page?: number;
   limit?: number;
-  query?: unknown;
   permissionsFilter?: CreatePermissionsFilterResult;
 };
 
@@ -38,17 +37,13 @@ type TransactionSearchForTrendInputs = {
   limit?: number;
 };
 
-const DEFAULT_SEARCH = {
-  page: 0,
-  limit: 10
-};
 const { TRANSACTIONS_INDEX } = process.env;
 
 const transactionsSearchService = ({
   elasticsearchClient,
 }: TransactionsSearchServiceInputs) => ({
-  async searchTransactions({ query = DEFAULT_SEARCH, permissionsFilter = null }: TransactionSearchInputs = {}) {
-    const esQuery = cleanTransactionsSearchQuery({ ...query, permissionsFilter });
+  async searchTransactions({ page = 0, limit = 10, permissionsFilter = null }: TransactionSearchInputs = {}) {
+    const esQuery = cleanTransactionsSearchQuery({ page, limit, permissionsFilter });
     const result = await elasticsearchClient.search({
       index: TRANSACTIONS_INDEX,
       body: esQuery,
