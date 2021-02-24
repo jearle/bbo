@@ -22,12 +22,12 @@ const bool = {
             {
               range: {
                 dealStatusPriceUSD_amt: {
-                  gte: 10000000
-                }
-              }
-            }
-          ]
-        }
+                  gte: 10000000,
+                },
+              },
+            },
+          ],
+        },
       },
       {
         bool: {
@@ -35,15 +35,15 @@ const bool = {
             {
               range: {
                 dealStatusPriceUSD_amt: {
-                  gte: 2500000
-                }
-              }
-            }
-          ]
-        }
-      }
-    ]
-  }
+                  gte: 2500000,
+                },
+              },
+            },
+          ],
+        },
+      },
+    ],
+  },
 };
 
 const determineWhatFieldToSumOn = (
@@ -121,7 +121,7 @@ export const createAggs = ({
     filter = generateFilter(aggregationType);
   } catch {
     field = undefined;
-    filter= undefined;
+    filter = undefined;
   }
   return {
     sumPerQuarter: {

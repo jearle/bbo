@@ -43,7 +43,6 @@ describe('trends-search', () => {
   });
 
   it('creates a query with a geography and property type filter and an aggregation', () => {
-
     const bool = {
       bool: {
         should: [
@@ -53,12 +52,12 @@ describe('trends-search', () => {
                 {
                   range: {
                     dealStatusPriceUSD_amt: {
-                      gte: 10000000
-                    }
-                  }
-                }
-              ]
-            }
+                      gte: 10000000,
+                    },
+                  },
+                },
+              ],
+            },
           },
           {
             bool: {
@@ -66,15 +65,15 @@ describe('trends-search', () => {
                 {
                   range: {
                     dealStatusPriceUSD_amt: {
-                      gte: 2500000
-                    }
-                  }
-                }
-              ]
-            }
-          }
-        ]
-      }
+                      gte: 2500000,
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
     };
 
     const esQuery = createTrendSearchQuery({
@@ -107,7 +106,7 @@ describe('trends-search', () => {
                   },
                   bool,
                 ],
-              }
+              },
             },
             aggs: {
               sumResult: {

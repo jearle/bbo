@@ -13,7 +13,10 @@ import { createRCAWebAccountsService } from '../../../permissions/services/rca-w
 import { createPermissionsService } from '../../../permissions/services/permissions';
 // import { permissionsMiddleware as createPermissionsMiddleware } from '../../../permissions/middlewares/permissions';
 import { createRedisProvider } from '../../../../providers/redis';
-import { fetchJSONOnRandomPort, fetchResponseOnRandomPort } from 'shared/dist/helpers/express/listen-fetch';
+import {
+  fetchJSONOnRandomPort,
+  fetchResponseOnRandomPort,
+} from 'shared/dist/helpers/express/listen-fetch';
 
 const {
   MSSQL_URI,
@@ -128,7 +131,7 @@ describe(`transactions app`, () => {
         geographyFilter: atlantaFilter,
         propertyTypeFilter: apartmentFilter,
         aggregation: { aggregationType: 'price', currency: 'USD' },
-      })
+      });
       const { data } = await fetchJSONOnRandomPort(app, {
         method: 'POST',
         path: `/trends`,
