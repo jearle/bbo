@@ -1,3 +1,20 @@
+// const fetch = require('node-fetch');
+
+// let url = 'https://test.rcanalytics.com/api/v2/authentication/login';
+
+// let options = {
+//   method: 'POST',
+//   headers: {
+//     'Content-Type': 'application/json',
+//     },
+//   body: '{"email":"jearle@rcanalytics.com","password":"DQF5Bm"}',
+// };
+
+// fetch(url, options)
+//   .then((res) => res.json())
+//   .then((json) => console.log(json))
+//   .catch((err) => console.error('error:' + err));
+
 import fetch from 'node-fetch';
 
 type AuthenticateError = {
