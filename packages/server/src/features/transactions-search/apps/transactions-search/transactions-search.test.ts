@@ -125,7 +125,7 @@ describe(`transactions app`, () => {
       allPropertySubTypes: true,
     };
 
-    it(`searches trends with a price aggregation filter`, async () => {
+    it(`searches trends with a price aggregation filter, ATL, apt, qtr, qtr totals, TT match`, async () => {
       app.use(transactionsSearchApp);
       const body = JSON.stringify({
         geographyFilter: atlantaFilter,
@@ -148,7 +148,7 @@ describe(`transactions app`, () => {
       expect(data.length).toBeGreaterThanOrEqual(1);
     });
 
-    it(`searches trends with a units aggregation filter`, async () => {
+    it(`searches trends with a units aggregation filter, ATL, apt, qtr, qtr totals, TT match`, async () => {
       app.use(transactionsSearchApp);
       const { data } = await fetchJSONOnRandomPort(app, {
         method: 'POST',
@@ -169,7 +169,7 @@ describe(`transactions app`, () => {
       expect(data.length).toBeGreaterThanOrEqual(1);
     });
 
-    it(`searches trends with a sqft aggregation filter`, async () => {
+    it(`searches trends with a sqft aggregation filter, ATL, office, qtr, qtr, TT match`, async () => {
       const officeFilter = {
         propertyTypeId: 96,
         allPropertySubTypes: true,
@@ -196,7 +196,7 @@ describe(`transactions app`, () => {
       expect(data.length).toBeGreaterThanOrEqual(1);
     });
 
-    it(`searches trends with a number of properties aggregation filter`, async () => {
+    it(`searches trends with a number of properties aggregation filter, ATL, apt, qtr, qtr totals, TT match`, async () => {
       app.use(transactionsSearchApp);
       const { data } = await fetchJSONOnRandomPort(app, {
         method: 'POST',

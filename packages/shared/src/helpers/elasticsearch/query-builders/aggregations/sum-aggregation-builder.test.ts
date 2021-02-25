@@ -12,19 +12,6 @@ describe('sum aggregation builder', () => {
               {
                 range: {
                   dealStatusPriceUSD_amt: {
-                    gte: 10000000,
-                  },
-                },
-              },
-            ],
-          },
-        },
-        {
-          bool: {
-            must: [
-              {
-                range: {
-                  dealStatusPriceUSD_amt: {
                     gte: 2500000,
                   },
                 },

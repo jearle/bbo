@@ -13,7 +13,7 @@ const date_histogram = {
   min_doc_count: 0,
 };
 
-const bool = {
+const priceFloorFilter = {
   bool: {
     should: [
       {
@@ -86,7 +86,7 @@ const generateFilter = (aggregationType: AggregationType) => {
               eligibleTTVolume_fg: true,
             },
           },
-          bool,
+          priceFloorFilter,
         ],
       },
     };
