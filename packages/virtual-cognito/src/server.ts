@@ -6,6 +6,7 @@ import { createUserStoreFeature } from './features/user-store';
 import { createTargetFeature } from './features/target';
 import { createHandlersFeature } from './features/handlers';
 import { createPublicKeysFeature } from './features/public-keys';
+import cors from 'cors';
 
 type StartServerInputs = {
   readonly host: string;
@@ -40,11 +41,15 @@ export const startServer = async ({
 
   const app = express();
 
-  app.use(async (req, res) => {
-    const { statusCode, body } = await req.handler(req);
-
-    res.status(statusCode).send(body);
-  });
+  app.use(
+    [
+      cors(),
+      async (req, res) => {
+        const { statusCode, body } = await req.handler(req);
+        res.status(statusCode).send(body);
+      }
+    ]
+  );
 
   mounts.use(app);
 
