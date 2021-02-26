@@ -135,7 +135,7 @@ describe(`transactions app`, () => {
       const { data } = await fetchJSONOnRandomPort(app, {
         method: 'POST',
         path: `/trends`,
-        body: body,
+        body,
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
