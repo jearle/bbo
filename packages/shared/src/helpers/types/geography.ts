@@ -43,5 +43,8 @@ export type Filter = {
 };
 
 export const getGeographySearchFieldByTx = (field: string): string => {
-  return FieldMappings.get(Types[field]);
+  const val = FieldMappings.get(Types[field]);
+  // for cases such as permissions, stateProv = adminLevel1, however for geo filter searches further parsing based on the geo's id
+  // see parseStateProv() in /geography-filters
+  return val === 'stateProv' ? 'adminLevel1_id' : val; 
 };
