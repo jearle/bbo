@@ -1,13 +1,18 @@
-import { csvToArray } from 'shared/dist/helpers/csv';
-import { unique } from 'shared/dist/helpers/array';
+import { csvToIntArray } from 'shared/dist/helpers/csv';
+
+export type PermissionsSet = {
+  permissionModels: PermissionsModel[]; // a user can have multilpe subscriptions each with their own combo of geo/propertype permissions
+  fullPermissions?: boolean; // if true they are permissioned for all geo and prop types and we can skip the more granular permissions
+};
 
 export type PermissionsModel = {
-  readonly stateProvidence: string[];
-  readonly country: string[];
-  readonly marketTier: string[];
-  readonly metro: string[];
-  readonly transType: string[];
-  readonly propertyTypeSearch: string[];
+  readonly StateProv: number[];
+  readonly Country: number[];
+  readonly MarketTier: number[];
+  readonly Metro: number[];
+  readonly TransType: number[];
+  readonly PropertyTypeSearch: number[];
+  readonly FullPermissions?: boolean;
 };
 
 export type RawPermissionsModel = {
@@ -17,16 +22,8 @@ export type RawPermissionsModel = {
   readonly Metro_csv: string | null;
   readonly TransType_csv: string | null;
   readonly PtsMenu_csv: string | null;
+  readonly FullPermission_fg: boolean | null;
 };
-
-const createEmptyPermissionModel = (): PermissionsModel => ({
-  stateProvidence: [],
-  country: [],
-  marketTier: [],
-  metro: [],
-  transType: [],
-  propertyTypeSearch: [],
-});
 
 const createPermissionModelFromRaw = (
   rawPermissionModel: RawPermissionsModel
@@ -38,15 +35,17 @@ const createPermissionModelFromRaw = (
     Metro_csv,
     TransType_csv,
     PtsMenu_csv,
+    FullPermission_fg
   } = rawPermissionModel;
 
   const permissionModel = {
-    stateProvidence: csvToArray(StateProv_csv),
-    country: csvToArray(Country_csv),
-    marketTier: csvToArray(MarketTier_csv),
-    metro: csvToArray(Metro_csv),
-    transType: csvToArray(TransType_csv),
-    propertyTypeSearch: csvToArray(PtsMenu_csv),
+    StateProv: csvToIntArray(StateProv_csv),
+    Country: csvToIntArray(Country_csv),
+    MarketTier: csvToIntArray(MarketTier_csv),
+    Metro: csvToIntArray(Metro_csv),
+    TransType: csvToIntArray(TransType_csv),
+    PropertyTypeSearch: csvToIntArray(PtsMenu_csv),
+    FullPermissions: FullPermission_fg
   };
 
   return permissionModel;
@@ -54,32 +53,15 @@ const createPermissionModelFromRaw = (
 
 export const createPermissionsModelFromList = (
   rawPermissionModels: RawPermissionsModel[]
-): PermissionsModel => {
-  const permissionsModel = rawPermissionModels.reduce(
-    (acc, rawPermissionModel) => {
-      const {
-        stateProvidence,
-        country,
-        marketTier,
-        metro,
-        transType,
-        propertyTypeSearch,
-      } = createPermissionModelFromRaw(rawPermissionModel);
+): PermissionsSet => {
+  let hasFullPermissions = false;
+  const permissions = rawPermissionModels.map((rawPermissionModel) => {
+    hasFullPermissions = rawPermissionModel.FullPermission_fg || hasFullPermissions; // if any subscription has FullPermission_fg = true, set to true
+    return createPermissionModelFromRaw(rawPermissionModel);
+  });
 
-      return {
-        stateProvidence: unique([...acc.stateProvidence, ...stateProvidence]),
-        country: unique([...acc.country, ...country]),
-        marketTier: unique([...acc.marketTier, ...marketTier]),
-        metro: unique([...acc.metro, ...metro]),
-        transType: unique([...acc.transType, ...transType]),
-        propertyTypeSearch: unique([
-          ...acc.propertyTypeSearch,
-          ...propertyTypeSearch,
-        ]),
-      };
-    },
-    createEmptyPermissionModel()
-  );
-
-  return permissionsModel;
+  return {
+    permissionModels: permissions,
+    fullPermissions: hasFullPermissions
+  };
 };

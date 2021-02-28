@@ -53,10 +53,12 @@ export const createApp = ({
    *         description: PropertyTransactionSearchResponse
    */
   app.get(`/transactions`, async (req, res) => {
-    // const { permissionsFilter } = req; // todo: add back permissionfilter
-    const { query } = req;
-    const data = await transactionsSearchService.search({
-      query,
+    const { permissionsFilter } = req;
+    const { limit, page } = req.query;
+    const data = await transactionsSearchService.searchTransactions({
+      limit,
+      page,
+      permissionsFilter
     });
     res.json({ data });
   });
@@ -116,15 +118,17 @@ export const createApp = ({
   app.post(`/trends`, async (req, res) => {
     const { geographyFilter, propertyTypeFilter, aggregation } = req.body;
     const { debug } = req.query;
+    const { permissionsFilter } = req;
     const {
       data,
       index,
       request,
       response,
-    } = await transactionsSearchService.getTrends({
+    } = await transactionsSearchService.searchTrends({
       geographyFilter,
       propertyTypeFilter,
       aggregation,
+      permissionsFilter
     });
     if (debug === 'true') {
       res.json({ data, index, request, response });

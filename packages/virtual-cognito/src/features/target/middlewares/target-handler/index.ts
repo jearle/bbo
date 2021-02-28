@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-type HandlerResult = any; // eslint-disable-line @typescript-eslint/no-explicit-any
+type HandlerResult = unknown;
 
 export type Handlers = { [key: string]: (req: Request) => HandlerResult };
 
@@ -21,14 +21,14 @@ export const targetHandlerMiddleware = ({
   res,
   next
 ) => {
-  const { [`x-amz-target`]: amazonTarget } = req.headers;
-  const targetName = amazonTarget.split(`.`)[1];
-  const target = targetName[0].toLowerCase() + targetName.slice(1);
+    const { [`x-amz-target`]: amazonTarget } = req.headers;
+    const targetName = amazonTarget.split(`.`)[1];
+    const target = targetName[0].toLowerCase() + targetName.slice(1);
 
-  const handler = handlers[target];
+    const handler = handlers[target];
 
-  req.target = target;
-  req.handler = handler;
+    req.target = target;
+    req.handler = handler;
 
-  next();
-};
+    next();
+  };

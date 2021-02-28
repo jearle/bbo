@@ -1,75 +1,87 @@
-import { PermissionsModel } from '../../../services/rca-web-accounts/permissions-model';
+import { size } from 'lodash';
+import { PermissionsSet, PermissionsModel } from '../../../services/rca-web-accounts/permissions-model';
+import { getGeographySearchFieldByTx } from 'shared/dist/helpers/types/geography';
 
-type MatchObject = {
-  match: { [key: string]: string };
-};
+export type boolShouldArray = {
+  bool: {
+    should: termsSubQuery[]
+  }
+}
 
-type CreateMatchObjectsResult = MatchObject[];
+type termsSubQuery = {
+  terms: {
+    [key: string]: number[]
+  }
+}
 
-const createMatchObjects = (
-  permissionsModel: PermissionsModel,
-  mappings: { permissionsModelProperty: string; elasticSearchId: string }[]
-): CreateMatchObjectsResult => {
-  const matchObjects = mappings.reduce(
-    (acc, { permissionsModelProperty, elasticSearchId }) => {
-      return [
-        ...acc,
-        ...permissionsModel[permissionsModelProperty].map((id) => ({
-          match: {
-            [elasticSearchId]: id,
-          },
-        })),
-      ];
-    },
-    []
-  );
-
-  return matchObjects;
-};
+export type PermissionResultsType = boolShouldArray | termsSubQuery;
+type PermissionsSetResultsType = { bool: { must: PermissionResultsType[] } } | PermissionResultsType;
 
 type CreatePermissionsFilterInputs = {
-  permissionsModel: PermissionsModel;
+  permissionsSet: PermissionsSet;
 };
 
-type CreatePermissionsFilterResult = {
+export type CreatePermissionsFilterResult = {
   bool: {
-    must: CreateMatchObjectsResult;
-  };
-};
+    should: PermissionsSetResultsType[];
+  }
+} | PermissionsSetResultsType;
 
 export const createPermissionsFilter = ({
-  permissionsModel,
+  permissionsSet,
 }: CreatePermissionsFilterInputs): CreatePermissionsFilterResult => {
-  const must = createMatchObjects(permissionsModel, [
-    {
-      permissionsModelProperty: `stateProvidence`,
-      elasticSearchId: `adminLevel1_id`,
-    },
-    {
-      permissionsModelProperty: `country`,
-      elasticSearchId: `adminLevel0_id`,
-    },
-    {
-      permissionsModelProperty: `marketTier`,
-      elasticSearchId: `newMarketTier_id`,
-    },
-    {
-      permissionsModelProperty: `metro`,
-      elasticSearchId: `newMetro_id`,
-    },
-    {
-      permissionsModelProperty: `transType`,
-      elasticSearchId: `newTransType_id`,
-    },
-    {
-      permissionsModelProperty: `propertyTypeSearch`,
-      elasticSearchId: `propertyTypeSearch_id`,
-    },
-  ]);
 
-  const filter = {
-    bool: { must },
-  };
+  if (!permissionsSet || permissionsSet.fullPermissions) {
+    return null;
+  }
 
-  return filter;
+  const permissionSetResults: PermissionsSetResultsType[] = permissionsSet.permissionModels.map((geoPermissions: PermissionsModel) => {
+
+    const permissionResults: PermissionResultsType[] = [
+      {
+        terms: {
+          propertyTypeSearch_id: geoPermissions.PropertyTypeSearch,
+        },
+      },
+    ];
+
+    const transType = geoPermissions.TransType;
+    if (size(transType) > 0) {
+      // removed known holdings filter since not a part of trends, reference cd-stack if needed later
+      permissionResults.push({
+        terms: {
+          transType_id: transType,
+        },
+      });
+    }
+
+    const geoPermissionsQuery: boolShouldArray = {
+      bool: { should: [] },
+    };
+    const geoTypes = ['Country', 'Metro', 'StateProv', 'MarketTier'];
+    geoTypes.forEach(key => {
+      if (size(geoPermissions[key]) > 0) {
+        geoPermissionsQuery.bool.should.push({
+          terms: {
+            [getGeographySearchFieldByTx(key)]: geoPermissions[key],
+          },
+        });
+      }
+    });
+
+    if (geoPermissionsQuery.bool.should.length > 0) {
+      permissionResults.push(geoPermissionsQuery);
+    }
+
+    return permissionResults.length > 1 ? { bool: { must: permissionResults } } : permissionResults[0];
+  },
+  );
+
+  if (permissionSetResults.length === 0) {
+    return null;
+  } else if (permissionSetResults.length === 1) {
+    return permissionSetResults[0];
+  } else {
+    return { bool: { should: permissionSetResults } };
+  }
 };

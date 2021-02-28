@@ -41,3 +41,10 @@ export type Filter = {
   id: number;
   type: Types;
 };
+
+export const getGeographySearchFieldByTx = (field: string): string => {
+  const val = FieldMappings.get(Types[field]);
+  // for cases such as permissions, stateProv = adminLevel1, however for geo filter searches further parsing based on the geo's id
+  // see parseStateProv() in /geography-filters
+  return val === 'stateProv' ? 'adminLevel1_id' : val; 
+};

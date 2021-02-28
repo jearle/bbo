@@ -1,4 +1,5 @@
 import { RCAWebAccountsService } from '../rca-web-accounts';
+import { PermissionsSet } from '../rca-web-accounts/permissions-model';
 
 type PermissionsServiceInput = {
   readonly redisProvider;
@@ -110,10 +111,10 @@ const permissionsService = ({
   redisProvider,
   rcaWebAccountsService,
 }: PermissionsServiceInput) => ({
-  async fetchPermissionsModel({
+  async fetchPermissionsSet({
     userId: userIdInput,
     username,
-  }: FetchPermissionsModelInput) {
+  }: FetchPermissionsModelInput): Promise<PermissionsSet> {
     const userId = username
       ? await fetchUserId({ redisProvider, rcaWebAccountsService, username })
       : userIdInput;

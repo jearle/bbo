@@ -1,39 +1,41 @@
-import { csvToArray } from '.';
+import { csvToIntArray } from '.';
 
-describe(`csvToArray`, () => {
-  test(`csvToArray no argument`, () => {
-    const array = csvToArray();
-
-    expect(array).toHaveLength(0);
-  });
-
-  test(`csvToArray undefined`, () => {
-    const array = csvToArray(undefined);
+describe(`csvToIntArray`, () => {
+  test(`csvToIntArray no argument`, () => {
+    const array = csvToIntArray();
 
     expect(array).toHaveLength(0);
   });
 
-  test(`csvToArray null`, () => {
-    const array = csvToArray(null);
+  test(`csvToIntArray undefined`, () => {
+    const array = csvToIntArray(undefined);
 
     expect(array).toHaveLength(0);
   });
 
-  test(`csvToArray ''`, () => {
-    const array = csvToArray('');
+  test(`csvToIntArray null`, () => {
+    const array = csvToIntArray(null);
 
     expect(array).toHaveLength(0);
   });
 
-  test(`csvToArray '1'`, () => {
-    const array = csvToArray('1');
+  test(`csvToIntArray ''`, () => {
+    const array = csvToIntArray('');
+
+    expect(array).toHaveLength(0);
+  });
+
+  test(`csvToIntArray '1'`, () => {
+    const array = csvToIntArray('1');
 
     expect(array).toHaveLength(1);
+    expect(array[0]).toEqual(1);
   });
 
-  test(`csvToArray '1,2'`, () => {
-    const array = csvToArray('1,2');
+  test(`csvToIntArray '1,2'`, () => {
+    const array = csvToIntArray('1,2');
 
     expect(array).toHaveLength(2);
+    expect(array).toEqual([1, 2]);
   });
 });
