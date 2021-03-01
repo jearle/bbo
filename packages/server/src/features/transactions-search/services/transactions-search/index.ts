@@ -70,7 +70,7 @@ const transactionsSearchService = ({
       body: esQuery,
     });
     return {
-      data: getElasticBucket(result),
+      data: getElasticBucket(result, aggregation.aggregationType),
       index: TRANSACTIONS_INDEX,
       request: esQuery,
       response: result.body,

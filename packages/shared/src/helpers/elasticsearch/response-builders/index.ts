@@ -1,4 +1,5 @@
 import { EsClientRawResponse } from '../../types/elasticsearch';
+import {AggregationType} from "../../types";
 
 export const getElasticHits = (response: EsClientRawResponse): unknown[] => {
   const { hits } = response.body.hits;
@@ -14,8 +15,11 @@ export const getElasticBody = (response: EsClientRawResponse) => {
 
 */
 
-export const getElasticBucket = (response: EsClientRawResponse) => {
-  const data = response.body.aggregations?.sumPerQuarter?.buckets?.map(
+export const getElasticBucket = (response: EsClientRawResponse, aggregationType: AggregationType) => {
+  if (aggregationType === "PPU") {
+    return getAvgElasticBucket(response);
+  }
+  return response.body.aggregations?.sumPerQuarter?.buckets?.map(
     (bucket) => {
       return {
         date: bucket.key_as_string,
@@ -23,5 +27,15 @@ export const getElasticBucket = (response: EsClientRawResponse) => {
       };
     }
   );
-  return data;
+};
+
+export const getAvgElasticBucket = (response: EsClientRawResponse) => {
+  return response.body.aggregations?.quarterlyAverage?.buckets?.map(
+    (bucket) => {
+      return {
+        date: bucket.key_as_string,
+        value: bucket.calculatedAverage?.value,
+      };
+    }
+  );
 };
