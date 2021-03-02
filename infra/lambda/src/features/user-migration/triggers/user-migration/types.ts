@@ -26,6 +26,8 @@ export type TriggerSource =
   | `UserMigration_Authentication`
   | `UserMigration_ForgotPassword`;
 
+export type UserMigrationCallback = (error?: string | null) => void;
+
 export type UserMigrationEvent = {
   readonly version: string;
   readonly userName: string;

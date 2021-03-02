@@ -1,51 +1,13 @@
-import { UserMigrationEvent, UserMigrationContext } from './types';
+import {
+  UserMigrationCallback,
+  UserMigrationEvent,
+  UserMigrationContext,
+} from './types';
 import { FetchDoesAuthenticate } from '../../services/authenticate';
-
-type Callback = (error?: string | null) => void;
+import { userMigrationAuthentication } from './trigger-source/authentication';
 
 type CreateUserMigrationTriggerInput = {
   readonly fetchDoesAuthenticate: FetchDoesAuthenticate;
-};
-
-type UserMigrationAuthenticationInputs = {
-  readonly username: string;
-  readonly password: string;
-  readonly event: UserMigrationEvent;
-  readonly context: UserMigrationContext;
-  readonly fetchDoesAuthenticate: FetchDoesAuthenticate;
-  readonly callback: Callback;
-};
-
-const userMigrationAuthentication = async ({
-  username,
-  password,
-  event,
-  context,
-  fetchDoesAuthenticate,
-  callback,
-}: UserMigrationAuthenticationInputs) => {
-  const { doesAuthenticate, error } = await fetchDoesAuthenticate({
-    username,
-    password,
-  });
-
-  if (!doesAuthenticate) {
-    console.log(`does not authenticate error`, error);
-    return callback(error);
-  }
-
-  event.response.userAttributes = {
-    email: username,
-    email_verified: `true`,
-  };
-  event.response.finalUserStatus = `CONFIRMED`;
-  event.response.messageAction = `SUPPRESS`;
-
-  console.log(`success`);
-
-  context.succeed(event);
-
-  callback(null);
 };
 
 export const createUserMigrationTrigger = ({
@@ -53,7 +15,7 @@ export const createUserMigrationTrigger = ({
 }: CreateUserMigrationTriggerInput) => async (
   event: UserMigrationEvent,
   context: UserMigrationContext,
-  callback: Callback
+  callback: UserMigrationCallback
 ) => {
   const { userName: username, triggerSource } = event;
   const { password } = event.request;
