@@ -62,6 +62,8 @@ const determineWhichFieldsToSumOn = (
       case 'PPSF':
       case 'PPSM':
         return [priceField, 'sqFt_dbl']
+      default:
+        throw `fields do not exist for avg-aggregation ${aggregationType}`;
     }
   } else {
     throw `currency ${currency} does not exist for aggregation`;
