@@ -1,6 +1,6 @@
 import * as Geography from '../../../types/geography';
 import { createGeographyFilterTerms } from '../geography-filters';
-import { createAggs } from './sum-aggregation-builder';
+import { createSumAggs } from './sum-aggregation-builder';
 
 describe('sum aggregation builder', () => {
   const bool = {
@@ -62,7 +62,7 @@ describe('sum aggregation builder', () => {
         },
       },
     };
-    const result = createAggs({ aggregationType: 'PRICE' });
+    const result = createSumAggs({ aggregationType: 'PRICE' });
     expect(result).toEqual(expected);
   });
 
@@ -105,7 +105,7 @@ describe('sum aggregation builder', () => {
         },
       },
     };
-    const result = createAggs({ aggregationType: 'PROPERTY' });
+    const result = createSumAggs({ aggregationType: 'PROPERTY' });
     expect(result).toEqual(expected);
   });
 
@@ -148,7 +148,7 @@ describe('sum aggregation builder', () => {
         },
       },
     };
-    const result = createAggs({ aggregationType: 'UNITS' });
+    const result = createSumAggs({ aggregationType: 'UNITS' });
     expect(result).toEqual(expected);
   });
 
@@ -191,13 +191,13 @@ describe('sum aggregation builder', () => {
         },
       },
     };
-    const result = createAggs({ aggregationType: 'SQFT' });
+    const result = createSumAggs({ aggregationType: 'SQFT' });
     expect(result).toEqual(expected);
   });
 
   it('aggregationType error', () => {
     try {
-      createAggs({ aggregationType: 'random' } as any);
+      createSumAggs({ aggregationType: 'random' } as any);
     } catch (e) {
       expect(e).toEqual('field does not exist for aggregation');
     }
@@ -205,7 +205,7 @@ describe('sum aggregation builder', () => {
 
   it('currencyType error', () => {
     try {
-      createAggs({ aggregationType: 'price', currency: 'Bitcoin' } as any);
+      createSumAggs({ aggregationType: 'price', currency: 'Bitcoin' } as any);
     } catch (e) {
       expect(e).toEqual('field does not exist for aggregation');
     }

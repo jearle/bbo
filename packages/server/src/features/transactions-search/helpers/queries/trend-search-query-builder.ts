@@ -3,11 +3,12 @@ import {
   Geography,
   PropertyType,
 } from 'shared/dist/helpers/types';
-import { createAggs } from 'shared/dist/helpers/elasticsearch/query-builders/aggregations';
 import { createGeographyFilterTerms } from 'shared/dist/helpers/elasticsearch/query-builders/geography-filters';
 import { createPropertyTypeFilterTerms } from 'shared/dist/helpers/elasticsearch/query-builders/property-type-filters';
 import { ElasticQuery } from 'shared/dist/helpers/types/elasticsearch';
 import { CreatePermissionsFilterResult } from '../../../permissions/helpers/elasticsearch/permissions-filter';
+import { createSumAggs } from "shared/dist/helpers/elasticsearch/query-builders/aggregations";
+import { createAvgAggs } from "shared/dist/helpers/elasticsearch/query-builders/aggregations";
 
 type TrendsSearchQueryInputs = {
   readonly limit?: number;
@@ -56,3 +57,19 @@ export const createTrendSearchQuery = ({
   }
   return query;
 };
+
+const createAggs = (aggregation: Aggregation) => {
+  switch(aggregation.aggregationType) {
+    case 'PRICE':
+    case 'PROPERTY':
+    case 'UNITS':
+    case 'SQFT':
+      return createSumAggs(aggregation);
+    case 'PPU':
+    case 'PPSF':
+    case 'PPSM':
+      return createAvgAggs(aggregation);
+    default:
+      throw `Cannot create aggregation query for unknown aggregation type ${aggregation.aggregationType}`;
+  }
+}
