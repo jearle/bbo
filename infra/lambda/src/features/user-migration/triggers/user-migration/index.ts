@@ -1,6 +1,6 @@
 import { FetchDoesAuthenticate } from '../../services/authenticate';
 
-type Request = {
+type UserMigrationRequest = {
   readonly password: string;
 };
 
@@ -9,7 +9,7 @@ type UserAttributes = {
   email_verified: string;
 };
 
-type Response = {
+type UserMigrationResponse = {
   userAttributes: UserAttributes;
   finalUserStatus?: `CONFIRMED`;
   messageAction?: `SUPPRESS`;
@@ -20,8 +20,8 @@ type Event = {
   readonly triggerSource:
     | `UserMigration_Authentication`
     | `UserMigration_ForgotPassword`;
-  readonly request: Request;
-  readonly response: Response;
+  readonly request: UserMigrationRequest;
+  readonly response: UserMigrationResponse;
 };
 
 type Context = {
@@ -41,6 +41,11 @@ export const createUserMigrationTrigger = ({
   context: Context,
   callback: Callback
 ) => {
+  console.log(`event`);
+  console.log(JSON.stringify(event, null, `  `));
+
+  console.log(`context`);
+  console.log(JSON.stringify(context, null, `  `));
   const { userName: username, triggerSource } = event;
   const { password } = event.request;
 
