@@ -71,10 +71,9 @@ const capRateFilter = {
 };
 
 const determineWhatFieldToSumOn = (
-  aggregationType: AggregationType,
+  aggregationTypeUpperCase: AggregationType,
   currency: Currency
 ) => {
-  const aggregationTypeUpperCase = aggregationType.toUpperCase();
   if (aggregationTypeUpperCase === 'PRICE') {
     if (currencyMapper[currency]) {
       return `statusPriceAdjusted_amt.${currencyMapper[currency]}`;
@@ -94,8 +93,7 @@ const determineWhatFieldToSumOn = (
   }
 };
 
-const generateFilter = (aggregationType: AggregationType) => {
-  const aggregationTypeUpperCase = aggregationType.toUpperCase();
+const generateFilter = (aggregationTypeUpperCase: AggregationType) => {
   if (
     ['PRICE', 'UNITS', 'PROPERTY', 'SQFT'].includes(aggregationTypeUpperCase)
   ) {
@@ -113,9 +111,9 @@ export const createAggs = ({
   let filter;
   let metricAggregation;
   try {
-    field = determineWhatFieldToSumOn(aggregationType, currency);
-    filter = generateFilter(aggregationType);
-    const aggregationTypeUpperCase = aggregationType.toUpperCase();
+    const aggregationTypeUpperCase = aggregationType.toUpperCase() as AggregationType
+    field = determineWhatFieldToSumOn(aggregationTypeUpperCase, currency);
+    filter = generateFilter(aggregationTypeUpperCase);
     metricAggregation = metricAggregationMapper[aggregationTypeUpperCase];
   } catch {
     field = undefined;
