@@ -38,7 +38,9 @@ export const determineEligibilityFlags = (aggregationType: AggregationType) => {
   const defaultEligibilityFlags = ['eligibleForStats_fg', 'eligibleTTVolume_fg'];
 
   switch(aggregationType) {
-    case "PPU":
+    case 'PPU':
+    case 'PPSF':
+    case 'PPSM':
       return ['eligibleForPPU_fg'].concat(defaultEligibilityFlags);
     default:
       return defaultEligibilityFlags;
@@ -53,7 +55,7 @@ export const generateFilter = (aggregationType: AggregationType) => {
       [`${eligibilityFlag}`]: true
     }
   }));
-  if (['PRICE', 'UNITS', 'PROPERTY', 'SQFT', 'PPU'].includes(aggregationTypeUpperCase)) {
+  if (['PRICE', 'UNITS', 'PROPERTY', 'SQFT', 'PPU', 'PPSF', 'PPSM'].includes(aggregationTypeUpperCase)) {
     filters.push(priceFloorFilter)
   }
   return {

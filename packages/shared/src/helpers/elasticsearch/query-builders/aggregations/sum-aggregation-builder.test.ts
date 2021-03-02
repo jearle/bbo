@@ -1,5 +1,3 @@
-import * as Geography from '../../../types/geography';
-import { createGeographyFilterTerms } from '../geography-filters';
 import { createSumAggs } from './sum-aggregation-builder';
 
 describe('sum aggregation builder', () => {

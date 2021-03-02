@@ -30,7 +30,7 @@ export const getElasticBucket = (response: EsClientRawResponse, aggregationType:
 };
 
 export const getAvgElasticBucket = (response: EsClientRawResponse) => {
-  return response.body.aggregations?.quarterlyAverage?.buckets?.map(
+  return response.body.aggregations?.avgPerQuarter?.buckets?.map(
     (bucket) => {
       return {
         date: bucket.key_as_string,

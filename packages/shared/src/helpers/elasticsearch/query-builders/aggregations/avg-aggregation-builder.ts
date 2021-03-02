@@ -20,8 +20,8 @@ export const createAvgAggs = ({aggregationType, currency = 'USD'}: Aggregation) 
     calculatedAverage: {
       bucket_script: {
         buckets_path: {
-          num: 'filteredSumPerQuarter_0>sumResult',
-          div: 'filteredSumPerQuarter_1>sumResult'
+          num: 'filteredSum_0>sumResult',
+          div: 'filteredSum_1>sumResult'
         },
         script: `params.num / (params.div * ${multiplier})`
       }
@@ -29,7 +29,7 @@ export const createAvgAggs = ({aggregationType, currency = 'USD'}: Aggregation) 
   }
   const innerAggs = fields?.reduce((acc, field, idx) => ({
     ...acc,
-    [`filteredSumPerQuarter_${idx}`]: {
+    [`filteredSum_${idx}`]: {
       filter,
       aggs: {
         sumResult: {
@@ -42,7 +42,7 @@ export const createAvgAggs = ({aggregationType, currency = 'USD'}: Aggregation) 
   }), initialAgg);
 
   return {
-    quarterlyAverage: {
+    avgPerQuarter: {
       date_histogram,
       aggs: innerAggs
     }
