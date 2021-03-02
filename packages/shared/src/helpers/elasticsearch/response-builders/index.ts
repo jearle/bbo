@@ -20,8 +20,9 @@ export const getElasticBucket = (response: EsClientRawResponse) => {
   const data = filteredBuckets?.map(
     (bucket) => {
       if (bucket.filteredSum["doc_count"] > 0) {
+        const dateStringYYYYMMDD = bucket.to_as_string.substring(0,10);
         return {
-          date: bucket.to_as_string,
+          date: dateStringYYYYMMDD,
           value: bucket.filteredSum.sumResult.value,
         };
       }
