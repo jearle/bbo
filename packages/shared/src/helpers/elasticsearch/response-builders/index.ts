@@ -16,7 +16,7 @@ export const getElasticBody = (response: EsClientRawResponse) => {
 */
 
 export const getElasticBucket = (response: EsClientRawResponse, aggregationType: AggregationType) => {
-  if (['PPU', 'PPSF', 'PPSM'].includes(aggregationType)) {
+  if (['PPU', 'PPSF', 'PPSM'].includes(aggregationType.toUpperCase())) {
     return getAvgElasticBucket(response);
   }
   return response.body.aggregations?.sumPerQuarter?.buckets?.map(

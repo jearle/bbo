@@ -37,7 +37,7 @@ export const priceFloorFilter = {
 export const determineEligibilityFlags = (aggregationType: AggregationType) => {
   const defaultEligibilityFlags = ['eligibleForStats_fg', 'eligibleTTVolume_fg'];
 
-  switch(aggregationType) {
+  switch(aggregationType.toUpperCase()) {
     case 'PPU':
     case 'PPSF':
     case 'PPSM':

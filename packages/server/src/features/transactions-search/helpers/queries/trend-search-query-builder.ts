@@ -59,7 +59,7 @@ export const createTrendSearchQuery = ({
 };
 
 const createAggs = (aggregation: Aggregation) => {
-  switch(aggregation.aggregationType) {
+  switch(aggregation.aggregationType.toUpperCase()) {
     case 'PRICE':
     case 'PROPERTY':
     case 'UNITS':
