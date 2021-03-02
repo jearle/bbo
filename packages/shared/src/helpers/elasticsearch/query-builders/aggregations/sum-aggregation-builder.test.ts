@@ -1,36 +1,15 @@
-import * as Geography from '../../../types/geography';
-import { createGeographyFilterTerms } from '../geography-filters';
 import { createAggs } from './sum-aggregation-builder';
+import { quarters } from '../date-builder';
 
 describe('sum aggregation builder', () => {
-  const bool = {
-    bool: {
-      should: [
-        {
-          bool: {
-            must: [
-              {
-                range: {
-                  dealStatusPriceUSD_amt: {
-                    gte: 2500000,
-                  },
-                },
-              },
-            ],
-          },
-        },
-      ],
-    },
-  };
+  const bool = { range: { dealStatusPriceUSD_amt: { gte: 2500000 } }};
 
   it('create quarterly (sum) aggregation for price (CRE volume) in default currency USD', () => {
     const expected = {
       sumPerQuarter: {
-        date_histogram: {
-          field: 'status_dt',
-          calendar_interval: 'quarter',
-          format: 'YYYY-MM-dd',
-          min_doc_count: 0,
+        range: {
+          field: "status_dt",
+          ranges: quarters
         },
         aggs: {
           filteredSum: {
@@ -69,11 +48,9 @@ describe('sum aggregation builder', () => {
   it('create quarterly (sum) aggregation for number of properties', () => {
     const expected = {
       sumPerQuarter: {
-        date_histogram: {
-          field: 'status_dt',
-          calendar_interval: 'quarter',
-          format: 'YYYY-MM-dd',
-          min_doc_count: 0,
+        range: {
+          field: "status_dt",
+          ranges: quarters
         },
         aggs: {
           filteredSum: {
@@ -112,11 +89,9 @@ describe('sum aggregation builder', () => {
   it('create quarterly (sum) aggregation for number of units', () => {
     const expected = {
       sumPerQuarter: {
-        date_histogram: {
-          field: 'status_dt',
-          calendar_interval: 'quarter',
-          format: 'YYYY-MM-dd',
-          min_doc_count: 0,
+        range: {
+          field: "status_dt",
+          ranges: quarters
         },
         aggs: {
           filteredSum: {
@@ -155,11 +130,9 @@ describe('sum aggregation builder', () => {
   it('create quarterly (sum) aggregation for number of units', () => {
     const expected = {
       sumPerQuarter: {
-        date_histogram: {
-          field: 'status_dt',
-          calendar_interval: 'quarter',
-          format: 'YYYY-MM-dd',
-          min_doc_count: 0,
+        range: {
+          field: "status_dt",
+          ranges: quarters
         },
         aggs: {
           filteredSum: {
@@ -192,6 +165,60 @@ describe('sum aggregation builder', () => {
       },
     };
     const result = createAggs({ aggregationType: 'SQFT' });
+    expect(result).toEqual(expected);
+  });
+
+  it('create quarterly (avg) aggregation for capRate', () => {
+
+    const filter = {
+      bool: {
+        must: [
+          {
+            term: {
+              eligibleForCapRates_fg: true,
+            },
+          },
+          {
+            term: {
+              eligibleForStats_fg: true,
+            },
+          },
+          {
+            terms: {
+              transType_id: [1, 2, 3],
+            },
+          },
+          {
+            term: {
+              status_id: 1,
+            },
+          },
+          bool,
+        ],
+      },
+    };
+
+    const expected = {
+      sumPerQuarter: {
+        range: {
+          field: "status_dt",
+          ranges: quarters
+        },
+        aggs: {
+          filteredSum: {
+            filter,
+            aggs: {
+              sumResult: {
+                avg: {
+                  field: 'statusCapRate_dbl',
+                },
+              },
+            },
+          },
+        }
+      },
+    };
+    const result = createAggs({ aggregationType: 'CAPRATE' });
     expect(result).toEqual(expected);
   });
 

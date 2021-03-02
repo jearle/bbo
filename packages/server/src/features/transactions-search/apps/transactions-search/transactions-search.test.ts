@@ -216,6 +216,29 @@ describe(`transactions app`, () => {
       expect(data.length).toBeGreaterThanOrEqual(1);
     });
 
+    //exact match for all dates, execpt for 2017-09-30 which is 0.2% off.
+    it(`searches trends with a CAPRATE metric aggregation, ATL, apt, qtr, qtr totals, TT match`, async () => {
+      app.use(transactionsSearchApp);
+      const { data } = await fetchJSONOnRandomPort(app, {
+        method: 'POST',
+        path: `/trends`,
+        body: JSON.stringify({
+          geographyFilter: atlantaFilter,
+          propertyTypeFilter: apartmentFilter,
+          aggregation: { aggregationType: 'CAPRATE' },
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
+      expect(Array.isArray(data)).toBe(true);
+      expect(data[0]).toHaveProperty('date');
+      expect(data[0]).toHaveProperty('value');
+      expect(data.length).toBeGreaterThanOrEqual(1);
+    });
+
+
     it(`fails without a geography`, async () => {
       app.use(transactionsSearchApp);
       const response = await fetchResponseOnRandomPort(app, {

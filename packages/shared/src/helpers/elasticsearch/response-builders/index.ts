@@ -15,12 +15,16 @@ export const getElasticBody = (response: EsClientRawResponse) => {
 */
 
 export const getElasticBucket = (response: EsClientRawResponse) => {
-  const data = response.body.aggregations?.sumPerQuarter?.buckets?.map(
+  const buckets = response.body.aggregations?.sumPerQuarter?.buckets;
+  const filteredBuckets = buckets?.filter((bucket) => (bucket.filteredSum["doc_count"] > 0));
+  const data = filteredBuckets?.map(
     (bucket) => {
-      return {
-        date: bucket.key_as_string,
-        value: bucket.filteredSum.sumResult.value,
-      };
+      if (bucket.filteredSum["doc_count"] > 0) {
+        return {
+          date: bucket.to_as_string,
+          value: bucket.filteredSum.sumResult.value,
+        };
+      }
     }
   );
   return data;
