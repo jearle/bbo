@@ -3,6 +3,26 @@ import { createGeographyFilterTerms } from '../geography-filters';
 import { createAggs } from './sum-aggregation-builder';
 
 describe('sum aggregation builder', () => {
+  const bool = {
+    bool: {
+      should: [
+        {
+          bool: {
+            must: [
+              {
+                range: {
+                  dealStatusPriceUSD_amt: {
+                    gte: 2500000,
+                  },
+                },
+              },
+            ],
+          },
+        },
+      ],
+    },
+  };
+
   it('create quarterly (sum) aggregation for price (CRE volume) in default currency USD', () => {
     const expected = {
       sumPerQuarter: {
@@ -19,9 +39,15 @@ describe('sum aggregation builder', () => {
                 must: [
                   {
                     term: {
+                      eligibleForStats_fg: true,
+                    },
+                  },
+                  {
+                    term: {
                       eligibleTTVolume_fg: true,
                     },
                   },
+                  bool,
                 ],
               },
             },
@@ -56,9 +82,15 @@ describe('sum aggregation builder', () => {
                 must: [
                   {
                     term: {
+                      eligibleForStats_fg: true,
+                    },
+                  },
+                  {
+                    term: {
                       eligibleTTVolume_fg: true,
                     },
                   },
+                  bool,
                 ],
               },
             },
@@ -93,9 +125,15 @@ describe('sum aggregation builder', () => {
                 must: [
                   {
                     term: {
+                      eligibleForStats_fg: true,
+                    },
+                  },
+                  {
+                    term: {
                       eligibleTTVolume_fg: true,
                     },
                   },
+                  bool,
                 ],
               },
             },
@@ -130,9 +168,15 @@ describe('sum aggregation builder', () => {
                 must: [
                   {
                     term: {
+                      eligibleForStats_fg: true,
+                    },
+                  },
+                  {
+                    term: {
                       eligibleTTVolume_fg: true,
                     },
                   },
+                  bool,
                 ],
               },
             },
