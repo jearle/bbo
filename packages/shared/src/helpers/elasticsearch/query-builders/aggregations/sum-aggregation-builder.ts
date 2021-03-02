@@ -1,13 +1,6 @@
 import { Aggregation, AggregationType, Currency } from '../../../types';
 import { quarters } from '../date-builder';
 
-const date_histogram = {
-  field: 'status_dt',
-  calendar_interval: 'quarter',
-  format: 'YYYY-MM-dd',
-  min_doc_count: 0,
-};
-
 const currencyMapper = {
   USD: 'usd',
   EUR: 'eur',
