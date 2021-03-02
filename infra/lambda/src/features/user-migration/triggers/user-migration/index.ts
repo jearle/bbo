@@ -1,32 +1,5 @@
+import { UserMigrationEvent, UserMigrationContext } from './types';
 import { FetchDoesAuthenticate } from '../../services/authenticate';
-
-type UserMigrationRequest = {
-  readonly password: string;
-};
-
-type UserAttributes = {
-  email: string;
-  email_verified: string;
-};
-
-type UserMigrationResponse = {
-  userAttributes: UserAttributes;
-  finalUserStatus?: `CONFIRMED`;
-  messageAction?: `SUPPRESS`;
-};
-
-type Event = {
-  readonly userName: string;
-  readonly triggerSource:
-    | `UserMigration_Authentication`
-    | `UserMigration_ForgotPassword`;
-  readonly request: UserMigrationRequest;
-  readonly response: UserMigrationResponse;
-};
-
-type Context = {
-  readonly succeed: (event: Event) => void;
-};
 
 type Callback = (error?: string | null) => void;
 
@@ -34,53 +7,67 @@ type CreateUserMigrationTriggerInput = {
   readonly fetchDoesAuthenticate: FetchDoesAuthenticate;
 };
 
+type UserMigrationAuthenticationInputs = {
+  readonly username: string;
+  readonly password: string;
+  readonly event: UserMigrationEvent;
+  readonly context: UserMigrationContext;
+  readonly fetchDoesAuthenticate: FetchDoesAuthenticate;
+  readonly callback: Callback;
+};
+
+const userMigrationAuthentication = async ({
+  username,
+  password,
+  event,
+  context,
+  fetchDoesAuthenticate,
+  callback,
+}: UserMigrationAuthenticationInputs) => {
+  const { doesAuthenticate, error } = await fetchDoesAuthenticate({
+    username,
+    password,
+  });
+
+  if (!doesAuthenticate) {
+    console.log(`does not authenticate error`, error);
+    return callback(error);
+  }
+
+  event.response.userAttributes = {
+    email: username,
+    email_verified: `true`,
+  };
+  event.response.finalUserStatus = `CONFIRMED`;
+  event.response.messageAction = `SUPPRESS`;
+
+  console.log(`success`);
+
+  context.succeed(event);
+
+  callback(null);
+};
+
 export const createUserMigrationTrigger = ({
   fetchDoesAuthenticate,
 }: CreateUserMigrationTriggerInput) => async (
-  event: Event,
-  context: Context,
+  event: UserMigrationEvent,
+  context: UserMigrationContext,
   callback: Callback
 ) => {
-  console.log(`event`);
-  console.log(JSON.stringify(event, null, `  `));
-
-  console.log(`context`);
-  console.log(JSON.stringify(context, null, `  `));
   const { userName: username, triggerSource } = event;
   const { password } = event.request;
 
   if (triggerSource === `UserMigration_Authentication`) {
-    console.log(`UserMigration_Authentication`);
-    const { doesAuthenticate, error } = await fetchDoesAuthenticate({
+    return await userMigrationAuthentication({
       username,
       password,
+      event,
+      context,
+      fetchDoesAuthenticate,
+      callback,
     });
-
-    console.log(`Does Authenticate`, doesAuthenticate);
-    if (!doesAuthenticate) {
-      console.log(`does not authenticate error`, error);
-      return callback(error);
-    }
-
-    event.response.userAttributes = {
-      email: username,
-      email_verified: `true`,
-    };
-    event.response.finalUserStatus = `CONFIRMED`;
-    event.response.messageAction = `SUPPRESS`;
-
-    console.log(`succeed`, event);
-
-    context.succeed(event);
-    callback(null);
-    return;
   }
 
-  // console.log(`cognito!`);
-  // console.log(`username`, username);
-  // console.log(`password`, password);
-  // console.log(`doesAuthenticate`, doesAuthenticate);
-  // console.log(`error`, error);
-
-  return;
+  return callback(`unknown triggerSource: "${triggerSource}"`);
 };
