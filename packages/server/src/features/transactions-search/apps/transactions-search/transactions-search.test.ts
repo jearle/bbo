@@ -216,7 +216,7 @@ describe(`transactions app`, () => {
       expect(data.length).toBeGreaterThanOrEqual(1);
     });
 
-    //exact match for all dates, execpt for 2017-09-30 which is 0.2% off.
+    //exact match for all dates, execpt for 2017-09-30, 0.05818639269896916 to TT value of 0,058037676
     it(`searches trends with a CAPRATE metric aggregation, ATL, apt, qtr, qtr totals, TT match`, async () => {
       app.use(transactionsSearchApp);
       const { data } = await fetchJSONOnRandomPort(app, {
