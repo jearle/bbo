@@ -41,7 +41,7 @@ export const determineEligibilityFlags = (aggregationType: AggregationType) => {
     case 'PPU':
     case 'PPSF':
     case 'PPSM':
-      return ['eligibleForPPU_fg'].concat(defaultEligibilityFlags);
+      return ['eligibleTTPPU_fg'].concat(defaultEligibilityFlags);
     default:
       return defaultEligibilityFlags;
   }

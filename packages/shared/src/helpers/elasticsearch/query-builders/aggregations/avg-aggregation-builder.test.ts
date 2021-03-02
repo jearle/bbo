@@ -46,7 +46,7 @@ describe('average aggregation builder', () => {
                 must: [
                   {
                     term: {
-                      eligibleForPPU_fg: true,
+                      eligibleTTPPU_fg: true,
                     },
                   },
                   {
@@ -77,7 +77,7 @@ describe('average aggregation builder', () => {
                 must: [
                   {
                     term: {
-                      eligibleForPPU_fg: true,
+                      eligibleTTPPU_fg: true,
                     },
                   },
                   {
@@ -134,7 +134,7 @@ describe('average aggregation builder', () => {
                 must: [
                   {
                     term: {
-                      eligibleForPPU_fg: true,
+                      eligibleTTPPU_fg: true,
                     },
                   },
                   {
@@ -165,7 +165,7 @@ describe('average aggregation builder', () => {
                 must: [
                   {
                     term: {
-                      eligibleForPPU_fg: true,
+                      eligibleTTPPU_fg: true,
                     },
                   },
                   {
@@ -222,7 +222,7 @@ describe('average aggregation builder', () => {
                 must: [
                   {
                     term: {
-                      eligibleForPPU_fg: true,
+                      eligibleTTPPU_fg: true,
                     },
                   },
                   {
@@ -253,7 +253,7 @@ describe('average aggregation builder', () => {
                 must: [
                   {
                     term: {
-                      eligibleForPPU_fg: true,
+                      eligibleTTPPU_fg: true,
                     },
                   },
                   {
