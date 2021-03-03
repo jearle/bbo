@@ -7,7 +7,7 @@ import { createGeographyFilterTerms } from 'shared/dist/helpers/elasticsearch/qu
 import { createPropertyTypeFilterTerms } from 'shared/dist/helpers/elasticsearch/query-builders/property-type-filters';
 import { ElasticQuery } from 'shared/dist/helpers/types/elasticsearch';
 import { CreatePermissionsFilterResult } from '../../../permissions/helpers/elasticsearch/permissions-filter';
-import { createSumAggs } from "shared/dist/helpers/elasticsearch/query-builders/aggregations";
+import { createAggs } from "shared/dist/helpers/elasticsearch/query-builders/aggregations";
 import { createAvgAggs } from "shared/dist/helpers/elasticsearch/query-builders/aggregations";
 
 type TrendsSearchQueryInputs = {
@@ -58,18 +58,18 @@ export const createTrendSearchQuery = ({
   return query;
 };
 
-const createAggs = (aggregation: Aggregation) => {
-  switch(aggregation.aggregationType.toUpperCase()) {
-    case 'PRICE':
-    case 'PROPERTY':
-    case 'UNITS':
-    case 'SQFT':
-      return createSumAggs(aggregation);
-    case 'PPU':
-    case 'PPSF':
-    case 'PPSM':
-      return createAvgAggs(aggregation);
-    default:
-      throw `Cannot create aggregation query for unknown aggregation type ${aggregation.aggregationType}`;
-  }
-}
+// const createAggs = (aggregation: Aggregation) => {
+//   switch(aggregation.aggregationType.toUpperCase()) {
+//     case 'PRICE':
+//     case 'PROPERTY':
+//     case 'UNITS':
+//     case 'SQFT':
+//       return createAggs(aggregation);
+//     case 'PPU':
+//     case 'PPSF':
+//     case 'PPSM':
+//       return createAvgAggs(aggregation);
+//     default:
+//       throw `Cannot create aggregation query for unknown aggregation type ${aggregation.aggregationType}`;
+//   }
+// }

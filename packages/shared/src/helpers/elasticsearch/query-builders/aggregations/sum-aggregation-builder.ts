@@ -1,11 +1,72 @@
 import { Aggregation, AggregationType, Currency } from '../../../types';
-import {currencyMapper, date_histogram, generateFilter} from "./shared";
+import { quarters } from '../date-builder';
+
+const currencyMapper = {
+  USD: 'usd',
+  EUR: 'eur',
+  CHF: 'chf',
+};
+
+const metricAggregationMapper = {
+  PRICE: 'sum',
+  PROPERTY: 'sum',
+  UNITS: 'sum',
+  SQFT: 'sum',
+  CAPRATE: 'avg',
+};
+
+const priceFloorFilter = { range: { dealStatusPriceUSD_amt: { gte: 2500000 } }};
+
+const volumeFilter = {
+  bool: {
+    must: [
+      {
+        term: {
+          eligibleForStats_fg: true,
+        },
+      },
+      {
+        term: {
+          eligibleTTVolume_fg: true,
+        },
+      },
+      priceFloorFilter,
+    ],
+  },
+};
+
+const capRateFilter = {
+  bool: {
+    must: [
+      {
+        term: {
+          eligibleForCapRates_fg: true,
+        },
+      },
+      {
+        term: {
+          eligibleForStats_fg: true,
+        },
+      },
+      {
+        terms: {
+          transType_id: [1, 2, 3],
+        },
+      },
+      {
+        term: {
+          status_id: 1,
+        },
+      },
+      priceFloorFilter,
+    ],
+  },
+};
 
 const determineWhatFieldToSumOn = (
-  aggregationType: AggregationType,
+  aggregationTypeUpperCase: AggregationType,
   currency: Currency
 ) => {
-  const aggregationTypeUpperCase = aggregationType.toUpperCase();
   if (aggregationTypeUpperCase === 'PRICE') {
     if (currencyMapper[currency]) {
       return `statusPriceAdjusted_amt.${currencyMapper[currency]}`;
@@ -18,20 +79,35 @@ const determineWhatFieldToSumOn = (
     return 'units_dbl';
   } else if (aggregationTypeUpperCase === 'SQFT') {
     return 'sqFt_dbl';
+  } else if (aggregationTypeUpperCase === 'CAPRATE') {
+    return 'statusCapRate_dbl';
   } else {
     throw 'field does not exist for sum-aggregation';
   }
 };
 
-export const createSumAggs = ({
+const generateFilter = (aggregationTypeUpperCase: AggregationType) => {
+  if (
+    ['PRICE', 'UNITS', 'PROPERTY', 'SQFT'].includes(aggregationTypeUpperCase)
+  ) {
+    return volumeFilter;
+  } else if (aggregationTypeUpperCase === 'CAPRATE') {
+    return capRateFilter;
+  }
+};
+
+export const createAggs = ({
   aggregationType,
   currency = 'USD',
 }: Aggregation) => {
   let field;
   let filter;
+  let metricAggregation;
   try {
-    field = determineWhatFieldToSumOn(aggregationType, currency);
-    filter = generateFilter(aggregationType);
+    const aggregationTypeUpperCase = aggregationType.toUpperCase() as AggregationType
+    field = determineWhatFieldToSumOn(aggregationTypeUpperCase, currency);
+    filter = generateFilter(aggregationTypeUpperCase);
+    metricAggregation = metricAggregationMapper[aggregationTypeUpperCase];
   } catch {
     field = undefined;
     filter = undefined;
@@ -39,14 +115,17 @@ export const createSumAggs = ({
 
   return {
     sumPerQuarter: {
-      date_histogram,
+      range: {
+        field: "status_dt",
+        ranges: quarters
+      },
       aggs: {
         filteredSum: {
           filter,
           aggs: {
             sumResult: {
-              sum: {
-                field,
+              [metricAggregation]: {
+                field: field,
               },
             },
           },

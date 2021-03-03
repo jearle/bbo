@@ -4,6 +4,7 @@ import {
   Geography,
   PropertyType,
 } from 'shared/dist/helpers/types';
+import { quarters } from 'shared/dist/helpers/elasticsearch/query-builders/date-builder';
 
 describe('trends-search', () => {
   const atlantaFilter: Geography.Filter = {
@@ -62,25 +63,7 @@ describe('trends-search', () => {
   });
 
   it('creates a query with filters and an aggregation', () => {
-    const bool = {
-      bool: {
-        should: [
-          {
-            bool: {
-              must: [
-                {
-                  range: {
-                    dealStatusPriceUSD_amt: {
-                      gte: 2500000,
-                    },
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    };
+    const bool = { range: { dealStatusPriceUSD_amt: { gte: 2500000 } }};
 
     const esQuery = createTrendSearchQuery({
       geographyFilter: atlantaFilter,
@@ -90,11 +73,9 @@ describe('trends-search', () => {
     });
     expect(esQuery.aggs).toEqual({
       sumPerQuarter: {
-        date_histogram: {
-          field: 'status_dt',
-          calendar_interval: 'quarter',
-          format: 'YYYY-MM-dd',
-          min_doc_count: 0,
+        range: {
+          field: "status_dt",
+          ranges: quarters
         },
         aggs: {
           filteredSum: {

@@ -19,12 +19,17 @@ export const getElasticBucket = (response: EsClientRawResponse, aggregationType:
   if (['PPU', 'PPSF', 'PPSM'].includes(aggregationType.toUpperCase())) {
     return getAvgElasticBucket(response);
   }
-  return response.body.aggregations?.sumPerQuarter?.buckets?.map(
+  const buckets = response.body.aggregations?.sumPerQuarter?.buckets;
+  const filteredBuckets = buckets?.filter((bucket) => (bucket.filteredSum["doc_count"] > 0));
+  return filteredBuckets?.map(
     (bucket) => {
-      return {
-        date: bucket.key_as_string,
-        value: bucket.filteredSum.sumResult.value,
-      };
+      if (bucket.filteredSum["doc_count"] > 0) {
+        const dateStringYYYYMMDD = bucket.to_as_string.substring(0,10);
+        return {
+          date: dateStringYYYYMMDD,
+          value: bucket.filteredSum.sumResult.value,
+        };
+      }
     }
   );
 };
