@@ -4,6 +4,7 @@
   "description": "CD Product API Lambda Code",
   "private": true,
   "scripts": {
+    "test": "yarn test:development",
     "test:development": "jest --detectOpenHandles --setupFiles dotenv/config --coverage --watchAll",
     "build": "rm -rf dist && tsc",
     "package": "sh package.sh"
