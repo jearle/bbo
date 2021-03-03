@@ -18,17 +18,27 @@ export const createApp = ({ permissionsService }: Options): Application => {
    * @swagger
    *
    * /refresh:
-   *   get:
-   *     description: Refreshes users permissions
+   *     description: Refreshes the permissions for users
+   *     requestBody:
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *              properties:
+   *                userId:
+   *                 type: array
+   *                   items:
+   *                    type: string
    *     responses:
    *       204:
-   *         description: no content
+   *         description: No content
    */
-  app.get(`/refresh`, async (req, res) => {
-    const { userId } = req.query;
-
-    await permissionsService.clearCachedPermissionsModel({ userId });
-
+  app.post(`/refresh`, async (req, res) => {
+    const { userId } = req.body;
+    userId.map(
+      async (id) =>
+        await permissionsService.clearCachedPermissionsModel({ userId: id })
+    );
     res.sendStatus(204);
   });
 
