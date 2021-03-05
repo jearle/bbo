@@ -1,6 +1,5 @@
-import fetch from 'node-fetch';
 import * as express from 'express';
-import { portListen } from 'shared/dist/helpers/express/port-listen';
+import { fetchResponseOnRandomPort } from 'shared/dist/helpers/express/listen-fetch';
 
 import { createMSSQLProvider } from '../../../../providers/mssql';
 import { createRedisProvider } from '../../../../providers/redis';
@@ -12,11 +11,10 @@ import { createApp } from './';
 const { MSSQL_URI, REDIS_URI } = process.env;
 
 describe('permissions app', () => {
-  let server = null;
   let app = null;
-  let url = null;
   let rcaWebAccountsService = null;
   let permissionsService = null;
+  let permissionsApp = null;
 
   beforeEach(async () => {
     const mssqlProvider = await createMSSQLProvider({ uri: MSSQL_URI });
@@ -29,11 +27,8 @@ describe('permissions app', () => {
       rcaWebAccountsService,
     });
     app = express();
-    app.use(createApp({ permissionsService }));
-  });
-
-  afterEach(() => {
-    server.close();
+    app.use(express.json());
+    permissionsApp = createApp({ permissionsService });
   });
 
   afterAll(async () => {
@@ -41,9 +36,16 @@ describe('permissions app', () => {
   });
 
   test(`/refresh`, async () => {
-    server = await portListen(app);
-    url = `http://localhost:${server.address().port}`;
-    const result = await fetch(`${url}/refresh?userId=130435`);
-    expect(result.status).toBe(204);
+    app.use(permissionsApp);
+    const response = await fetchResponseOnRandomPort(app, {
+      method: 'POST',
+      path: '/refresh',
+      body: JSON.stringify({ userId: ['130435'] }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    expect(response.status).toBe(204);
   });
 });
