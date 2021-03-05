@@ -15,7 +15,6 @@ export const createApp = ({
   transactionsSearchService,
 }: CreateAppInputs): Application => {
   const app = express();
-  app.use(express.json());
 
   /**
    * @swagger
@@ -58,7 +57,7 @@ export const createApp = ({
     const data = await transactionsSearchService.searchTransactions({
       limit,
       page,
-      permissionsFilter
+      permissionsFilter,
     });
     res.json({ data });
   });
@@ -128,7 +127,7 @@ export const createApp = ({
       geographyFilter,
       propertyTypeFilter,
       aggregation,
-      permissionsFilter
+      permissionsFilter,
     });
     if (debug === 'true') {
       res.json({ data, index, request, response });
