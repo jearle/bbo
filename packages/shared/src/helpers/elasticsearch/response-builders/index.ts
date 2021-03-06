@@ -1,5 +1,5 @@
 import { EsClientRawResponse } from '../../types/elasticsearch';
-import {AggregationType} from "../../types";
+import {AggregationType, calculatedAverageAggregations} from "../../types";
 
 export const getElasticHits = (response: EsClientRawResponse): unknown[] => {
   const { hits } = response.body.hits;
@@ -15,31 +15,21 @@ export const getElasticBody = (response: EsClientRawResponse) => {
 
 */
 
-export const getElasticBucket = (response: EsClientRawResponse, aggregationType: AggregationType) => {
-  if (['PPU', 'PPSF', 'PPSM'].includes(aggregationType.toUpperCase())) {
-    return getAvgElasticBucket(response);
+export const getTrendsDataFromElasticResponse = (response: EsClientRawResponse, aggregationType: AggregationType) => {
+  if (calculatedAverageAggregations.includes(aggregationType.toUpperCase() as AggregationType)) {
+    return getDataFromElasticBucket(response, 'avgPerQuarter', 'calculatedAverage');
   }
-  const buckets = response.body.aggregations?.sumPerQuarter?.buckets;
-  const filteredBuckets = buckets?.filter((bucket) => (bucket.filteredSum["doc_count"] > 0));
-  return filteredBuckets?.map(
-    (bucket) => {
-      if (bucket.filteredSum["doc_count"] > 0) {
-        const dateStringYYYYMMDD = bucket.to_as_string.substring(0,10);
-        return {
-          date: dateStringYYYYMMDD,
-          value: bucket.filteredSum.sumResult.value,
-        };
-      }
-    }
-  );
-};
+  return getDataFromElasticBucket(response, 'sumPerQuarter', 'filteredSum');
+}
 
-export const getAvgElasticBucket = (response: EsClientRawResponse) => {
-  return response.body.aggregations?.avgPerQuarter?.buckets?.map(
+const getDataFromElasticBucket = (response: EsClientRawResponse, bucketKey: string, valueKey: string) => {
+
+  return response.body.aggregations[bucketKey]?.buckets.map(
     (bucket) => {
+      const dateStringYYYYMMDD = bucket.to_as_string.substring(0,10);
       return {
-        date: bucket.key_as_string,
-        value: bucket.calculatedAverage?.value,
+        date: dateStringYYYYMMDD,
+        value: bucket[valueKey].sumResult.value,
       };
     }
   );

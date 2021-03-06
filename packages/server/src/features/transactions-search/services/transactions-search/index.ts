@@ -3,8 +3,7 @@ import {
   ElasticsearchClient,
 } from '../../../../providers/elasticsearch';
 import {
-  getElasticBucket,
-  getElasticHits,
+  getElasticHits, getTrendsDataFromElasticResponse,
 } from 'shared/dist/helpers/elasticsearch/response-builders';
 import {
   Geography,
@@ -70,7 +69,7 @@ const transactionsSearchService = ({
       body: esQuery,
     });
     return {
-      data: getElasticBucket(result, aggregation.aggregationType),
+      data: getTrendsDataFromElasticResponse(result, aggregation.aggregationType),
       index: TRANSACTIONS_INDEX,
       request: esQuery,
       response: result.body,

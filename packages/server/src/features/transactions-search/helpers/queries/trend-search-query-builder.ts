@@ -2,13 +2,14 @@ import {
   Aggregation,
   Geography,
   PropertyType,
+  calculatedAverageAggregations, AggregationType
 } from 'shared/dist/helpers/types';
 import { createGeographyFilterTerms } from 'shared/dist/helpers/elasticsearch/query-builders/geography-filters';
 import { createPropertyTypeFilterTerms } from 'shared/dist/helpers/elasticsearch/query-builders/property-type-filters';
 import { ElasticQuery } from 'shared/dist/helpers/types/elasticsearch';
 import { CreatePermissionsFilterResult } from '../../../permissions/helpers/elasticsearch/permissions-filter';
-import { createAggs } from "shared/dist/helpers/elasticsearch/query-builders/aggregations";
-import { createAvgAggs } from "shared/dist/helpers/elasticsearch/query-builders/aggregations";
+import {createAggs, createCalculatedAverageAggs} from "shared/dist/helpers/elasticsearch/query-builders/aggregations";
+import {quarters} from "shared/dist/helpers/elasticsearch/query-builders/date-builder";
 
 type TrendsSearchQueryInputs = {
   readonly limit?: number;
@@ -47,29 +48,34 @@ export const createTrendSearchQuery = ({
     size: limit,
   };
   if (aggregation?.aggregationType) {
-    const aggs = createAggs(aggregation);
-    const queryWithAggs = {
+    let aggs;
+    if (calculatedAverageAggregations.includes(aggregation?.aggregationType.toUpperCase() as AggregationType)) {
+      aggs = {
+        avgPerQuarter: {
+          range: {
+            field: "status_dt",
+            ranges: quarters
+          },
+          aggs: createCalculatedAverageAggs(aggregation)
+        }
+      }
+
+    } else {
+      aggs = {
+        sumPerQuarter: {
+          range: {
+            field: "status_dt",
+            ranges: quarters
+          },
+          aggs: createAggs(aggregation)
+        }
+      }
+    }
+    return {
       query: query.query,
       aggs,
       size: 0,
     };
-    return queryWithAggs;
   }
   return query;
 };
-
-// const createAggs = (aggregation: Aggregation) => {
-//   switch(aggregation.aggregationType.toUpperCase()) {
-//     case 'PRICE':
-//     case 'PROPERTY':
-//     case 'UNITS':
-//     case 'SQFT':
-//       return createAggs(aggregation);
-//     case 'PPU':
-//     case 'PPSF':
-//     case 'PPSM':
-//       return createAvgAggs(aggregation);
-//     default:
-//       throw `Cannot create aggregation query for unknown aggregation type ${aggregation.aggregationType}`;
-//   }
-// }
