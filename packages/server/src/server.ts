@@ -2,6 +2,7 @@ import * as express from 'express';
 import { json } from 'body-parser';
 import { createServer } from 'http';
 import { AddressInfo } from 'net';
+import * as cors from 'cors';
 
 import logger, { createLoggerFeature } from './features/logger';
 
@@ -124,6 +125,12 @@ export const startServer = async ({
   // end features
 
   const mounts = express();
+
+  mounts.use(cors({
+    origin: true,
+    methods: ['GET', 'POST'],
+    alowedHeaders: ['Content-Type', 'accessToken']
+  }))
 
   // Pre Middleware
   mounts.use(loggerIdMiddleware());
