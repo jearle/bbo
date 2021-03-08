@@ -97,6 +97,7 @@ export const createApp = ({
    *                 properties:
    *                   aggregationType:
    *                     type: string
+   *                     enum: [PRICE, PROPERTY, UNITS, SQFT, CAPRATE, PPU, PPSF, PPSM]
    *                   currency:
    *                     type: string
    *                propertyTypeFilter:
