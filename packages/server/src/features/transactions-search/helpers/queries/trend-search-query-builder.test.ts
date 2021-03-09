@@ -62,7 +62,7 @@ describe('trends-search', () => {
     });
   });
 
-  it('creates a query with filters and an aggregation', () => {
+  it('creates a sum aggregation query with filters and an aggregation', () => {
     const bool = { range: { dealStatusPriceUSD_amt: { gte: 2500000 } }};
 
     const esQuery = createTrendSearchQuery({
@@ -108,4 +108,110 @@ describe('trends-search', () => {
       },
     });
   });
+
+  it('creates a calculated average query with filters for calculated average aggregations', () => {
+    const esQuery = createTrendSearchQuery({
+      geographyFilter: atlantaFilter,
+      propertyTypeFilter: officeFilter,
+      permissionsFilter: null,
+      aggregation: {
+        aggregationType: 'PPU',
+        currency: 'USD',
+      },
+    });
+    expect(esQuery.aggs).toEqual({
+      avgPerQuarter: {
+        range: {
+          field: "status_dt",
+          ranges: quarters
+        },
+        aggs: {
+          calculatedAverage: {
+            bucket_script: {
+              buckets_path: {
+                num: 'numSum>sumResult',
+                div: 'divSum>sumResult'
+              },
+              script: 'params.num / (params.div * 1)'
+            }
+          },
+          numSum: {
+            filter: {
+              bool: {
+                must: [
+                  {
+                    term: {
+                      eligibleForStats_fg: true
+                    }
+                  },
+                  {
+                    term: {
+                      eligibleTTVolume_fg: true
+                    }
+                  },
+                  {
+                    term: {
+                      eligibleTTPPU_fg: true
+                    }
+                  },
+                  {
+                    range: {
+                      dealStatusPriceUSD_amt: {
+                        gte: 2500000
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            aggs: {
+              sumResult: {
+                sum: {
+                  field: 'statusPrice_amt.usd'
+                }
+              }
+            }
+          },
+          divSum: {
+        filter: {
+          bool: {
+            must: [
+              {
+                term: {
+                  eligibleForStats_fg: true
+                }
+              },
+              {
+                term: {
+                  eligibleTTVolume_fg: true
+                }
+              },
+              {
+                term: {
+                  eligibleTTPPU_fg: true
+                }
+              },
+              {
+                range: {
+                  dealStatusPriceUSD_amt: {
+                    gte: 2500000
+                  }
+                }
+              }
+            ]
+          }
+        },
+        aggs: {
+          sumResult: {
+            sum: {
+              field: 'units_dbl'
+            }
+          }
+        }
+      }
+        }
+      }
+    });
+
+  })
 });

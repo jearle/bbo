@@ -1,4 +1,8 @@
 import { EsClientRawResponse } from '../../types/elasticsearch';
+import {AggregationType, calculatedAverageAggregations} from "../../types";
+
+
+type BucketValueGetter = (data) => number;
 
 export const getElasticHits = (response: EsClientRawResponse): unknown[] => {
   const { hits } = response.body.hits;
@@ -6,27 +10,29 @@ export const getElasticHits = (response: EsClientRawResponse): unknown[] => {
     return _source;
   });
 };
-/*
 
-export const getElasticBody = (response: EsClientRawResponse) => {
-  return response.body;
-};
+export const getTrendsDataFromElasticResponse = (response: EsClientRawResponse, aggregationType: AggregationType) => {
+  if (calculatedAverageAggregations.includes(aggregationType.toUpperCase() as AggregationType)) {
+    return getDataFromElasticBucket(response, 'avgPerQuarter', getValueFromCalculatedAverage);
+  }
+  return getDataFromElasticBucket(response, 'sumPerQuarter', getValueFromFilteredSum);
+}
 
-*/
-
-export const getElasticBucket = (response: EsClientRawResponse) => {
-  const buckets = response.body.aggregations?.sumPerQuarter?.buckets;
-  const filteredBuckets = buckets?.filter((bucket) => (bucket.filteredSum["doc_count"] > 0));
-  const data = filteredBuckets?.map(
+const getDataFromElasticBucket = (
+  response: EsClientRawResponse,
+  bucketKey: string,
+  bucketValueGetter: BucketValueGetter) => {
+  return response.body.aggregations[bucketKey]?.buckets.map(
     (bucket) => {
-      if (bucket.filteredSum["doc_count"] > 0) {
-        const dateStringYYYYMMDD = bucket.to_as_string.substring(0,10);
-        return {
-          date: dateStringYYYYMMDD,
-          value: bucket.filteredSum.sumResult.value,
-        };
-      }
+      const dateStringYYYYMMDD = bucket.to_as_string.substring(0,10);
+      return {
+        date: dateStringYYYYMMDD,
+        value: bucketValueGetter(bucket)
+      };
     }
   );
-  return data;
 };
+
+const getValueFromFilteredSum = data => data.filteredSum.sumResult.value;
+
+const getValueFromCalculatedAverage = data => data.calculatedAverage.value;

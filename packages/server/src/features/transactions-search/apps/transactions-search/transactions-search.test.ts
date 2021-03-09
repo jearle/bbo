@@ -124,6 +124,11 @@ describe(`transactions app`, () => {
       propertyTypeId: 1,
       allPropertySubTypes: true,
     };
+    const officeFilter = {
+      propertyTypeId: 96,
+      allPropertySubTypes: true,
+      propertySubTypeIds: [102, 107],
+    };
 
     it(`searches trends with a price aggregation filter, ATL, apt, qtr, qtr totals, TT match`, async () => {
       app.use(transactionsSearchApp);
@@ -227,6 +232,71 @@ describe(`transactions app`, () => {
           geographyFilter: atlantaFilter,
           propertyTypeFilter: apartmentFilter,
           aggregation: { aggregationType: 'CAPRATE' },
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
+      expect(Array.isArray(data)).toBe(true);
+      expect(data[0]).toHaveProperty('date');
+      expect(data[0]).toHaveProperty('value');
+      expect(data.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it(`searches trends with a PPU metric aggregation, ATL, apt, qtr, qtr totals, TT match`, async () => {
+      app.use(transactionsSearchApp);
+      const body = JSON.stringify({
+        geographyFilter: atlantaFilter,
+        propertyTypeFilter: apartmentFilter,
+        aggregation: { aggregationType: 'PPU' },
+      });
+
+      const { data } = await fetchJSONOnRandomPort(app, {
+        method: 'POST',
+        path: `/trends`,
+        body,
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
+      expect(Array.isArray(data)).toBe(true);
+      expect(data[0]).toHaveProperty('date');
+      expect(data[0]).toHaveProperty('value');
+      expect(data.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it(`searches trends with a PPSF metric aggregation, ATL, off, qtr, qtr totals, TT match`, async () => {
+      app.use(transactionsSearchApp);
+      const { data } = await fetchJSONOnRandomPort(app, {
+        method: 'POST',
+        path: `/trends`,
+        body: JSON.stringify({
+          geographyFilter: atlantaFilter,
+          propertyTypeFilter: officeFilter,
+          aggregation: { aggregationType: 'PPSF' },
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
+      expect(Array.isArray(data)).toBe(true);
+      expect(data[0]).toHaveProperty('date');
+      expect(data[0]).toHaveProperty('value');
+      expect(data.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it(`searches trends with a PPSM metric aggregation, ATL, off, qtr, qtr totals, TT match`, async () => {
+      app.use(transactionsSearchApp);
+      const { data } = await fetchJSONOnRandomPort(app, {
+        method: 'POST',
+        path: `/trends`,
+        body: JSON.stringify({
+          geographyFilter: atlantaFilter,
+          propertyTypeFilter: officeFilter,
+          aggregation: { aggregationType: 'PPSM' },
         }),
         headers: {
           'Content-Type': 'application/json',
