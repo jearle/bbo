@@ -100,6 +100,7 @@ export const createApp = ({
    *                     enum: [PRICE, PROPERTY, UNITS, SQFT, CAPRATE, PPU, PPSF, PPSM]
    *                   currency:
    *                     type: string
+   *                     enum: [USD, EUR, GBP, JPY, AUD, CAN, CNY, LOC]
    *                propertyTypeFilter:
    *                 type: object
    *                 properties:
