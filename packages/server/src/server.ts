@@ -44,6 +44,7 @@ import {
   createPropertyTypeFeature,
   PropertyTypeFeatureOptions,
 } from './features/property-type';
+import {createLookupsFeature} from "./features/lookups";
 
 interface ServerOptions {
   readonly port?: number;
@@ -122,6 +123,11 @@ export const startServer = async ({
     propertyTypeBasePath,
   } = await createPropertyTypeFeature(propertyTypeFeatureOptions);
 
+  const {
+    lookupsApp,
+    lookupsBasePath
+  } = await createLookupsFeature();
+
   // end features
 
   const mounts = express();
@@ -149,11 +155,13 @@ export const startServer = async ({
   mounts.use(transactionsSearchBasePath, permissionsMiddleware());
   mounts.use(geographyBasePath, authenticationMiddleware());
   mounts.use(propertyTypeBasePath, authenticationMiddleware());
+  mounts.use(lookupsBasePath, authenticationMiddleware());
 
   // Apps
   mounts.use(transactionsSearchBasePath, transactionsSearchApp());
   mounts.use(geographyBasePath, geographyApp());
   mounts.use(propertyTypeBasePath, propertyTypeApp());
+  mounts.use(lookupsBasePath, lookupsApp());
 
   // Post Middleware
   mounts.use(loggerErrorMiddleware());
