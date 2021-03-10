@@ -33,7 +33,7 @@ describe('sum aggregation builder', () => {
           },
         },
       }
-      const result = createAggs({ aggregationType: 'PRICE' });
+      const result = createAggs({ aggregationType: 'PRICE', currency: 'USD' });
       expect(result).toEqual(expected);
     });
 
@@ -245,7 +245,7 @@ describe('sum aggregation builder', () => {
         }
       }
 
-      const result = createCalculatedAverageAggs({aggregationType: 'PPU'});
+      const result = createCalculatedAverageAggs({aggregationType: 'PPU', currency: 'USD'});
       expect(result).toEqual(expected);
     });
 
@@ -311,7 +311,7 @@ describe('sum aggregation builder', () => {
         }
       }
 
-      const result = createCalculatedAverageAggs({aggregationType: 'PPSF'});
+      const result = createCalculatedAverageAggs({aggregationType: 'PPSF', currency: 'USD'});
       expect(result).toEqual(expected);
     });
 
@@ -377,7 +377,7 @@ describe('sum aggregation builder', () => {
         }
       }
 
-      const result = createCalculatedAverageAggs({aggregationType: 'PPSM'});
+      const result = createCalculatedAverageAggs({aggregationType: 'PPSM', currency: 'USD'});
       expect(result).toEqual(expected);
     });
   });

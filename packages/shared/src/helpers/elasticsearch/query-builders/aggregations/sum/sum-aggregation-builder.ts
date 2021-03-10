@@ -161,7 +161,7 @@ const getSumTypeForAgg = (aggregationType: AggregationType, numerator?: boolean)
 
 export const createAggs = ({
   aggregationType,
-  currency = 'USD',
+  currency,
 }: Aggregation) => {
   let field;
   let filter;
@@ -185,7 +185,7 @@ export const createAggs = ({
 
 export const createCalculatedAverageAggs = ({
   aggregationType,
-  currency = 'USD',
+  currency,
 }: Aggregation) => {
 
   let filter;

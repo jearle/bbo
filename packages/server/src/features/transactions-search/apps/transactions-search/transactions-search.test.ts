@@ -254,7 +254,7 @@ describe(`transactions app`, () => {
       const body = JSON.stringify({
         geographyFilter: atlantaFilter,
         propertyTypeFilter: apartmentFilter,
-        aggregation: { aggregationType: 'PPU' },
+        aggregation: { aggregationType: 'PPU', currency: 'USD' },
       });
 
       const { data } = await fetchJSONOnRandomPort(app, {
@@ -280,7 +280,7 @@ describe(`transactions app`, () => {
         body: JSON.stringify({
           geographyFilter: atlantaFilter,
           propertyTypeFilter: officeFilter,
-          aggregation: { aggregationType: 'PPSF' },
+          aggregation: { aggregationType: 'PPSF', currency: 'USD' },
         }),
         headers: {
           'Content-Type': 'application/json',
@@ -301,7 +301,7 @@ describe(`transactions app`, () => {
         body: JSON.stringify({
           geographyFilter: atlantaFilter,
           propertyTypeFilter: officeFilter,
-          aggregation: { aggregationType: 'PPSM' },
+          aggregation: { aggregationType: 'PPSM', currency: 'EUR' },
         }),
         headers: {
           'Content-Type': 'application/json',
@@ -314,6 +314,43 @@ describe(`transactions app`, () => {
       expect(data.length).toBeGreaterThanOrEqual(1);
     });
 
+    it(`returns a bad request response when missing a required currency for a pricing metric`, async () => {
+      app.use(transactionsSearchApp);
+      const body = JSON.stringify({
+        geographyFilter: atlantaFilter,
+        propertyTypeFilter: apartmentFilter,
+        aggregation: { aggregationType: 'price' },
+      });
+      const response = await fetchResponseOnRandomPort(app, {
+        method: 'POST',
+        path: `/trends`,
+        body,
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
+      expect(response.status).toBe(400);
+    });
+
+    it(`returns a bad request response for unsupported currency`, async () => {
+      app.use(transactionsSearchApp);
+      const body = JSON.stringify({
+        geographyFilter: atlantaFilter,
+        propertyTypeFilter: apartmentFilter,
+        aggregation: { aggregationType: 'price', currency: 'ILS' },
+      });
+      const response = await fetchResponseOnRandomPort(app, {
+        method: 'POST',
+        path: `/trends`,
+        body,
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
+      expect(response.status).toBe(400);
+    });
 
     it(`fails without a geography`, async () => {
       app.use(transactionsSearchApp);

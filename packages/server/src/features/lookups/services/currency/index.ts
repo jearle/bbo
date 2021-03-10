@@ -7,6 +7,6 @@ const currencyService = () => ({
 });
 export type CurrencyService = ReturnType<typeof currencyService>;
 
-export const createCurrencyService = () => {
+export const createCurrencyService = (): CurrencyService => {
   return currencyService();
 }
