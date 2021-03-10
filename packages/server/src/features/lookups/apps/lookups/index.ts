@@ -6,8 +6,8 @@ export const VERSION = `v0`;
 export const DESCRIPTION = `Lookups API`;
 export const BASE_PATH = `/api/lookups/${VERSION}`;
 
-interface CreateAppInputs {
-  currencyService: CurrencyService;
+type CreateAppInputs = {
+  readonly currencyService: CurrencyService;
 }
 
 export const createApp = ({

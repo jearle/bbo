@@ -330,6 +330,8 @@ describe(`transactions app`, () => {
           Accept: 'application/json',
         },
       });
+      const { errors } = await response.json();
+      expect(errors.map(err => err.msg)).toContain('Must supply currency for aggregation type: price')
       expect(response.status).toBe(400);
     });
 
@@ -349,6 +351,8 @@ describe(`transactions app`, () => {
           Accept: 'application/json',
         },
       });
+      const { errors } = await response.json();
+      expect(errors.map(err => err.msg)).toContain('Currency: ILS is not supported')
       expect(response.status).toBe(400);
     });
 
