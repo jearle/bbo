@@ -53,6 +53,7 @@
     "cors": "^2.8.5",
     "express": "^5.0.0-alpha.8",
     "express-interceptor": "^1.2.0",
+    "express-validator": "^6.10.0",
     "ioredis": "^4.19.2",
     "jsonwebtoken": "^8.5.1",
     "jwk-to-pem": "^2.0.4",

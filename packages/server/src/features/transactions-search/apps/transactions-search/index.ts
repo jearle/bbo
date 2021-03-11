@@ -1,7 +1,9 @@
 import * as express from 'express';
 import { Application } from 'express';
+import { body, validationResult } from 'express-validator';
 
 import { TransactionsSearchService } from '../../services/transactions-search';
+import { currencyValidator } from "../../middlewares/validation";
 
 export const VERSION = `v0`;
 export const DESCRIPTION = `Transactions Search API`;
@@ -100,6 +102,7 @@ export const createApp = ({
    *                     enum: [PRICE, PROPERTY, UNITS, SQFT, CAPRATE, PPU, PPSF, PPSM]
    *                   currency:
    *                     type: string
+   *                     enum: [USD, EUR, GBP, JPY, AUD, CAN, CNY, LOC]
    *                propertyTypeFilter:
    *                 type: object
    *                 properties:
@@ -115,27 +118,36 @@ export const createApp = ({
    *       200:
    *         description: TrendsAggregationResponse
    */
-  app.post(`/trends`, async (req, res) => {
-    const { geographyFilter, propertyTypeFilter, aggregation } = req.body;
-    const { debug } = req.query;
-    const { permissionsFilter } = req;
-    const {
-      data,
-      index,
-      request,
-      response,
-    } = await transactionsSearchService.searchTrends({
-      geographyFilter,
-      propertyTypeFilter,
-      aggregation,
-      permissionsFilter,
-    });
-    if (debug === 'true') {
-      res.json({ data, index, request, response });
-    } else {
-      res.json({ data });
+  app.post(
+    `/trends`,
+    body('aggregation').custom(currencyValidator),
+    async (req, res) => {
+      const validationErrors = validationResult(req);
+      if (!validationErrors.isEmpty()) {
+        return res.status(400).json({ errors: validationErrors.array() })
+      }
+
+      const { geographyFilter, propertyTypeFilter, aggregation } = req.body;
+      const { debug } = req.query;
+      const { permissionsFilter } = req;
+      const {
+        data,
+        index,
+        request,
+        response,
+      } = await transactionsSearchService.searchTrends({
+        geographyFilter,
+        propertyTypeFilter,
+        aggregation,
+        permissionsFilter,
+      });
+      if (debug === 'true') {
+        res.json({ data, index, request, response });
+      } else {
+        res.json({ data });
+      }
     }
-  });
+  );
 
   return app;
 };

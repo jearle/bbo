@@ -1,11 +1,16 @@
-import { Aggregation, AggregationType, Currency } from '../../../../types';
+import { Aggregation, AggregationType } from '../../../../types';
 import {SumType} from "./index";
+import {Currency, isValidCurrency} from "../../../../types/currency";
 
-const currencyMapper = {
-  USD: 'usd',
-  EUR: 'eur',
-  CHF: 'chf',
-};
+const currencyMapper = (currency: Currency): string => {
+  if (currency.toUpperCase() === 'LOC') {
+    return 'local'
+  }
+  if (currency.toUpperCase() === 'CAN') {
+    return 'cad';
+  }
+  return currency.toLowerCase();
+}
 
 const metricAggregationMapper = {
   PRICE: 'sum',
@@ -100,8 +105,8 @@ const determineWhatFieldToSumOn = (
   const currencyError = `currency does not exist for ${sumType} sum aggregation type`;
   switch (sumType) {
     case 'PRICE':
-      if (currencyMapper[currency]) {
-        return `statusPriceAdjusted_amt.${currencyMapper[currency]}`;
+      if (isValidCurrency(currency)) {
+        return `statusPriceAdjusted_amt.${currencyMapper(currency)}`;
       } else {
         throw currencyError;
       }
@@ -119,8 +124,8 @@ const determineWhatFieldToSumOn = (
     case 'PPU_PRICE':
     case 'PPSF_PRICE':
     case 'PPSM_PRICE':
-      if (currencyMapper[currency]) {
-        return `statusPrice_amt.${currencyMapper[currency]}`;
+      if (isValidCurrency(currency)) {
+        return `statusPrice_amt.${currencyMapper(currency)}`;
       } else {
         throw currencyError;
       }
@@ -156,7 +161,7 @@ const getSumTypeForAgg = (aggregationType: AggregationType, numerator?: boolean)
 
 export const createAggs = ({
   aggregationType,
-  currency = 'USD',
+  currency,
 }: Aggregation) => {
   let field;
   let filter;
@@ -180,7 +185,7 @@ export const createAggs = ({
 
 export const createCalculatedAverageAggs = ({
   aggregationType,
-  currency = 'USD',
+  currency,
 }: Aggregation) => {
 
   let filter;

@@ -2330,6 +2330,14 @@ express-interceptor@^1.2.0:
   dependencies:
     debug "^2.2.0"
 
+express-validator@^6.10.0:
+  version "6.10.0"
+  resolved "https://registry.npmjs.org/express-validator/-/express-validator-6.10.0.tgz#66f70f73d04fb55c227401c75fe3713879c9cb70"
+  integrity sha512-gDtepU94EpUzgFvKO/8JzjZ4uqIF4xHekjYtcNgFDiBK6Hob3MQhPU8s/c3NaWd1xi5e5nA0oVmOJ0b0ZBO36Q==
+  dependencies:
+    lodash "^4.17.20"
+    validator "^13.5.2"
+
 express@^5.0.0-alpha.8:
   version "5.0.0-alpha.8"
   resolved "https://registry.yarnpkg.com/express/-/express-5.0.0-alpha.8.tgz#b9dd3a568eab791e3391db47f9e6ab91e61b13fe"
@@ -6204,6 +6212,11 @@ validator@^12.0.0:
   version "12.2.0"
   resolved "https://registry.yarnpkg.com/validator/-/validator-12.2.0.tgz#660d47e96267033fd070096c3b1a6f2db4380a0a"
   integrity sha512-jJfE/DW6tIK1Ek8nCfNFqt8Wb3nzMoAbocBF6/Icgg1ZFSBpObdnwVY2jQj6qUqzhx5jc71fpvBWyLGO7Xl+nQ==
+
+validator@^13.5.2:
+  version "13.5.2"
+  resolved "https://registry.npmjs.org/validator/-/validator-13.5.2.tgz#c97ae63ed4224999fb6f42c91eaca9567fe69a46"
+  integrity sha512-mD45p0rvHVBlY2Zuy3F3ESIe1h5X58GPfAtslBjY7EtTqGquZTj+VX/J4RnHWN8FKq0C9WRVt1oWAcytWRuYLQ==
 
 vary@^1, vary@~1.1.2:
   version "1.1.2"
