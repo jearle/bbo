@@ -82,6 +82,10 @@ type HashSecretInput = {
   appClientSecret: string;
 };
 
+type LogoutInput = {
+  accessToken: string;
+};
+
 const hashSecret = ({
   username,
   appClientId,
@@ -239,6 +243,10 @@ const authenticationService = ({
     const result = await tokenValidator.validate({ token });
 
     return result;
+  },
+
+  async logout({ accessToken }: LogoutInput): Promise<void> {
+    //TODO: logout from cognito
   },
 });
 

@@ -83,5 +83,15 @@ export const createApp = ({ authenticationService }: Options): Application => {
     }
   });
 
+  app.get(`/logout`, async (req, res) => {
+    const { accessToken } = req.get(`accesstoken`);
+    if (!accessToken) {
+      res.sendStatus(401);
+      return;
+    }
+    await authenticationService.logout({ accessToken });
+    res.sendStatus(200);
+  });
+
   return app;
 };
