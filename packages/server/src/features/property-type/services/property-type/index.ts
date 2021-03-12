@@ -9,13 +9,6 @@ type CreatePropertyTypeServiceInput = {
 };
 
 const propertyTypeService = ({ rcaAnalyticsDataConnection }) => ({
-  async fetchPropertyTypes() {
-    const result = await rcaAnalyticsDataConnection
-      .request()
-      .execute(STORED_PROCEDURE);
-
-    return result.recordsets[0];
-  },
 
   async fetchPropertyTypesMenu() {
     const result = await rcaAnalyticsDataConnection
