@@ -1,37 +1,45 @@
 import * as express from 'express';
-import {createApp} from "./";
-import {currencies} from "shared/dist/helpers/types/currency";
-import {createCurrencyService} from "../../services/currency";
-import {fetchJSONOnRandomPort} from "shared/dist/helpers/express/listen-fetch";
+import { fetchJSONOnRandomPort } from 'shared/dist/helpers/express/listen-fetch';
+import { createApp } from './';
+import { createCurrencyService } from '../../services/currency';
+import { createDataTypeService } from '../../services/data-type';
 
 describe('lookups app', () => {
   let app = null;
-  let lookupsApp = null;
+
   beforeEach(async () => {
     app = express();
     app.use(express.json());
     app.use((req, res, next) => {
-      req.jwtPayload = { username: 'jearle@rcanalytics.com' };
+      req.jwtPayload = { username: `jearle@rcanalytics.com` };
       next();
     });
 
     const currencyService = createCurrencyService();
+    const dataTypeService = createDataTypeService();
 
-    lookupsApp = createApp({ currencyService });
+    const lookupsApp = createApp({ currencyService, dataTypeService });
+
+    app.use(lookupsApp);
   });
 
-  describe('/currency', () => {
-    test('/currency', async () => {
-      app.use(lookupsApp);
+  describe(`/currency`, () => {
+    test(`/currency`, async () => {
       const { data } = await fetchJSONOnRandomPort(app, {
-        method: 'GET',
-        path: '/currency',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        }
+        path: `/currency`,
       });
-      expect(data.length).toBe(currencies.length);
+
+      expect(data.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe(`/data-type`, () => {
+    test(`/data-type/:propertyType`, async () => {
+      const { data } = await fetchJSONOnRandomPort(app, {
+        path: `/data-type/apartment`,
+      });
+
+      expect(data.length).toBeGreaterThan(0);
     });
   });
 });

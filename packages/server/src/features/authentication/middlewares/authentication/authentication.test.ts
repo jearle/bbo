@@ -75,7 +75,9 @@ describe(`authenticationMiddleware`, () => {
 
   test(`authenticationMiddleware no token`, async () => {
     const app = await createApp({ accessToken: undefined });
-    const { status } = await fetchJSONOnRandomPort(app);
+    const {
+      data: { status },
+    } = await fetchJSONOnRandomPort(app);
 
     expect(status).toBe(401);
   });
@@ -85,7 +87,9 @@ describe(`authenticationMiddleware`, () => {
       appClientId: `expired`,
     });
     const app = await createApp({ accessToken });
-    const { status } = await fetchJSONOnRandomPort(app);
+    const {
+      data: { status },
+    } = await fetchJSONOnRandomPort(app);
 
     expect(status).toBe(401);
   });

@@ -69,16 +69,19 @@ export const createApp = ({ authenticationService }: Options): Application => {
     const { username, password } = req.body;
 
     try {
-      const result = await authenticationService.authenticateUser({
+      const data = await authenticationService.authenticateUser({
         username,
         password,
       });
-      res.json(result);
-    } catch (e) {
+
+      res.json({
+        data,
+        error: null,
+      });
+    } catch ({ message: error }) {
       res.status(401).json({
-        data: {
-          error: e.message,
-        },
+        data: {},
+        error,
       });
     }
   });
