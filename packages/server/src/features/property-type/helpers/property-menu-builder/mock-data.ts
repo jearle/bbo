@@ -1,6 +1,5 @@
-import { createPropertyMenu } from './index';
 
-const rawPropertyTypes = [
+export const rawPropertyTypes = [
   {
     "TrendtrackerData_PropertyTypes_id": 1,
     "box3Value": "ALL",
@@ -512,7 +511,7 @@ const rawPropertyTypes = [
     "propertyType_tx": "Hotel"
   }
 ]
-const propertyTypeWithNoChildren = {
+export const propertyTypeWithNoChildren = {
   "TrendtrackerData_PropertyTypes_id": 1,
   "box3Value": "ALL",
   "box3": "All Property Types",
@@ -531,69 +530,59 @@ const propertyTypeWithNoChildren = {
   "value": "0",
   "options": []
 };
-const propertyTypeWithChildren = {
-    "TrendtrackerData_PropertyTypes_id": 3,
-    "box3Value": "OFF",
-    "box3": "Office",
-    "display_fg": true,
-    "indent": 0,
-    "propertyType_id": 6,
-    "propertySubType_id": null,
-    "propertyFeature_id": null,
-    "PropertySubTypeCategory_id": null,
-    "definition": "Office",
-    "sortOrder": 3,
-    "hotelRating_id": null,
-    "propertyType_tx": "Office",
-    "label": "Office",
-    "id": "6",
-    "value": "6",
-    "options": [
-      {
-        "TrendtrackerData_PropertyTypes_id": 4,
-        "box3Value": "CBD",
-        "box3": "Office-CBD",
-        "display_fg": true,
-        "indent": 1,
-        "propertyType_id": 6,
-        "propertySubType_id": 7,
-        "propertyFeature_id": null,
-        "PropertySubTypeCategory_id": null,
-        "definition": "Central Business District",
-        "sortOrder": 4,
-        "hotelRating_id": null,
-        "propertyType_tx": "Office",
-        "label": "Office-CBD",
-        "id": "6-7",
-        "value": "7"
-      },
-      {
-        "TrendtrackerData_PropertyTypes_id": 5,
-        "box3Value": "SUB",
-        "box3": "Office-Sub",
-        "display_fg": true,
-        "indent": 1,
-        "propertyType_id": 6,
-        "propertySubType_id": 8,
-        "propertyFeature_id": null,
-        "PropertySubTypeCategory_id": null,
-        "definition": "Suburban Office",
-        "sortOrder": 5,
-        "hotelRating_id": null,
-        "propertyType_tx": "Office",
-        "label": "Office-Sub",
-        "id": "6-8",
-        "value": "8"
-      }
-    ]
-  };
-
-  describe('propertyMenuBuilder', () => {
-
-  test('propertyBuilder', () => {
-    const createPropertyMenuResult = createPropertyMenu(rawPropertyTypes);
-    expect(createPropertyMenuResult[0]).toStrictEqual(propertyTypeWithNoChildren);
-    expect(createPropertyMenuResult[2]).toStrictEqual(propertyTypeWithChildren);
-  });
-
-});
+export const propertyTypeWithChildren = {
+  "TrendtrackerData_PropertyTypes_id": 3,
+  "box3Value": "OFF",
+  "box3": "Office",
+  "display_fg": true,
+  "indent": 0,
+  "propertyType_id": 6,
+  "propertySubType_id": null,
+  "propertyFeature_id": null,
+  "PropertySubTypeCategory_id": null,
+  "definition": "Office",
+  "sortOrder": 3,
+  "hotelRating_id": null,
+  "propertyType_tx": "Office",
+  "label": "Office",
+  "id": "6",
+  "value": "6",
+  "options": [
+    {
+      "TrendtrackerData_PropertyTypes_id": 4,
+      "box3Value": "CBD",
+      "box3": "Office-CBD",
+      "display_fg": true,
+      "indent": 1,
+      "propertyType_id": 6,
+      "propertySubType_id": 7,
+      "propertyFeature_id": null,
+      "PropertySubTypeCategory_id": null,
+      "definition": "Central Business District",
+      "sortOrder": 4,
+      "hotelRating_id": null,
+      "propertyType_tx": "Office",
+      "label": "Office-CBD",
+      "id": "6-7",
+      "value": "7"
+    },
+    {
+      "TrendtrackerData_PropertyTypes_id": 5,
+      "box3Value": "SUB",
+      "box3": "Office-Sub",
+      "display_fg": true,
+      "indent": 1,
+      "propertyType_id": 6,
+      "propertySubType_id": 8,
+      "propertyFeature_id": null,
+      "PropertySubTypeCategory_id": null,
+      "definition": "Suburban Office",
+      "sortOrder": 5,
+      "hotelRating_id": null,
+      "propertyType_tx": "Office",
+      "label": "Office-Sub",
+      "id": "6-8",
+      "value": "8"
+    }
+  ]
+};
