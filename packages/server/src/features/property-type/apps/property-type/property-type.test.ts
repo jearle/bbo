@@ -25,11 +25,33 @@ describe('property type app', () => {
     propertyTypeService.close();
   });
 
-  test(`/property-type`, async () => {
+  test(`/property-type, returns propertyType without children`, async () => {
+    const expectedPropertyTypes = {
+      TrendtrackerData_PropertyTypes_id: 1,
+      box3Value: 'ALL',
+      box3: 'All Property Types',
+      display_fg: true,
+      indent: 0,
+      propertyType_id: 0,
+      propertySubType_id: null,
+      propertyFeature_id: null,
+      PropertySubTypeCategory_id: null,
+      definition:
+        'Office, Industrial, Retail, Apartment, Hotel and Dev Site properties',
+      sortOrder: 1,
+      hotelRating_id: null,
+      propertyType_tx: 'All Property Types',
+      label: 'All Property Types',
+      id: '0',
+      value: '0',
+      options: [],
+    };
     app.use(propertyTypeApp);
-
-    const json = await fetchJSONOnRandomPort(app, { path: `/property-type` });
-
-    expect(Array.isArray(json)).toBe(true);
+    const propertyTypeResponse = await fetchJSONOnRandomPort(app, {
+      path: `/property-type`,
+    });
+    expect(Array.isArray(propertyTypeResponse)).toBe(true);
+    expect(propertyTypeResponse[0]).toStrictEqual(expectedPropertyTypes);
   });
+
 });

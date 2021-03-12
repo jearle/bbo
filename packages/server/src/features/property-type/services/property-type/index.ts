@@ -1,4 +1,5 @@
 import { MSSQLProvider } from '../../../../providers/mssql';
+import { createPropertyMenu } from '../../helpers/property-menu-builder';
 
 const DATABASE = `dbRCAAnalyticsData`;
 const STORED_PROCEDURE = `[${DATABASE}].[dbo].[ReturnTrendtrackerData_PropertyTypes]`;
@@ -14,6 +15,14 @@ const propertyTypeService = ({ rcaAnalyticsDataConnection }) => ({
       .execute(STORED_PROCEDURE);
 
     return result.recordsets[0];
+  },
+
+  async fetchPropertyTypesMenu() {
+    const result = await rcaAnalyticsDataConnection
+      .request()
+      .execute(STORED_PROCEDURE)
+
+    return createPropertyMenu(result.recordsets[0])
   },
 
   async close() {
