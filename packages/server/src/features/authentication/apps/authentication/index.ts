@@ -86,7 +86,7 @@ export const createApp = ({ authenticationService }: Options): Application => {
   /**
    * @swagger
    *
-   * /login:
+   * /logout:
    *   post:
    *     summary: Log out the user
    *     responses:
