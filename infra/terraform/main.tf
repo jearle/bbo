@@ -111,3 +111,68 @@ resource "aws_lambda_function" "cognito_user_migration" {
     }
   }
 }
+
+# Cognito User Pool
+resource "aws_cognito_user_pool" "cognito_user_pool" {
+  name = "cd_product_api_${var.environment}_cognito_user_pool"
+
+  admin_create_user_config {
+    allow_admin_create_user_only = false
+    invite_message_template {
+      email_message = "Your username is {username} and temporary password is {####}. "
+      email_subject = "Your temporary password"
+      sms_message = "Your username is {username} and temporary password is {####}. "
+    }
+  }
+
+  auto_verified_attributes = ["email"]
+
+  device_configuration {
+    challenge_required_on_new_device = false
+    device_only_remembered_on_user_prompt = false
+  }
+
+  email_configuration {
+    email_sending_account = "COGNITO_DEFAULT"
+    source_arn = "source_arn_param" // TODO parameterize this
+  }
+  email_verification_message = "Your verification code is {####}. "
+  email_verification_subject = "Your verification code"
+
+  lambda_config {
+    // TODO: should preauth lambda also be wired up?
+//    pre_authentication = ""
+    user_migration = aws_lambda_function.cognito_user_migration.arn
+  }
+
+  password_policy {
+    minimum_length = 8
+    require_numbers = true
+    require_symbols = true
+    require_uppercase = true
+    require_lowercase = true
+    temporary_password_validity_days = 7
+  }
+
+  schema {
+    attribute_data_type = "String"
+    name = "email"
+    required = true
+    developer_only_attribute = false
+    mutable = true
+    string_attribute_constraints {
+      max_length = "2048"
+      min_length = "0"
+    }
+  }
+
+  sms_authentication_message = "Your authentication code is {####}. "
+  sms_verification_message = "Your verification code is {####}. "
+
+  verification_message_template {
+    default_email_option = "CONFIRM_WITH_CODE"
+    email_message = "Your verification code is {####}. "
+    email_subject = "Your verification code"
+    sms_message = "Your verification code is {####}. "
+  }
+}
