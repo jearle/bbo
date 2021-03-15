@@ -83,6 +83,18 @@ export const createApp = ({ authenticationService }: Options): Application => {
     }
   });
 
+  /**
+   * @swagger
+   *
+   * /login:
+   *   post:
+   *     summary: Log out the user
+   *     responses:
+   *       200:
+   *         description: OK
+   *       401: 
+   *         description: unauthorized
+   */
   app.post(`/logout`, async (req, res) => {
     const accessToken = req.get('accessToken');
     if (!accessToken) {
