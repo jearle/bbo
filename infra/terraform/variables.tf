@@ -13,3 +13,7 @@ variable "vpcId" {
 variable "subnet" {
   type = string
 }
+
+variable "cognitoEmail" {
+  type = string
+}

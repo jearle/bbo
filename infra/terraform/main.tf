@@ -113,6 +113,11 @@ resource "aws_lambda_function" "cognito_user_migration" {
 }
 
 # Cognito User Pool
+
+resource "aws_ses_email_identity" "cognito_email_identity" {
+  email = var.cognitoEmail
+}
+
 resource "aws_cognito_user_pool" "cognito_user_pool" {
   name = "cd_product_api_${var.environment}_cognito_user_pool"
 
@@ -134,7 +139,8 @@ resource "aws_cognito_user_pool" "cognito_user_pool" {
 
   email_configuration {
     email_sending_account = "COGNITO_DEFAULT"
-    source_arn = "source_arn_param" // TODO parameterize this
+    // TODO: check if this is needed with COGNITO_DEFAULT type (was set to aromito identity on import)
+    source_arn = aws_ses_email_identity.cognito_email_identity.arn
   }
   email_verification_message = "Your verification code is {####}. "
   email_verification_subject = "Your verification code"

@@ -9,7 +9,7 @@ rcaWebAccountsUri: ${config.rcaWebAccountsUri}
 launchDarklySdk: ${config.launchDarklySdk}
 segmentAccessKey: ${config.segmentAccessKey}
 cognitoRegion: ${config.cognitoRegion}
-cognitoUserPoolId: ${config.cognitoUserPoolId}
+cognitoUserPoolId: ${params.cognitoUserPoolId}
 cognitoAppClientId: ${config.cognitoAppClientId}
 cognitoAppClientSecret: ${config.cognitoAppClientSecret}
 rcaAnalyticsDataUri: ${config.rcaAnalyticsDataUri}
