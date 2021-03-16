@@ -69,37 +69,39 @@ jobs:
         run: |
           cd infra/terraform
           terraform init -backend-config="bucket=rca-playground-terraform" -backend-config="key=cd/product-api/${{ github.event.deployment.environment }}.tfstate" -backend-config="region=us-east-1"
-          terraform plan
-          echo COGNITO_USER_POOL_ID=$(terraform output cognito_user_pool_id) >> $GITHUB_ENV
+          terraform apply --auto-approve
 
-      - name: Setup Helm Values
-        uses: ./.github-actions/workflow/eval
-        with:
-          inputPaths: helm/helm-values.yaml
-          params: |
-            image:${{ github.event.deployment.payload.image }}
-            cognitoUserPoolId:${{ env.COGNITO_USER_POOL_ID }}
+#          terraform plan
+#          echo COGNITO_USER_POOL_ID=$(terraform output cognito_user_pool_id) >> $GITHUB_ENV
 
-      - name: Helm Install
-        uses: ./.github-actions/tools/helm
-        with:
-          command: install
-          release: cd-product-api-${{ github.event.deployment.environment }}
-          cluster: eks-default
-          namespace: cd
-          chart: helm/chart
-          values: helm/helm-values.yaml
-
-      - name: Record Environment Deployment
-        uses: ./.github-actions/repo/environment
-        with:
-          environment: ${{ github.event.deployment.environment }}
-          deploymentMap: |
-            branch:${{ github.event.deployment.ref }}
-
-      - name: Slack
-        if: always()
-        uses: ./.github-actions/slack
-        with:
-          channel: prs-cd-product-api
-          message: cd-product-api deployment to the ${{ github.event.deployment.environment }} environment from branch ${{ github.event.deployment.ref }} finished with status - ${{ job.status }}
+#      - name: Setup Helm Values
+#        uses: ./.github-actions/workflow/eval
+#        with:
+#          inputPaths: helm/helm-values.yaml
+#          params: |
+#            image:${{ github.event.deployment.payload.image }}
+#            cognitoUserPoolId:${{ env.COGNITO_USER_POOL_ID }}
+#
+#      - name: Helm Install
+#        uses: ./.github-actions/tools/helm
+#        with:
+#          command: install
+#          release: cd-product-api-${{ github.event.deployment.environment }}
+#          cluster: eks-default
+#          namespace: cd
+#          chart: helm/chart
+#          values: helm/helm-values.yaml
+#
+#      - name: Record Environment Deployment
+#        uses: ./.github-actions/repo/environment
+#        with:
+#          environment: ${{ github.event.deployment.environment }}
+#          deploymentMap: |
+#            branch:${{ github.event.deployment.ref }}
+#
+#      - name: Slack
+#        if: always()
+#        uses: ./.github-actions/slack
+#        with:
+#          channel: prs-cd-product-api
+#          message: cd-product-api deployment to the ${{ github.event.deployment.environment }} environment from branch ${{ github.event.deployment.ref }} finished with status - ${{ job.status }}
