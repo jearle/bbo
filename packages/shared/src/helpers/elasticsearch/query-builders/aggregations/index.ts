@@ -1,1 +1,1 @@
-export * from './sum-aggregation-builder';
+export * from './sum';

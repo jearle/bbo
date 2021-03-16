@@ -15,8 +15,8 @@ describe('PropertyTypeService', () => {
     await propertyTypeService.close();
   });
 
-  test('fetchPropertyTypes', async () => {
-    const result = await propertyTypeService.fetchPropertyTypes();
+  test('fetchPropertyTypesMenu', async () => {
+    const result = await propertyTypeService.fetchPropertyTypesMenu();
     expect(result).not.toBeUndefined();
   });
 });

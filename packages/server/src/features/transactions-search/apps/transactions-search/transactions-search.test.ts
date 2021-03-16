@@ -17,6 +17,7 @@ import {
   fetchJSONOnRandomPort,
   fetchResponseOnRandomPort,
 } from 'shared/dist/helpers/express/listen-fetch';
+import {currencies, Currency} from "shared/dist/helpers/types/currency";
 
 const {
   MSSQL_URI,
@@ -124,28 +125,37 @@ describe(`transactions app`, () => {
       propertyTypeId: 1,
       allPropertySubTypes: true,
     };
+    const officeFilter = {
+      propertyTypeId: 96,
+      allPropertySubTypes: true,
+      propertySubTypeIds: [102, 107],
+    };
 
-    it(`searches trends with a price aggregation filter, ATL, apt, qtr, qtr totals, TT match`, async () => {
-      app.use(transactionsSearchApp);
-      const body = JSON.stringify({
-        geographyFilter: atlantaFilter,
-        propertyTypeFilter: apartmentFilter,
-        aggregation: { aggregationType: 'price', currency: 'USD' },
-      });
-      const { data } = await fetchJSONOnRandomPort(app, {
-        method: 'POST',
-        path: `/trends`,
-        body,
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-      });
-      expect(Array.isArray(data)).toBe(true);
-      expect(Number.isInteger(data[0].value)).toBe(true);
-      expect(data[0]).toHaveProperty('value');
-      expect(data[0]).toHaveProperty('date');
-      expect(data.length).toBeGreaterThanOrEqual(1);
+    currencies.forEach((currency: Currency) => {
+      describe(`currency ${currency}`, () => {
+        it(`searches trends with a price aggregation filter, ATL, apt, qtr, qtr totals, TT match`, async () => {
+          app.use(transactionsSearchApp);
+          const body = JSON.stringify({
+            geographyFilter: atlantaFilter,
+            propertyTypeFilter: apartmentFilter,
+            aggregation: { aggregationType: 'price', currency },
+          });
+          const { data } = await fetchJSONOnRandomPort(app, {
+            method: 'POST',
+            path: `/trends`,
+            body,
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+            },
+          });
+          expect(Array.isArray(data)).toBe(true);
+          expect(typeof data[0].value).toBe('number');
+          expect(data[0]).toHaveProperty('value');
+          expect(data[0]).toHaveProperty('date');
+          expect(data.length).toBeGreaterThanOrEqual(1);
+        });
+      })
     });
 
     it(`searches trends with a units aggregation filter, ATL, apt, qtr, qtr totals, TT match`, async () => {
@@ -239,6 +249,112 @@ describe(`transactions app`, () => {
       expect(data.length).toBeGreaterThanOrEqual(1);
     });
 
+    it(`searches trends with a PPU metric aggregation, ATL, apt, qtr, qtr totals, TT match`, async () => {
+      app.use(transactionsSearchApp);
+      const body = JSON.stringify({
+        geographyFilter: atlantaFilter,
+        propertyTypeFilter: apartmentFilter,
+        aggregation: { aggregationType: 'PPU', currency: 'USD' },
+      });
+
+      const { data } = await fetchJSONOnRandomPort(app, {
+        method: 'POST',
+        path: `/trends`,
+        body,
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
+      expect(Array.isArray(data)).toBe(true);
+      expect(data[0]).toHaveProperty('date');
+      expect(data[0]).toHaveProperty('value');
+      expect(data.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it(`searches trends with a PPSF metric aggregation, ATL, off, qtr, qtr totals, TT match`, async () => {
+      app.use(transactionsSearchApp);
+      const { data } = await fetchJSONOnRandomPort(app, {
+        method: 'POST',
+        path: `/trends`,
+        body: JSON.stringify({
+          geographyFilter: atlantaFilter,
+          propertyTypeFilter: officeFilter,
+          aggregation: { aggregationType: 'PPSF', currency: 'USD' },
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
+      expect(Array.isArray(data)).toBe(true);
+      expect(data[0]).toHaveProperty('date');
+      expect(data[0]).toHaveProperty('value');
+      expect(data.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it(`searches trends with a PPSM metric aggregation, ATL, off, qtr, qtr totals, TT match`, async () => {
+      app.use(transactionsSearchApp);
+      const { data } = await fetchJSONOnRandomPort(app, {
+        method: 'POST',
+        path: `/trends`,
+        body: JSON.stringify({
+          geographyFilter: atlantaFilter,
+          propertyTypeFilter: officeFilter,
+          aggregation: { aggregationType: 'PPSM', currency: 'EUR' },
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
+      expect(Array.isArray(data)).toBe(true);
+      expect(data[0]).toHaveProperty('date');
+      expect(data[0]).toHaveProperty('value');
+      expect(data.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it(`returns a bad request response when missing a required currency for a pricing metric`, async () => {
+      app.use(transactionsSearchApp);
+      const body = JSON.stringify({
+        geographyFilter: atlantaFilter,
+        propertyTypeFilter: apartmentFilter,
+        aggregation: { aggregationType: 'price' },
+      });
+      const response = await fetchResponseOnRandomPort(app, {
+        method: 'POST',
+        path: `/trends`,
+        body,
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
+      const { errors } = await response.json();
+      expect(errors.map(err => err.msg)).toContain('Must supply currency for aggregation type: price')
+      expect(response.status).toBe(400);
+    });
+
+    it(`returns a bad request response for unsupported currency`, async () => {
+      app.use(transactionsSearchApp);
+      const body = JSON.stringify({
+        geographyFilter: atlantaFilter,
+        propertyTypeFilter: apartmentFilter,
+        aggregation: { aggregationType: 'price', currency: 'ILS' },
+      });
+      const response = await fetchResponseOnRandomPort(app, {
+        method: 'POST',
+        path: `/trends`,
+        body,
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
+      const { errors } = await response.json();
+      expect(errors.map(err => err.msg)).toContain('Currency: ILS is not supported')
+      expect(response.status).toBe(400);
+    });
 
     it(`fails without a geography`, async () => {
       app.use(transactionsSearchApp);
