@@ -70,7 +70,6 @@ jobs:
           cd infra/terraform
           terraform init -backend-config="bucket=rca-playground-terraform" -backend-config="key=cd/product-api/${{ github.event.deployment.environment }}.tfstate" -backend-config="region=us-east-1"
           terraform plan
-#          terraform apply --auto-approve
           echo COGNITO_USER_POOL_ID=$(terraform output cognito_user_pool_id) >> $GITHUB_ENV
 
       - name: Setup Helm Values
