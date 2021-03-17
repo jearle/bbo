@@ -1,5 +1,8 @@
 import { MSSQLProvider } from '../../../../providers/mssql';
-import { createPropertyTypeMenu, PropertyTypeMenu } from '../../helpers/property-menu-builder';
+import {
+  createPropertyTypeMenu,
+  PropertyTypeMenu,
+} from '../../helpers/property-menu-builder';
 
 const DATABASE = `dbRCAAnalyticsData`;
 const STORED_PROCEDURE = `[${DATABASE}].[dbo].[ReturnTrendtrackerData_PropertyTypes]`;
@@ -11,17 +14,21 @@ type CreatePropertyTypeServiceInput = {
 
 type UpdateCacheWithPropertyTypeMenu = {
   readonly redisProvider;
-  propertyTypeMenu: PropertyTypeMenu
-}
+  propertyTypeMenu: PropertyTypeMenu;
+};
 
 type CheckCacheForPropertyTypeMenu = {
   readonly redisProvider;
-}
+};
 
 const propertyTypeMenuCacheKey = 'propertyTypeMenu';
 
-const checkCacheForPropertyTypeMenu = async ({ redisProvider }: CheckCacheForPropertyTypeMenu) => {
-  const cachedPropertyTypeMenu = await redisProvider.get(propertyTypeMenuCacheKey);
+const checkCacheForPropertyTypeMenu = async ({
+  redisProvider,
+}: CheckCacheForPropertyTypeMenu) => {
+  const cachedPropertyTypeMenu = await redisProvider.get(
+    propertyTypeMenuCacheKey
+  );
   if (cachedPropertyTypeMenu) return JSON.parse(cachedPropertyTypeMenu);
 
   return null;
@@ -31,7 +38,10 @@ const updateCacheWithPropertyTypeMenu = async ({
   redisProvider,
   propertyTypeMenu,
 }: UpdateCacheWithPropertyTypeMenu) => {
-  await redisProvider.set(propertyTypeMenuCacheKey, JSON.stringify(propertyTypeMenu));
+  await redisProvider.set(
+    propertyTypeMenuCacheKey,
+    JSON.stringify(propertyTypeMenu)
+  );
 };
 
 const propertyTypeService = ({

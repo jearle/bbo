@@ -53,5 +53,4 @@ describe('property type app', () => {
     expect(Array.isArray(propertyTypeResponse)).toBe(true);
     expect(propertyTypeResponse[0]).toStrictEqual(expectedPropertyTypes);
   });
-
 });
