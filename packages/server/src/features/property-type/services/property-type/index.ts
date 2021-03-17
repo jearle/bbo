@@ -34,6 +34,7 @@ const checkCacheForPropertyTypeMenu = async ({
   return null;
 };
 
+
 const updateCacheWithPropertyTypeMenu = async ({
   redisProvider,
   propertyTypeMenu,
@@ -61,6 +62,10 @@ const propertyTypeService = ({
     const propertyTypeMenu = createPropertyTypeMenu(result.recordsets[0]);
     await updateCacheWithPropertyTypeMenu({ redisProvider, propertyTypeMenu });
     return propertyTypeMenu;
+  },
+
+  async clearCachedPropertyTypeMenu() {
+    await redisProvider.del(propertyTypeMenuCacheKey);
   },
 
   async close() {

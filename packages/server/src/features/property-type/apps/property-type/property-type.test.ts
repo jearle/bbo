@@ -4,8 +4,9 @@ import { fetchJSONOnRandomPort } from 'shared/dist/helpers/express/listen-fetch'
 import { createMSSQLProvider } from '../../../../providers/mssql';
 import { createPropertyTypeService } from '../../services/property-type';
 import { createApp } from './';
+import { createRedisProvider } from '../../../../providers/redis';
 
-const { ANALYTICSDATA_MSSQL_URI } = process.env;
+const { ANALYTICSDATA_MSSQL_URI, REDIS_URI } = process.env;
 
 describe('property type app', () => {
   let app = null;
@@ -16,7 +17,8 @@ describe('property type app', () => {
     const mssqlProvider = await createMSSQLProvider({
       uri: ANALYTICSDATA_MSSQL_URI,
     });
-    propertyTypeService = await createPropertyTypeService({ mssqlProvider });
+    const redisProvider = await createRedisProvider({ uri: REDIS_URI });
+    propertyTypeService = await createPropertyTypeService({ mssqlProvider, redisProvider });
     app = express();
     propertyTypeApp = createApp({ propertyTypeService });
   });
