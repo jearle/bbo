@@ -5,8 +5,8 @@ import {
   propertyTypeWithChildren,
 } from './mock-data';
 
-describe('propertyMenuBuilder', () => {
-  test('propertyBuilder', () => {
+describe('propertyTypeMenuBuilder', () => {
+  test('propertyTypeBuilder build a menu from raw propertyType data', () => {
     const createPropertyMenuResult = createPropertyTypeMenu(rawPropertyTypes);
     expect(createPropertyMenuResult[0]).toStrictEqual(
       propertyTypeWithNoChildren
