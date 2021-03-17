@@ -22,9 +22,9 @@ interface PropertyTypeParent extends PropertyType {
   options: PropertyType[]
 }
 
-type PropertyTypeMenu = PropertyTypeParent[]
+export type PropertyTypeMenu = PropertyTypeParent[]
 
-export const createPropertyMenu = (flatPropertyArray: PropertyType[]): PropertyTypeMenu => {
+export const createPropertyTypeMenu = (flatPropertyArray: PropertyType[]): PropertyTypeMenu => {
   let propertyTypeParents: PropertyTypeParent[] = flatPropertyArray.filter((item) => (item.indent === 0)).map((item) => ({
     ...item,
     label: item.box3,
