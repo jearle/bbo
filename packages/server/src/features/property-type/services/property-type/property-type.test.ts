@@ -31,7 +31,7 @@ describe('PropertyTypeService', () => {
     expect(result).not.toBeUndefined();
   });
 
-  test(`fetchPermissionsModel ensure cache works with username`, async () => {
+  test(`fetchPermissionsModel ensure cache works`, async () => {
     await propertyTypeService.fetchPropertyTypesMenu();
 
     // hit again to ensure caching via istanbul code coverage
