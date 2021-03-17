@@ -35,7 +35,6 @@ jobs:
         with:
           vaultToken: ${{ secrets.WORKFLOW_TOKEN }}
           paths: |
-            devops/aws/shared/playground
             shared/services/${{ github.event.deployment.environment }}
             cd/shared/${{ github.event.deployment.environment }}
             cd/product-api/${{ github.event.deployment.environment }}
@@ -68,8 +67,8 @@ jobs:
       - name: Terraform Deploy
         run: |
           cd infra/terraform
-          terraform init -backend-config="bucket=rca-playground-terraform" -backend-config="key=cd/product-api/${{ github.event.deployment.environment }}.tfstate" -backend-config="region=us-east-1"
-          terraform apply --auto-approve
+          terraform init -backend-config="bucket=rca-shared-terraform" -backend-config="key=cd/product-api/${{ github.event.deployment.environment }}.tfstate" -backend-config="region=us-east-1"
+          terraform plan
 
 #          terraform plan
 #          echo COGNITO_USER_POOL_ID=$(terraform output cognito_user_pool_id) >> $GITHUB_ENV

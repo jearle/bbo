@@ -112,14 +112,15 @@ resource "aws_lambda_function" "cognito_user_migration" {
   }
 }
 
-# Cognito User Pool
-
+# ****** SES ******
 resource "aws_ses_email_identity" "cognito_email_identity" {
   email = var.cognitoEmail
 }
 
+# ****** COGNITO ******
 resource "aws_cognito_user_pool" "cognito_user_pool" {
-  name = "cd_product_api_${var.environment}_cognito_user_pool"
+  # name = "cd_product_api_${var.environment}_cognito_user_pool"
+  name = "contentdelivery"
 
   admin_create_user_config {
     allow_admin_create_user_only = false
