@@ -5,6 +5,7 @@ import * as AuthenticationApp from '../authentication/apps/authentication';
 import * as GeographyApp from '../geography/apps/geography';
 import * as PropertyTypeApp from '../property-type/apps/property-type';
 import * as TransactionsSearchApp from '../transactions-search/apps/transactions-search';
+import * as LookupsApp from '../lookups/apps/lookups';
 
 type FeatureApp = {
   readonly DESCRIPTION: string;
@@ -38,6 +39,11 @@ const documentationConfigurations: Array<DocumentationConfiguration> = [
     title: `Transactions Search API`,
     feature: `transactions-search`,
     featureApp: TransactionsSearchApp,
+  },
+  {
+    title: `Lookups API`,
+    feature: `lookups`,
+    featureApp: LookupsApp
   },
 ];
 
