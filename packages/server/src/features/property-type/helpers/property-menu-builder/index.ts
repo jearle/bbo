@@ -1,4 +1,4 @@
-interface PropertyType {
+type PropertyType = {
   TrendtrackerData_PropertyTypes_id: number;
   box3Value: string;
   box3: string;
@@ -14,7 +14,7 @@ interface PropertyType {
   propertyType_tx: string;
 }
 
-interface PropertyTypeParent extends PropertyType {
+type PropertyTypeParent = PropertyType & {
   id: string;
   value: string;
   label: string;
