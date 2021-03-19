@@ -55,6 +55,7 @@ interface ServerOptions {
   readonly transactionsSearchOptions: TransactionsSearchFeatureOptions;
   readonly userActivityFeatureOptions: UserActivityFeatureInputOptions;
   readonly geographyFeatureOptions: GeographyFeatureOptions;
+  readonly propertyTypeFeatureOptions: PropertyTypeFeatureOptions;
 }
 
 export const startServer = async ({
@@ -66,6 +67,7 @@ export const startServer = async ({
   transactionsSearchOptions,
   userActivityFeatureOptions,
   geographyFeatureOptions,
+  propertyTypeFeatureOptions,
 }: ServerOptions): Promise<void> => {
   // features
   const {
@@ -117,26 +119,24 @@ export const startServer = async ({
     geographyFeatureOptions
   );
 
-  const propertyTypeFeatureOptions: PropertyTypeFeatureOptions = geographyFeatureOptions;
   const {
     propertyTypeApp,
     propertyTypeBasePath,
   } = await createPropertyTypeFeature(propertyTypeFeatureOptions);
 
-  const {
-    lookupsApp,
-    lookupsBasePath
-  } = await createLookupsFeature();
+  const { lookupsApp, lookupsBasePath } = await createLookupsFeature();
 
   // end features
 
   const mounts = express();
 
-  mounts.use(cors({
-    origin: true,
-    methods: ['GET', 'POST'],
-    alowedHeaders: ['Content-Type', 'accessToken']
-  }))
+  mounts.use(
+    cors({
+      origin: true,
+      methods: ['GET', 'POST'],
+      alowedHeaders: ['Content-Type', 'accessToken'],
+    })
+  );
 
   // Pre Middleware
   mounts.use(loggerIdMiddleware());
