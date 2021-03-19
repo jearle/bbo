@@ -38,7 +38,7 @@ export const createApp = ({
   /**
    * @swagger
    *
-   * /data-type
+   * /data-type:
    *  get:
    *    description: Gets data type lookup values
    *    produces:
