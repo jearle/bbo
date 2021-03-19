@@ -21,7 +21,7 @@ export const createApp = ({
   /**
    * @swagger
    *
-   * /currency
+   * /currency:
    *  get:
    *    description: Gets currency lookup values
    *    produces:
