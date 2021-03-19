@@ -90,7 +90,7 @@ test(`fetchJSONOnRandomPort`, async () => {
     res.json({ pass: `pass` });
   });
 
-  const { pass } = await fetchJSONOnRandomPort(app);
+  const { pass } = (await fetchJSONOnRandomPort(app)) as { pass: string };
 
   expect(pass).toBe(`pass`);
 });

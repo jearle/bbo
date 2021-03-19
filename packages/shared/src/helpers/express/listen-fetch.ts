@@ -1,4 +1,5 @@
 import { Application } from 'express';
+import { AddressInfo } from 'net';
 import fetch from 'node-fetch';
 import { Response } from 'node-fetch';
 import { portListen } from './port-listen';
@@ -22,7 +23,7 @@ export const fetchResponseOnRandomPort = async (
   }: FetchOnRandomPortOptions = {}
 ): Promise<Response> => {
   const server = await portListen(app);
-  const { port } = server.address();
+  const { port } = server.address() as AddressInfo;
 
   const queryString = query.length > 0 ? `?${query}` : ``;
   const response = await fetch(
@@ -55,7 +56,7 @@ export const fetchTextOnRandomPort = async (
 export const fetchJSONOnRandomPort = async (
   app: Application,
   { path, method, query, body, headers }: FetchOnRandomPortOptions = {}
-): Promise<any> => {
+): Promise<unknown> => {
   const response = await fetchResponseOnRandomPort(app, {
     path,
     method,
