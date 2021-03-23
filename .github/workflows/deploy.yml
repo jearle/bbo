@@ -80,6 +80,8 @@ jobs:
           params: |
             image:${{ github.event.deployment.payload.image }}
             cognitoUserPoolId:${{ env.COGNITO_USER_POOL_ID }}
+            cognitoAppClientId:${{ env.COGNITO_APP_CLIENT_ID }}
+            cognitoAppClientSecret:${{ env.COGNITO_APP_CLIENT_SECRET }}
 
       - name: Helm Install
         uses: ./.github-actions/tools/helm
