@@ -79,7 +79,7 @@ resource "aws_lambda_function" "cognito_pre_auth" {
 
   vpc_config {
     security_group_ids = [aws_security_group.lambda.id]
-    subnet_ids = [var.subnet]
+    subnet_ids = [var.subnetId]
   }
 
   environment {
@@ -102,7 +102,7 @@ resource "aws_lambda_function" "cognito_user_migration" {
 
   vpc_config {
     security_group_ids = [aws_security_group.lambda.id]
-    subnet_ids = [var.subnet]
+    subnet_ids = [var.subnetId]
   }
 
   environment {
@@ -112,15 +112,9 @@ resource "aws_lambda_function" "cognito_user_migration" {
   }
 }
 
-# ****** SES ******
-resource "aws_ses_email_identity" "cognito_email_identity" {
-  email = var.cognitoEmail
-}
-
 # ****** COGNITO ******
 resource "aws_cognito_user_pool" "cognito_user_pool" {
-  # name = "cd_product_api_${var.environment}_cognito_user_pool"
-  name = "contentdelivery"
+  name = "cd_product_api_${var.environment}_cognito_user_pool"
 
   admin_create_user_config {
     allow_admin_create_user_only = false
@@ -140,15 +134,12 @@ resource "aws_cognito_user_pool" "cognito_user_pool" {
 
   email_configuration {
     email_sending_account = "COGNITO_DEFAULT"
-    // TODO: check if this is needed with COGNITO_DEFAULT type (was set to aromito identity on import)
-    source_arn = aws_ses_email_identity.cognito_email_identity.arn
   }
   email_verification_message = "Your verification code is {####}. "
   email_verification_subject = "Your verification code"
 
   lambda_config {
-    // TODO: should preauth lambda also be wired up?
-//    pre_authentication = ""
+    pre_authentication = aws_lambda_function.cognito_pre_auth.arn
     user_migration = aws_lambda_function.cognito_user_migration.arn
   }
 

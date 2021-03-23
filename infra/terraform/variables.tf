@@ -10,10 +10,6 @@ variable "vpcId" {
   type = string
 }
 
-variable "subnet" {
-  type = string
-}
-
-variable "cognitoEmail" {
+variable "subnetId" {
   type = string
 }
