@@ -8,8 +8,8 @@ esUrl: ${config.esUrl}
 rcaWebAccountsUri: ${config.rcaWebAccountsUri}
 launchDarklySdk: ${config.launchDarklySdk}
 segmentAccessKey: ${config.segmentAccessKey}
-cognitoRegion: ${config.cognitoRegion}
-cognitoUserPoolId: ${params.cognitoUserPoolId}
-cognitoAppClientId: ${config.cognitoAppClientId}
-cognitoAppClientSecret: ${config.cognitoAppClientSecret}
 rcaAnalyticsDataUri: ${config.rcaAnalyticsDataUri}
+cognitoRegion: ${config.awsRegion}
+cognitoUserPoolId: ${params.cognitoUserPoolId}
+cognitoAppClientId: ${params.cognitoAppClientId}
+cognitoAppClientSecret: ${params.cognitoAppClientSecret}

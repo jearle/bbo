@@ -113,7 +113,7 @@ resource "aws_lambda_function" "cognito_user_migration" {
 }
 
 # ****** COGNITO ******
-resource "aws_cognito_user_pool" "cognito_user_pool" {
+resource "aws_cognito_user_pool" "default" {
   name = "cd_product_api_${var.environment}_cognito_user_pool"
 
   admin_create_user_config {
@@ -170,4 +170,12 @@ resource "aws_cognito_user_pool" "cognito_user_pool" {
   verification_message_template {
     default_email_option = "CONFIRM_WITH_CODE"
   }
+}
+
+resource "aws_cognito_user_pool_client" "default" {
+  name = "cd_product_api_${var.environment}_cognito_user_pool_client"
+
+  user_pool_id = aws_cognito_user_pool.default.id
+
+  generate_secret = true
 }
