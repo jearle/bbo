@@ -5,6 +5,8 @@ export const getRandomPort = async (): Promise<number> => {
   const app = express();
   const server = await portListen(app);
   const { port } = server.address();
-  server.close();
+
+  await server.close();
+
   return port;
 };

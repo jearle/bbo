@@ -1,19 +1,33 @@
 import { Application } from 'express';
-import { createServer } from 'http';
+import { createServer, Server } from 'http';
+import { AddressInfo } from 'net';
 
-interface PortListenOptions {
+import { closeServer } from './close-server';
+
+type PortListenInputs = {
   port?: number;
-}
+};
+
+const createPortListenServer = (server: Server) => ({
+  server,
+  address() {
+    return server.address() as AddressInfo;
+  },
+  close() {
+    return closeServer(server);
+  },
+});
+
+export type PortListenServer = ReturnType<typeof createPortListenServer>;
 
 export const portListen = (
   app: Application,
-  { port = 0 }: PortListenOptions = {}
-): Promise<Application> => {
-  const promise = new Promise((resolve) => {
+  { port = 0 }: PortListenInputs = {}
+): Promise<PortListenServer> => {
+  return new Promise((resolve) => {
     const server = createServer(app).listen(port, () => {
-      resolve(server);
+      const portListenServer = createPortListenServer(server);
+      resolve(portListenServer);
     });
-  }) as Promise<Application>;
-
-  return promise;
+  });
 };

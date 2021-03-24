@@ -27,27 +27,37 @@ export const authenticationMiddleware = ({
   const type = 'about:blank';
 
   if (!token) {
-    return res.type(contentType).status(status).json({
-      instance,
-      title,
-      detail: `Missing JWT Token`,
-      status,
-      type,
-    });
+    return res
+      .type(contentType)
+      .status(status)
+      .json({
+        data: {
+          instance,
+          title,
+          detail: `Missing JWT Token`,
+          status,
+          type,
+        },
+      });
   }
 
   try {
     const jwtPayload = await authenticationService.validate({ token });
     req.jwtPayload = jwtPayload;
-  } catch (e) {
-    return res.type(contentType).status(status).json({
-      instance,
-      title,
-      detail: `Invalid JWT Token`,
-      status,
-      type,
-      error: e,
-    });
+  } catch ({ message: error }) {
+    return res
+      .type(contentType)
+      .status(status)
+      .json({
+        data: {
+          instance,
+          title,
+          detail: `Invalid JWT Token`,
+          status,
+          type,
+        },
+        error,
+      });
   }
 
   next();

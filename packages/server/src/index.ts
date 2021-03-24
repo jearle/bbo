@@ -51,6 +51,11 @@ const geographyFeatureOptions = {
   mssqlURI: ANALYTICSDATA_MSSQL_URI,
 };
 
+const propertyTypeFeatureOptions = {
+  mssqlURI: ANALYTICSDATA_MSSQL_URI,
+  redisURI: REDIS_URI,
+};
+
 startServer({
   port,
   host,
@@ -60,4 +65,5 @@ startServer({
   transactionsSearchOptions,
   userActivityFeatureOptions,
   geographyFeatureOptions,
+  propertyTypeFeatureOptions,
 });
