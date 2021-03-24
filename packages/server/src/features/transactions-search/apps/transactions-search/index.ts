@@ -99,7 +99,7 @@ export const createApp = ({
    *                 properties:
    *                   aggregationType:
    *                     type: string
-   *                     enum: [PRICE, PROPERTY, UNITS, SQFT, CAPRATE, PPU, PPSF, PPSM]
+   *                     enum: [PRICE, PROPERTY, UNITS, SQFT, CAPRATE, PPU, PPSF]
    *                   currency:
    *                     type: string
    *                     enum: [USD, EUR, GBP, JPY, AUD, CAN, CNY, LOC]

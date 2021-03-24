@@ -12,7 +12,6 @@ export const currencyValidator = ({ aggregationType, currency }: AggregationInpu
     case 'PRICE':
     case 'PPU':
     case 'PPSF':
-    case 'PPSM':
       if (!currency) {
         return Promise.reject(`Must supply currency for aggregation type: ${aggregationType}`);
       }

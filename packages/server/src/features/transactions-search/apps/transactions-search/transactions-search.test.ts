@@ -272,7 +272,7 @@ describe(`transactions app`, () => {
       expect(data.length).toBeGreaterThanOrEqual(1);
     });
 
-    it(`searches trends with a PPSF metric aggregation, ATL, off, qtr, qtr totals, TT match`, async () => {
+    it(`searches trends with a PPSF metric aggregation, ATL, off, SQFT, qtr, qtr totals, TT match`, async () => {
       app.use(transactionsSearchApp);
       const { data } = await fetchJSONOnRandomPort(app, {
         method: 'POST',
@@ -280,7 +280,7 @@ describe(`transactions app`, () => {
         body: JSON.stringify({
           geographyFilter: atlantaFilter,
           propertyTypeFilter: officeFilter,
-          aggregation: { aggregationType: 'PPSF', currency: 'USD' },
+          aggregation: { aggregationType: 'PPSF', currency: 'USD', rentableArea: 'SQFT' },
         }),
         headers: {
           'Content-Type': 'application/json',
@@ -293,7 +293,7 @@ describe(`transactions app`, () => {
       expect(data.length).toBeGreaterThanOrEqual(1);
     });
 
-    it(`searches trends with a PPSM metric aggregation, ATL, off, qtr, qtr totals, TT match`, async () => {
+    it(`searches trends with a PPSF metric aggregation ATL, off, SQMT, qtr, qtr totals, TT match`, async () => {
       app.use(transactionsSearchApp);
       const { data } = await fetchJSONOnRandomPort(app, {
         method: 'POST',
@@ -301,7 +301,7 @@ describe(`transactions app`, () => {
         body: JSON.stringify({
           geographyFilter: atlantaFilter,
           propertyTypeFilter: officeFilter,
-          aggregation: { aggregationType: 'PPSM', currency: 'EUR' },
+          aggregation: { aggregationType: 'PPSF', currency: 'USD', rentableArea: 'SQMT' },
         }),
         headers: {
           'Content-Type': 'application/json',
