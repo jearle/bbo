@@ -4,6 +4,7 @@ import { body, validationResult } from 'express-validator';
 
 import { TransactionsSearchService } from '../../services/transactions-search';
 import { currencyValidator } from '../../validators/currency';
+import { rentableAreaValidator } from '../../validators/rentable-area';
 
 export const VERSION = `v0`;
 export const DESCRIPTION = `Transactions Search API`;
@@ -125,7 +126,7 @@ export const createApp = ({
    */
   app.post(
     `/trends`,
-    body('aggregation').custom(currencyValidator),
+    body('aggregation').custom(currencyValidator).custom(rentableAreaValidator),
     body(`geographyFilter`).exists({ checkNull: true }),
     body(`propertyTypes`).exists({ checkNull: true }),
     async (req, res) => {
