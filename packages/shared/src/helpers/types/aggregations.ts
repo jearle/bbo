@@ -15,11 +15,9 @@ export type AggregationType =
   | 'SQFT'
   | 'CAPRATE'
   | 'PPU'
-  | 'PPSF'
-  | 'PPSM';
+  | 'PPSF';
 
 export const calculatedAverageAggregations: AggregationType[] = [
   'PPU',
   'PPSF',
-  'PPSM',
 ];

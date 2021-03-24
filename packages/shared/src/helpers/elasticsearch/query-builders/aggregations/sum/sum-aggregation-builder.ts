@@ -1,16 +1,17 @@
 import { Aggregation, AggregationType } from '../../../../types';
-import {SumType} from "./index";
-import {Currency, isValidCurrency} from "../../../../types/currency";
+import { SumType } from './index';
+import { Currency, isValidCurrency } from '../../../../types/currency';
+import { RentableArea } from '../../../../types/rentable-area';
 
 const currencyMapper = (currency: Currency): string => {
   if (currency.toUpperCase() === 'LOC') {
-    return 'local'
+    return 'local';
   }
   if (currency.toUpperCase() === 'CAN') {
     return 'cad';
   }
   return currency.toLowerCase();
-}
+};
 
 const metricAggregationMapper = {
   PRICE: 'sum',
@@ -22,11 +23,11 @@ const metricAggregationMapper = {
   PPU_UNITS: 'sum',
   PPSF_PRICE: 'sum',
   PPSF_SQFT: 'sum',
-  PPSM_PRICE: 'sum',
-  PPSM_SQFT: 'sum'
 };
 
-const priceFloorFilter = { range: { dealStatusPriceUSD_amt: { gte: 2500000 } }};
+const priceFloorFilter = {
+  range: { dealStatusPriceUSD_amt: { gte: 2500000 } },
+};
 
 const volumeFilter = {
   bool: {
@@ -74,7 +75,6 @@ const capRateFilter = {
   },
 };
 
-
 const ppuFilter = {
   bool: {
     must: [
@@ -98,10 +98,7 @@ const ppuFilter = {
   },
 };
 
-const determineWhatFieldToSumOn = (
-  sumType: SumType,
-  currency: Currency
-) => {
+const determineWhatFieldToSumOn = (sumType: SumType, currency: Currency) => {
   const currencyError = `currency does not exist for ${sumType} sum aggregation type`;
   switch (sumType) {
     case 'PRICE':
@@ -117,13 +114,11 @@ const determineWhatFieldToSumOn = (
       return 'units_dbl';
     case 'SQFT':
     case 'PPSF_SQFT':
-    case 'PPSM_SQFT':
       return 'sqFt_dbl';
     case 'CAPRATE':
       return 'statusCapRate_dbl';
     case 'PPU_PRICE':
     case 'PPSF_PRICE':
-    case 'PPSM_PRICE':
       if (isValidCurrency(currency)) {
         return `statusPrice_amt.${currencyMapper(currency)}`;
       } else {
@@ -141,100 +136,123 @@ const generateFilter = (aggregationTypeUpperCase: AggregationType) => {
     return volumeFilter;
   } else if (aggregationTypeUpperCase === 'CAPRATE') {
     return capRateFilter;
-  } else if (['PPU', 'PPSF', 'PPSM'].includes(aggregationTypeUpperCase)) {
+  } else if (['PPU', 'PPSF'].includes(aggregationTypeUpperCase)) {
     return ppuFilter;
   }
 };
 
-const getSumTypeForAgg = (aggregationType: AggregationType, numerator?: boolean): SumType => {
+const getSumTypeForAgg = (
+  aggregationType: AggregationType,
+  numerator?: boolean
+): SumType => {
   switch (aggregationType) {
     case 'PPU':
-      return numerator ? "PPU_PRICE" : 'PPU_UNITS';
+      return numerator ? 'PPU_PRICE' : 'PPU_UNITS';
     case 'PPSF':
-      return numerator ? "PPSF_PRICE" : 'PPSF_SQFT';
-    case 'PPSM':
-      return numerator ? "PPSM_PRICE" : 'PPSM_SQFT';
+      return numerator ? 'PPSF_PRICE' : 'PPSF_SQFT';
     default:
       return aggregationType as SumType;
   }
-}
+};
+
+const generateMetricAggregation = (
+  sumType: SumType,
+  field: string,
+  rentableArea?: RentableArea
+) => {
+  const metricAggregation = metricAggregationMapper[sumType];
+  let agg;
+  if (['SQFT', 'PPSF_SQFT'].includes(sumType) && rentableArea === 'SQMT') {
+    agg = {
+      field,
+      script: {
+        source: `_value * 0.092903`,
+      },
+    };
+  } else {
+    agg = {
+      field,
+    };
+  }
+  return {
+    [metricAggregation]: agg,
+  };
+};
 
 export const createAggs = ({
   aggregationType,
   currency,
+  rentableArea,
 }: Aggregation) => {
-  let field;
   let filter;
   let metricAggregation;
   try {
     const aggregationTypeUpperCase = aggregationType.toUpperCase() as AggregationType;
     const sumType = getSumTypeForAgg(aggregationTypeUpperCase);
-    field = determineWhatFieldToSumOn(sumType, currency);
+    const field = determineWhatFieldToSumOn(sumType, currency);
     filter = generateFilter(aggregationTypeUpperCase);
-    metricAggregation = metricAggregationMapper[sumType];
+    metricAggregation = generateMetricAggregation(sumType, field, rentableArea);
   } catch {
-    field = undefined;
     filter = undefined;
     metricAggregation = undefined;
   }
 
   return {
-    filteredSum: createInnerAggs(filter, metricAggregation, field)
-  }
+    filteredSum: createInnerAggs(filter, metricAggregation),
+  };
 };
 
 export const createCalculatedAverageAggs = ({
   aggregationType,
   currency,
+  rentableArea,
 }: Aggregation) => {
-
   let filter;
-  let numField;
-  let divField;
   let numMetricAggregation;
   let divMetricAggregation;
   const aggregationTypeUpperCase = aggregationType.toUpperCase() as AggregationType;
   try {
     const numSumType = getSumTypeForAgg(aggregationTypeUpperCase, true);
     const divSumType = getSumTypeForAgg(aggregationTypeUpperCase, false);
-    numField = determineWhatFieldToSumOn(numSumType, currency);
-    divField = determineWhatFieldToSumOn(divSumType, currency);
+    const numField = determineWhatFieldToSumOn(numSumType, currency);
+    const divField = determineWhatFieldToSumOn(divSumType, currency);
     filter = generateFilter(aggregationTypeUpperCase);
-    numMetricAggregation = metricAggregationMapper[numSumType];
-    divMetricAggregation = metricAggregationMapper[divSumType];
+    numMetricAggregation = generateMetricAggregation(
+      numSumType,
+      numField,
+      rentableArea
+    );
+    divMetricAggregation = generateMetricAggregation(
+      divSumType,
+      divField,
+      rentableArea
+    );
   } catch {
     filter = undefined;
-    numField = undefined;
-    divField = undefined;
     numMetricAggregation = undefined;
     divMetricAggregation = undefined;
   }
-  const multiplier = aggregationTypeUpperCase === 'PPSM' ? 0.0929 : 1;
 
   return {
     calculatedAverage: {
       bucket_script: {
         buckets_path: {
           num: 'numSum>sumResult',
-          div: 'divSum>sumResult'
+          div: 'divSum>sumResult',
         },
-        script: `params.num / (params.div * ${multiplier})`
-      }
+        script: `params.num / params.div`,
+      },
     },
-    numSum: createInnerAggs(filter, numMetricAggregation, numField),
-    divSum: createInnerAggs(filter, divMetricAggregation, divField)
-  }
-}
+    numSum: createInnerAggs(filter, numMetricAggregation),
+    divSum: createInnerAggs(filter, divMetricAggregation),
+  };
+};
 
-export const createInnerAggs = (filter, metricAggregation, field) => {
+export const createInnerAggs = (filter, metricAggregation) => {
   return {
     filter,
     aggs: {
-      sumResult: {
-        [metricAggregation]: {
-          field: field,
-        },
-      },
+      sumResult: metricAggregation,
     },
   };
-}
+};
