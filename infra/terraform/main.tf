@@ -181,6 +181,9 @@ resource "aws_cognito_user_pool_client" "default" {
     "ALLOW_USER_PASSWORD_AUTH",
     "ALLOW_USER_SRP_AUTH"
   ]
+  callback_urls = [
+    "https://www.example.com"
+  ]
 
   prevent_user_existence_errors = "ENABLED"
 
