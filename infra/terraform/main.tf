@@ -66,29 +66,6 @@ resource "aws_security_group_rule" "lambda_egress_all" {
 }
 
 # ****** LAMBDA FUNCTIONS ******
-resource "aws_lambda_function" "cognito_pre_auth" {
-  function_name = "cd_product_api_${var.environment}_cognito_pre_auth_lambda_function"
-  role          = aws_iam_role.cognito.arn
-  handler       = "cognito.preAuthentication"
-
-  filename         = "../lambda/dist/package.zip"
-  source_code_hash = base64sha256("../lambda/dist/package.zip")
-
-  runtime = "nodejs12.x"
-  timeout = 60
-
-  vpc_config {
-    security_group_ids = [aws_security_group.lambda.id]
-    subnet_ids = [var.subnetId]
-  }
-
-  environment {
-    variables = {
-      environment = var.environment
-    }
-  }
-}
-
 resource "aws_lambda_function" "cognito_user_migration" {
   function_name = "cd_product_api_${var.environment}_cognito_user_migration_lambda_function"
   role          = aws_iam_role.cognito.arn
@@ -139,7 +116,6 @@ resource "aws_cognito_user_pool" "default" {
   email_verification_subject = "Your verification code"
 
   lambda_config {
-    pre_authentication = aws_lambda_function.cognito_pre_auth.arn
     user_migration = aws_lambda_function.cognito_user_migration.arn
   }
 
