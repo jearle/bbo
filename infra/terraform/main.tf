@@ -153,7 +153,27 @@ resource "aws_cognito_user_pool_client" "default" {
 
   user_pool_id = aws_cognito_user_pool.default.id
 
-  explicit_auth_flows = ["USER_PASSWORD_AUTH"]
+  allowed_oauth_flows = ["code", "implicit"]
+  allowed_oauth_flows_user_pool_client = true
+  explicit_auth_flows = [
+    "ALLOW_CUSTOM_AUTH",
+    "ALLOW_REFRESH_TOKEN_AUTH",
+    "ALLOW_USER_PASSWORD_AUTH",
+    "ALLOW_USER_SRP_AUTH"
+  ]
+
+  prevent_user_existence_errors = "ENABLED"
+
+  supported_identity_providers = ["COGNITO"]
+
+  access_token_validity = 60
+  id_token_validity = 60
+  refresh_token_validity = 30
+  token_validity_units = {
+    access_token = "minutes"
+    id_token = "minutes"
+    refresh_token = "days"
+  }
 
   generate_secret = true
 }
