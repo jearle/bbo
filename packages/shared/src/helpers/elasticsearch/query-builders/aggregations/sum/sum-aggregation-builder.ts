@@ -1,5 +1,5 @@
 import { Aggregation, AggregationType } from '../../../../types';
-import { SumType } from './index';
+import { SumType, rentableAreaSumTypes } from './index';
 import { Currency, isValidCurrency } from '../../../../types/currency';
 import { RentableArea } from '../../../../types/rentable-area';
 
@@ -17,12 +17,12 @@ const metricAggregationMapper = {
   PRICE: 'sum',
   PROPERTY: 'sum',
   UNITS: 'sum',
-  SQFT: 'sum',
+  AREA: 'sum',
   CAPRATE: 'avg',
   PPU_PRICE: 'sum',
   PPU_UNITS: 'sum',
-  PPSF_PRICE: 'sum',
-  PPSF_SQFT: 'sum',
+  PPA_PRICE: 'sum',
+  PPA_SQFT: 'sum',
 };
 
 const priceFloorFilter = {
@@ -112,13 +112,13 @@ const determineWhatFieldToSumOn = (sumType: SumType, currency: Currency) => {
     case 'UNITS':
     case 'PPU_UNITS':
       return 'units_dbl';
-    case 'SQFT':
-    case 'PPSF_SQFT':
+    case 'AREA':
+    case 'PPA_SQFT':
       return 'sqFt_dbl';
     case 'CAPRATE':
       return 'statusCapRate_dbl';
     case 'PPU_PRICE':
-    case 'PPSF_PRICE':
+    case 'PPA_PRICE':
       if (isValidCurrency(currency)) {
         return `statusPrice_amt.${currencyMapper(currency)}`;
       } else {
@@ -131,12 +131,12 @@ const determineWhatFieldToSumOn = (sumType: SumType, currency: Currency) => {
 
 const generateFilter = (aggregationTypeUpperCase: AggregationType) => {
   if (
-    ['PRICE', 'UNITS', 'PROPERTY', 'SQFT'].includes(aggregationTypeUpperCase)
+    ['PRICE', 'UNITS', 'PROPERTY', 'AREA'].includes(aggregationTypeUpperCase)
   ) {
     return volumeFilter;
   } else if (aggregationTypeUpperCase === 'CAPRATE') {
     return capRateFilter;
-  } else if (['PPU', 'PPSF'].includes(aggregationTypeUpperCase)) {
+  } else if (['PPU', 'PPA'].includes(aggregationTypeUpperCase)) {
     return ppuFilter;
   }
 };
@@ -148,8 +148,8 @@ const getSumTypeForAgg = (
   switch (aggregationType) {
     case 'PPU':
       return numerator ? 'PPU_PRICE' : 'PPU_UNITS';
-    case 'PPSF':
-      return numerator ? 'PPSF_PRICE' : 'PPSF_SQFT';
+    case 'PPA':
+      return numerator ? 'PPA_PRICE' : 'PPA_SQFT';
     default:
       return aggregationType as SumType;
   }
@@ -162,7 +162,7 @@ const generateMetricAggregation = (
 ) => {
   const metricAggregation = metricAggregationMapper[sumType];
   let agg;
-  if (['SQFT', 'PPSF_SQFT'].includes(sumType) && rentableArea === 'SQMT') {
+  if (rentableAreaSumTypes.includes(sumType) && rentableArea === 'SQMT') {
     agg = {
       field,
       script: {

@@ -105,14 +105,14 @@ describe(`transactions app`, () => {
       expect(data.length).toBeGreaterThanOrEqual(1);
     });
 
-    it(`searches trends with a PPSF metric aggregation, ATL, off, SQFT, qtr, qtr totals, TT match`, async () => {
+    it(`searches trends with a PPA metric aggregation, ATL, off, SQFT, qtr, qtr totals, TT match`, async () => {
       const { data } = await fetchJSONOnRandomPort(app, {
         method: 'POST',
         path: `/trends`,
         body: JSON.stringify({
           geographyFilter,
           propertyTypes,
-          aggregation: { aggregationType: 'PPSF', currency: 'USD', rentableArea: 'SQFT' },
+          aggregation: { aggregationType: 'PPA', currency: 'USD', rentableArea: 'SQFT' },
         }),
         headers: {
           'Content-Type': 'application/json',
@@ -125,14 +125,14 @@ describe(`transactions app`, () => {
       expect(data.length).toBeGreaterThanOrEqual(1);
     });
 
-    it(`searches trends with a PPSF metric aggregation ATL, off, SQMT, qtr, qtr totals, TT match`, async () => {
+    it(`searches trends with a PPA metric aggregation ATL, off, SQMT, qtr, qtr totals, TT match`, async () => {
       const { data } = await fetchJSONOnRandomPort(app, {
         method: 'POST',
         path: `/trends`,
         body: JSON.stringify({
           geographyFilter,
           propertyTypes,
-          aggregation: { aggregationType: 'PPSF', currency: 'USD', rentableArea: 'SQMT' },
+          aggregation: { aggregationType: 'PPA', currency: 'USD', rentableArea: 'SQMT' },
         }),
         headers: {
           'Content-Type': 'application/json',

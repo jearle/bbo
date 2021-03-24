@@ -7,17 +7,16 @@ export type Aggregation = {
   rentableArea?: RentableArea;
 };
 
-// TODO: Rename SQFT to AREA ?
 export type AggregationType =
   | 'PRICE'
   | 'PROPERTY'
   | 'UNITS'
-  | 'SQFT'
+  | 'AREA'
   | 'CAPRATE'
   | 'PPU'
-  | 'PPSF';
+  | 'PPA';
 
 export const calculatedAverageAggregations: AggregationType[] = [
   'PPU',
-  'PPSF',
+  'PPA',
 ];
