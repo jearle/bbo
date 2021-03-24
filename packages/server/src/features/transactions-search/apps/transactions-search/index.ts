@@ -3,7 +3,7 @@ import { Application } from 'express';
 import { body, validationResult } from 'express-validator';
 
 import { TransactionsSearchService } from '../../services/transactions-search';
-import { currencyValidator } from "../../middlewares/validation";
+import { currencyValidator, rentableAreaValidator } from "../../middlewares/validation";
 
 export const VERSION = `v0`;
 export const DESCRIPTION = `Transactions Search API`;
@@ -120,7 +120,7 @@ export const createApp = ({
    */
   app.post(
     `/trends`,
-    body('aggregation').custom(currencyValidator),
+    body('aggregation').custom(currencyValidator).custom(rentableAreaValidator),
     async (req, res) => {
       const validationErrors = validationResult(req);
       if (!validationErrors.isEmpty()) {
