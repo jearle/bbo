@@ -177,5 +177,7 @@ resource "aws_cognito_user_pool_client" "default" {
 
   user_pool_id = aws_cognito_user_pool.default.id
 
+  explicit_auth_flows = ["USER_PASSWORD_AUTH"]
+
   generate_secret = true
 }
