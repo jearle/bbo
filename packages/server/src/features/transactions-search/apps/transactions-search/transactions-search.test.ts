@@ -179,7 +179,7 @@ describe(`transactions app`, () => {
       expect(data.length).toBeGreaterThanOrEqual(1);
     });
 
-    it(`searches trends with a sqft aggregation filter, ATL, office, qtr, qtr, TT match`, async () => {
+    it(`searches trends with an AREA aggregation filter, ATL, office, SQFT, qtr, qtr, TT match`, async () => {
       const officeFilter = {
         propertyTypeId: 96,
         allPropertySubTypes: true,
@@ -193,7 +193,34 @@ describe(`transactions app`, () => {
         body: JSON.stringify({
           geographyFilter: atlantaFilter,
           propertyTypeFilter: officeFilter,
-          aggregation: { aggregationType: 'sqft' },
+          aggregation: { aggregationType: 'AREA', rentableArea: 'SQFT' },
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
+      expect(Array.isArray(data)).toBe(true);
+      expect(Number.isInteger(data[0].value)).toBe(true);
+      expect(data[0]).toHaveProperty('date');
+      expect(data.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it(`searches trends with an AREA aggregation filter, ATL, office, SQMT, qtr, qtr, TT match`, async () => {
+      const officeFilter = {
+        propertyTypeId: 96,
+        allPropertySubTypes: true,
+        propertySubTypeIds: [102, 107],
+      };
+
+      app.use(transactionsSearchApp);
+      const { data } = await fetchJSONOnRandomPort(app, {
+        method: 'POST',
+        path: `/trends`,
+        body: JSON.stringify({
+          geographyFilter: atlantaFilter,
+          propertyTypeFilter: officeFilter,
+          aggregation: { aggregationType: 'AREA', rentableArea: 'SQMT' },
         }),
         headers: {
           'Content-Type': 'application/json',
@@ -272,7 +299,7 @@ describe(`transactions app`, () => {
       expect(data.length).toBeGreaterThanOrEqual(1);
     });
 
-    it(`searches trends with a PPSF metric aggregation, ATL, off, SQFT, qtr, qtr totals, TT match`, async () => {
+    it(`searches trends with a PPA metric aggregation, ATL, off, SQFT, qtr, qtr totals, TT match`, async () => {
       app.use(transactionsSearchApp);
       const { data } = await fetchJSONOnRandomPort(app, {
         method: 'POST',
@@ -280,7 +307,7 @@ describe(`transactions app`, () => {
         body: JSON.stringify({
           geographyFilter: atlantaFilter,
           propertyTypeFilter: officeFilter,
-          aggregation: { aggregationType: 'PPSF', currency: 'USD', rentableArea: 'SQFT' },
+          aggregation: { aggregationType: 'PPA', currency: 'USD', rentableArea: 'SQFT' },
         }),
         headers: {
           'Content-Type': 'application/json',
@@ -293,7 +320,7 @@ describe(`transactions app`, () => {
       expect(data.length).toBeGreaterThanOrEqual(1);
     });
 
-    it(`searches trends with a PPSF metric aggregation ATL, off, SQMT, qtr, qtr totals, TT match`, async () => {
+    it(`searches trends with a PPA metric aggregation ATL, off, SQMT, qtr, qtr totals, TT match`, async () => {
       app.use(transactionsSearchApp);
       const { data } = await fetchJSONOnRandomPort(app, {
         method: 'POST',
@@ -301,7 +328,7 @@ describe(`transactions app`, () => {
         body: JSON.stringify({
           geographyFilter: atlantaFilter,
           propertyTypeFilter: officeFilter,
-          aggregation: { aggregationType: 'PPSF', currency: 'USD', rentableArea: 'SQMT' },
+          aggregation: { aggregationType: 'PPA', currency: 'USD', rentableArea: 'SQMT' },
         }),
         headers: {
           'Content-Type': 'application/json',
@@ -356,6 +383,48 @@ describe(`transactions app`, () => {
       expect(response.status).toBe(400);
     });
 
+    it(`returns a bad request response when missing a required rentableArea for an area metric`, async () => {
+      app.use(transactionsSearchApp);
+      const body = JSON.stringify({
+        geographyFilter: atlantaFilter,
+        propertyTypeFilter: apartmentFilter,
+        aggregation: { aggregationType: 'AREA' },
+      });
+      const response = await fetchResponseOnRandomPort(app, {
+        method: 'POST',
+        path: `/trends`,
+        body,
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
+      const { errors } = await response.json();
+      expect(errors.map(err => err.msg)).toContain('Must supply currency for aggregation type: price')
+      expect(response.status).toBe(400);
+    });
+
+    it(`returns a bad request response for unsupported rentableArea`, async () => {
+      app.use(transactionsSearchApp);
+      const body = JSON.stringify({
+        geographyFilter: atlantaFilter,
+        propertyTypeFilter: apartmentFilter,
+        aggregation: { aggregationType: 'AREA', rentableArea: 'DUNAM' },
+      });
+      const response = await fetchResponseOnRandomPort(app, {
+        method: 'POST',
+        path: `/trends`,
+        body,
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
+      const { errors } = await response.json();
+      expect(errors.map(err => err.msg)).toContain('rentableArea: DUNAM is not supported')
+      expect(response.status).toBe(400);
+    });
+
     it(`fails without a geography`, async () => {
       app.use(transactionsSearchApp);
       const response = await fetchResponseOnRandomPort(app, {
@@ -364,7 +433,7 @@ describe(`transactions app`, () => {
         body: JSON.stringify({
           geographyFilter: null,
           propertyTypeFilter: apartmentFilter,
-          aggregation: { aggregationType: 'sqft' },
+          aggregation: { aggregationType: 'AREA' },
         }),
         headers: {
           'Content-Type': 'application/json',
@@ -382,7 +451,7 @@ describe(`transactions app`, () => {
         body: JSON.stringify({
           geographyFilter: atlantaFilter,
           propertyTypeFilter: null,
-          aggregation: { aggregationType: 'sqft' },
+          aggregation: { aggregationType: 'AREA' },
         }),
         headers: {
           'Content-Type': 'application/json',

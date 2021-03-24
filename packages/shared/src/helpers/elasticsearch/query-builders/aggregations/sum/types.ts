@@ -2,9 +2,24 @@ export type SumType =
   | 'PRICE'
   | 'PROPERTY'
   | 'UNITS'
-  | 'SQFT'
+  | 'AREA'
   | 'CAPRATE'
   | 'PPU_PRICE'
   | 'PPU_UNITS'
-  | 'PPSF_PRICE'
-  | 'PPSF_SQFT';
+  | 'PPA_PRICE'
+  | 'PPA_SQFT';
+
+export const rentableAreaSumTypes: SumType[] = [
+  'AREA',
+  'PPA_SQFT',
+];
+
+export const fooooYOU = (st: SumType): boolean => {
+  switch (st) {
+    case "AREA":
+    case "PPA_SQFT":
+      return true
+    default:
+      return false;
+  }
+}

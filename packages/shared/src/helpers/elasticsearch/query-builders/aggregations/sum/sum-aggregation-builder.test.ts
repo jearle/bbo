@@ -103,7 +103,7 @@ describe('sum aggregation builder', () => {
       expect(result).toEqual(expected);
     });
 
-    it('create (sum) aggregation for SQFT, SQFT', () => {
+    it('create (sum) aggregation for AREA, SQFT', () => {
       const expected = {
         filteredSum: {
           filter: {
@@ -132,11 +132,11 @@ describe('sum aggregation builder', () => {
           },
         },
       }
-      const result = createAggs({ aggregationType: 'SQFT', rentableArea: 'SQFT' });
+      const result = createAggs({ aggregationType: 'AREA', rentableArea: 'SQFT' });
       expect(result).toEqual(expected);
     });
 
-    it('create (sum) aggregation for SQFT, SQMT', () => {
+    it('create (sum) aggregation for AREA, SQMT', () => {
       const expected = {
         filteredSum: {
           filter: {
@@ -168,7 +168,7 @@ describe('sum aggregation builder', () => {
           },
         },
       }
-      const result = createAggs({ aggregationType: 'SQFT', rentableArea: 'SQMT' });
+      const result = createAggs({ aggregationType: 'AREA', rentableArea: 'SQMT' });
       expect(result).toEqual(expected);
     });
 
@@ -285,7 +285,7 @@ describe('sum aggregation builder', () => {
       expect(result).toEqual(expected);
     });
 
-    it('creates calculated aggregation for ppsf', () => {
+    it('creates calculated aggregation for PPA, SQFT', () => {
       const filter = {
         bool: {
           must: [
@@ -347,11 +347,15 @@ describe('sum aggregation builder', () => {
         }
       }
 
-      const result = createCalculatedAverageAggs({aggregationType: 'PPSF', currency: 'USD', rentableArea: 'SQFT'});
+      const result = createCalculatedAverageAggs({
+        aggregationType: 'PPA',
+        currency: 'USD',
+        rentableArea: 'SQFT'
+      });
       expect(result).toEqual(expected);
     });
 
-    it('creates calculated aggregation for PPSF, SQMT', () => {
+    it('creates calculated aggregation for PPA, SQMT', () => {
       const filter = {
         bool: {
           must: [
@@ -416,7 +420,11 @@ describe('sum aggregation builder', () => {
         }
       }
 
-      const result = createCalculatedAverageAggs({aggregationType: 'PPSF', currency: 'USD', rentableArea: 'SQMT'});
+      const result = createCalculatedAverageAggs({
+        aggregationType: 'PPA',
+        currency: 'USD',
+        rentableArea: 'SQMT'
+      });
       expect(result).toEqual(expected);
     });
   });

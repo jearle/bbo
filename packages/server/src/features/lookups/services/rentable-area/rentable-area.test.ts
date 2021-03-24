@@ -1,13 +1,11 @@
-import {createRentableAreaService} from "./";
+import { rentableAreas } from "shared/dist/helpers/types/rentable-area";
+import { createRentableAreaService } from "./";
 
 describe(`rentableAreaService`, () => {
   test(`getRentableAreas`, () => {
     const rentableAreaService = createRentableAreaService();
-    const rentableAreas = rentableAreaService.getRentableAreas();
+    const result = rentableAreaService.getRentableAreas();
 
-    expect(rentableAreas).toBe([
-      'SQFT',
-      'SQMT'
-    ])
+    expect(result).toBe(rentableAreas)
   })
 });
