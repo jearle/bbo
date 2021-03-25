@@ -3,7 +3,8 @@ import {
   ElasticsearchClient,
 } from '../../../../providers/elasticsearch';
 import {
-  getElasticHits, getTrendsDataFromElasticResponse,
+  getElasticHits,
+  getTrendsDataFromElasticResponse,
 } from 'shared/dist/helpers/elasticsearch/response-builders';
 import {
   Geography,
@@ -41,8 +42,16 @@ const { TRANSACTIONS_INDEX } = process.env;
 const transactionsSearchService = ({
   elasticsearchClient,
 }: TransactionsSearchServiceInputs) => ({
-  async searchTransactions({ page = 0, limit = 10, permissionsFilter = null }: TransactionSearchInputs = {}) {
-    const esQuery = cleanTransactionsSearchQuery({ page, limit, permissionsFilter });
+  async searchTransactions({
+    page = 0,
+    limit = 10,
+    permissionsFilter = null,
+  }: TransactionSearchInputs = {}) {
+    const esQuery = cleanTransactionsSearchQuery({
+      page,
+      limit,
+      permissionsFilter,
+    });
     const result = await elasticsearchClient.search({
       index: TRANSACTIONS_INDEX,
       body: esQuery,
@@ -57,19 +66,28 @@ const transactionsSearchService = ({
     permissionsFilter,
     limit,
   }: TransactionSearchForTrendInputs = {}) {
-    const esQuery = createTrendSearchQuery({
-      geographyFilter,
-      propertyTypeFilter,
-      aggregation,
-      permissionsFilter,
-      limit,
-    });
+    let esQuery;
+    try {
+      esQuery = createTrendSearchQuery({
+        geographyFilter,
+        propertyTypeFilter,
+        aggregation,
+        permissionsFilter,
+        limit,
+      });
+    } catch (e) {
+      console.log(e);
+    }
+
     const result = await elasticsearchClient.search({
       index: TRANSACTIONS_INDEX,
       body: esQuery,
     });
     return {
-      data: getTrendsDataFromElasticResponse(result, aggregation.aggregationType),
+      data: getTrendsDataFromElasticResponse(
+        result,
+        aggregation.aggregationType
+      ),
       index: TRANSACTIONS_INDEX,
       request: esQuery,
       response: result.body,

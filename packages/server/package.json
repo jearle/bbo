@@ -32,7 +32,7 @@
     "prestart": "yarn shared:build && yarn run:dockercompose && yarn clean && tsc",
     "start": "concurrently -c \"blue.bold,cyan.bold,magenta.bold,green.bold\" -n lint,node,compile,test \"yarn lint:development\" \"yarn node:development\" \"yarn compile:development\" \"yarn test:development\"",
     "lint:development": "esw --color -w --ext .ts ./src",
-    "node:development": "nodemon -r dotenv/config dist/index",
+    "node:development": "nodemon --delay 5000ms -r dotenv/config dist/index",
     "compile:development": "tsc -w",
     "test:development": "jest --detectOpenHandles --setupFiles dotenv/config --coverage --watchAll",
     "build:production": "yarn shared:build && yarn clean && tsc -p .",

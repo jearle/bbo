@@ -3,7 +3,8 @@ import { Application } from 'express';
 import { body, validationResult } from 'express-validator';
 
 import { TransactionsSearchService } from '../../services/transactions-search';
-import { currencyValidator } from "../../middlewares/validation";
+import { currencyValidator } from '../../middlewares/validation';
+import { slugToId } from '../../../property-type/helpers/property-type-slugs';
 
 export const VERSION = `v0`;
 export const DESCRIPTION = `Transactions Search API`;
@@ -124,12 +125,30 @@ export const createApp = ({
     async (req, res) => {
       const validationErrors = validationResult(req);
       if (!validationErrors.isEmpty()) {
-        return res.status(400).json({ errors: validationErrors.array() })
+        return res.status(400).json({ errors: validationErrors.array() });
       }
 
-      const { geographyFilter, propertyTypeFilter, aggregation } = req.body;
+      const { propertyType } = req.body;
+
+      // TODO: Move filter code to helper
+      // determine proper implementation
+      // possibly move into searchTrends service and generate filter
+      // there
+      const { id, parentId } = slugToId(propertyType.slug);
+
+      const hasParent = parentId !== null;
+      const propertyTypeId = hasParent ? parentId : id;
+
+      const propertyTypeFilter = {
+        propertyTypeId,
+        allPropertySubTypes: parentId !== null,
+        propertySubTypeIds: parentId !== null ? [id] : [],
+      };
+
+      const { geographyFilter, aggregation } = req.body;
       const { debug } = req.query;
       const { permissionsFilter } = req;
+
       const {
         data,
         index,
@@ -141,6 +160,7 @@ export const createApp = ({
         aggregation,
         permissionsFilter,
       });
+
       if (debug === 'true') {
         res.json({ data, index, request, response });
       } else {
