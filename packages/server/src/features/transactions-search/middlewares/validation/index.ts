@@ -11,12 +11,12 @@ export const currencyValidator = ({ aggregationType, currency }: AggregationInpu
   switch(aggregationType?.toString().toUpperCase()) {
     case 'PRICE':
     case 'PPU':
-    case 'PPSF':
+    case 'PPA':
       if (!currency) {
         return Promise.reject(`Must supply currency for aggregation type: ${aggregationType}`);
       }
       if (!isValidCurrency(currency)) {
-        return Promise.reject(`Currency: ${currency} is not supported`)
+        return Promise.reject(`currency: ${currency} is not supported`)
       }
       return Promise.resolve(true);
     default:
@@ -26,13 +26,13 @@ export const currencyValidator = ({ aggregationType, currency }: AggregationInpu
 
 export const rentableAreaValidator = ({ aggregationType, rentableArea }: AggregationInput): Promise<boolean> => {
   switch(aggregationType?.toString().toUpperCase()) {
-    case 'SQFT':
-    case 'PPSF':
+    case 'AREA':
+    case 'PPA':
       if (!rentableArea) {
         return Promise.reject(`Must supply rentableArea for aggregation type: ${aggregationType}`);
       }
       if (!isValidRentableArea(rentableArea)) {
-        return Promise.reject(`Rentable Area: ${rentableArea} is not supported`)
+        return Promise.reject(`rentableArea: ${rentableArea} is not supported`)
       }
       return Promise.resolve(true);
     default:

@@ -7,7 +7,7 @@ const dataTypeService = () => ({
     return [
       `Price`,
       `# Properties`,
-      `Total Sqft`,
+      `Total Area`,
       `Total Units`,
       `PPU`,
       `CapRate`,

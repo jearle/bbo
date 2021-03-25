@@ -227,9 +227,10 @@ describe(`transactions app`, () => {
           Accept: 'application/json',
         },
       });
+
       expect(Array.isArray(data)).toBe(true);
-      expect(Number.isInteger(data[0].value)).toBe(true);
       expect(data[0]).toHaveProperty('date');
+      expect(data[0]).toHaveProperty('value');
       expect(data.length).toBeGreaterThanOrEqual(1);
     });
 
@@ -379,7 +380,7 @@ describe(`transactions app`, () => {
         },
       });
       const { errors } = await response.json();
-      expect(errors.map(err => err.msg)).toContain('Currency: ILS is not supported')
+      expect(errors.map(err => err.msg)).toContain('currency: ILS is not supported')
       expect(response.status).toBe(400);
     });
 
@@ -400,7 +401,7 @@ describe(`transactions app`, () => {
         },
       });
       const { errors } = await response.json();
-      expect(errors.map(err => err.msg)).toContain('Must supply currency for aggregation type: price')
+      expect(errors.map(err => err.msg)).toContain('Must supply rentableArea for aggregation type: AREA')
       expect(response.status).toBe(400);
     });
 
@@ -433,7 +434,7 @@ describe(`transactions app`, () => {
         body: JSON.stringify({
           geographyFilter: null,
           propertyTypeFilter: apartmentFilter,
-          aggregation: { aggregationType: 'AREA' },
+          aggregation: { aggregationType: 'AREA', rentableArea: 'SQFT' },
         }),
         headers: {
           'Content-Type': 'application/json',
@@ -451,7 +452,7 @@ describe(`transactions app`, () => {
         body: JSON.stringify({
           geographyFilter: atlantaFilter,
           propertyTypeFilter: null,
-          aggregation: { aggregationType: 'AREA' },
+          aggregation: { aggregationType: 'AREA', rentableArea: 'SQFT' },
         }),
         headers: {
           'Content-Type': 'application/json',

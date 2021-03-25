@@ -24,7 +24,7 @@ describe('validation middleware', () => {
     it(`should reject with an error message true for unsupported currency`, () => {
       expect(
         currencyValidator({ aggregationType: 'PRICE', currency: 'ILS' })
-      ).rejects.toEqual('Currency: ILS is not supported');
+      ).rejects.toEqual('currency: ILS is not supported');
     });
   });
 });
