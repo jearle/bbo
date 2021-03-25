@@ -1,3 +1,5 @@
+import { FlatGeographies, GeographyMenu } from '../../helpers/types';
+import { toGeographyMenu } from '../../helpers/menu';
 import { MSSQLProvider } from '../../../../providers/mssql';
 
 const DATABASE = `dbRCAAnalyticsData`;
@@ -7,13 +9,21 @@ type CreateGeographyServiceInput = {
   readonly mssqlProvider: MSSQLProvider;
 };
 
-const geographyService = ({ rcaAnalyticsDataConnection }) => ({
-  async fetchGeographies() {
-    const result = await rcaAnalyticsDataConnection
-      .request()
-      .execute(STORED_PROCEDURE);
+type DatabaseResult = {
+  readonly recordsets: [FlatGeographies];
+};
 
-    return result.recordsets[0];
+const geographyService = ({ rcaAnalyticsDataConnection }) => ({
+  async fetchGeographies(): Promise<GeographyMenu> {
+    const {
+      recordsets: [flatGeographies],
+    } = (await rcaAnalyticsDataConnection
+      .request()
+      .execute(STORED_PROCEDURE)) as DatabaseResult;
+
+    const geographyMenu = toGeographyMenu({ flatGeographies });
+
+    return geographyMenu;
   },
 
   async close() {
