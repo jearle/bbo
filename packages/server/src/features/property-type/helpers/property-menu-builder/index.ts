@@ -1,130 +1,66 @@
-import { idToSlug } from '../property-type-slugs';
-
 type PropertyType = {
-  readonly TrendtrackerData_PropertyTypes_id: number;
-  readonly box3Value: string;
-  readonly box3: string;
-  readonly display_fg: boolean;
-  readonly indent: number;
-  readonly propertyType_id: number;
-  readonly propertySubType_id: number;
-  readonly propertyFeature_id: number;
-  readonly PropertySubTypeCategory_id: number;
-  readonly definition: string;
-  readonly sortOrder: number;
-  readonly hotelRating_id: number;
-  readonly propertyType_tx: string;
-};
+  TrendtrackerData_PropertyTypes_id: number;
+  box3Value: string;
+  box3: string;
+  display_fg: boolean;
+  indent: number;
+  propertyType_id: number;
+  propertySubType_id: number;
+  propertyFeature_id: number;
+  PropertySubTypeCategory_id: number;
+  definition: string;
+  sortOrder: number;
+  hotelRating_id: number;
+  propertyType_tx: string;
+}
 
-type PropertyTypeOption = {
-  readonly propertyType: PropertyType;
-  readonly id: string;
-  readonly parentId: string | null;
-  readonly label: string;
-  readonly options: PropertyTypeOption[];
-  readonly slug: string;
-  readonly parentSlug: string | null;
-};
+type PropertyTypeParent = PropertyType & {
+  id: string;
+  value: string;
+  label: string;
+  options: PropertyType[];
+}
 
-const toPropertyTypeOptions = (
-  propertyTypes: PropertyType[],
-  idKey: `propertyType_id` | `propertySubType_id`
-): PropertyTypeOption[] => {
-  return propertyTypes.map((propertyType) => {
-    const { box3: label, [idKey]: rawId } = propertyType;
-
-    const parentId = null;
-    const parentSlug = null;
-
-    const id = `${rawId}`;
-    const slug = idToSlug(id);
-
-    return {
-      propertyType,
-      id,
-      parentId,
-      slug,
-      parentSlug,
-      label,
-      options: [],
-    };
-  });
-};
-
-const filterParentPropertyTypes = (
-  propertyTypes: PropertyType[]
-): PropertyType[] => {
-  return propertyTypes.filter(({ indent }) => indent === 0);
-};
-
-const filterSubPropertyTypes = (
-  propertyTypes: PropertyType[]
-): PropertyType[] => {
-  return propertyTypes.filter(
-    ({ propertyFeature_id, PropertySubTypeCategory_id, propertySubType_id }) =>
-      propertyFeature_id === null &&
-      PropertySubTypeCategory_id === null &&
-      propertySubType_id !== null
-  );
-};
-
-const filterSubPropertyTypeOptionsByParentId = (
-  parentId: string,
-  subPropertyTypes: PropertyTypeOption[]
-): PropertyTypeOption[] => {
-  return subPropertyTypes
-    .filter((subPropertyType) => {
-      const { propertyType_id: subParentId } = subPropertyType.propertyType;
-
-      return parseInt(parentId) === subParentId;
-    })
-    .map((subPropertyType) => ({
-      ...subPropertyType,
-      parentId,
-      parentSlug: idToSlug(parentId),
-      slug: idToSlug(`${parentId}-${subPropertyType.id}`),
-    }));
-};
-
-const createParentSubRelationship = (
-  parentPropertyTypes: PropertyTypeOption[],
-  subPropertyTypes: PropertyTypeOption[]
-): PropertyTypeOption[] => {
-  return parentPropertyTypes.map((parentPropertyType) => {
-    const { id } = parentPropertyType;
-    const options = filterSubPropertyTypeOptionsByParentId(
-      id,
-      subPropertyTypes
-    );
-
-    return {
-      ...parentPropertyType,
-      options,
-    };
-  });
-};
-
-export type PropertyTypeMenu = PropertyTypeOption[];
+export type PropertyTypeMenu = PropertyTypeParent[];
 
 export const createPropertyTypeMenu = (
-  propertyTypes: PropertyType[]
+  flatPropertyArray: PropertyType[]
 ): PropertyTypeMenu => {
-  const parentPropertyTypes = filterParentPropertyTypes(propertyTypes);
-  const parentPropertyTypeOptions = toPropertyTypeOptions(
-    parentPropertyTypes,
-    `propertyType_id`
+  let propertyTypeParents: PropertyTypeParent[] = flatPropertyArray
+    .filter((item) => item.indent === 0)
+    .map((item) => ({
+      ...item,
+      label: item.box3,
+      id: `${item.propertyType_id}`,
+      value: `${item.propertyType_id}`,
+      options: [],
+    }));
+  const propertyOnlySubTypes = flatPropertyArray.filter(
+    (item) =>
+      item.propertyFeature_id === null &&
+      item.PropertySubTypeCategory_id === null &&
+      item.propertyFeature_id === null &&
+      item.propertySubType_id !== null
   );
-
-  const subPropertyTypes = filterSubPropertyTypes(propertyTypes);
-  const subPropertyTypeOptions = toPropertyTypeOptions(
-    subPropertyTypes,
-    `propertySubType_id`
-  );
-
-  const propertyTypeOptions = createParentSubRelationship(
-    parentPropertyTypeOptions,
-    subPropertyTypeOptions
-  );
-
-  return propertyTypeOptions;
+  propertyOnlySubTypes.forEach((item) => {
+    propertyTypeParents = propertyTypeParents.map((parentItem, i) => {
+      if (parentItem.propertyType_id === item.propertyType_id) {
+        const parentWithChild = {
+          ...parentItem,
+          options: [
+            ...parentItem.options,
+            {
+              ...item,
+              label: item.box3,
+              id: `${item.propertyType_id}-${item.propertySubType_id}`,
+              value: `${item.propertySubType_id}`,
+            },
+          ],
+        };
+        return parentWithChild;
+      }
+      return parentItem;
+    });
+  });
+  return propertyTypeParents;
 };

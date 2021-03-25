@@ -7,9 +7,10 @@ import {
 
 describe('propertyTypeMenuBuilder', () => {
   test('propertyTypeMenuBuilder build a menu from raw propertyType data', () => {
-    const propertyTypeMenu = createPropertyTypeMenu(rawPropertyTypes);
-
-    expect(propertyTypeMenu[0]).toStrictEqual(propertyTypeWithNoChildren);
-    expect(propertyTypeMenu[2]).toStrictEqual(propertyTypeWithChildren);
+    const createPropertyMenuResult = createPropertyTypeMenu(rawPropertyTypes);
+    expect(createPropertyMenuResult[0]).toStrictEqual(
+      propertyTypeWithNoChildren
+    );
+    expect(createPropertyMenuResult[2]).toStrictEqual(propertyTypeWithChildren);
   });
 });
