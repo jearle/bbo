@@ -38,6 +38,6 @@ describe('geography app', () => {
     url = `http://localhost:${server.address().port}`;
     const result = await fetch(`${url}/geography`);
     const data = await result.json();
-    expect(data).not.toBeUndefined();
+    expect(Array.isArray(data)).toBe(true);
   });
 });

@@ -17,7 +17,6 @@ describe('GeographyService', () => {
 
   test('fetchGeographies', async () => {
     const result = await geographyService.fetchGeographies();
-
     expect(result).not.toBeUndefined();
   });
 });

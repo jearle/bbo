@@ -35,9 +35,8 @@ export const createApp = ({
    *         description: GeographyResponse
    */
   app.get(`/geography`, async (req, res) => {
-    const data = await geographyService.fetchGeographies();
-
-    res.json({ data });
+    const result = await geographyService.fetchGeographies();
+    res.json(result);
   });
 
   return app;
