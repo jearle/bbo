@@ -1,4 +1,5 @@
-import {createAggs, createCalculatedAverageAggs} from './sum-aggregation-builder';
+import { createAggs, createCalculatedAverageAggs } from './sum-aggregation-builder';
+import { sqFtToSqMt } from "../../../../types/rentable-area";
 
 describe('sum aggregation builder', () => {
   describe ('createAggs()', () => {
@@ -161,7 +162,7 @@ describe('sum aggregation builder', () => {
               sum: {
                 field: 'sqFt_dbl',
                 script: {
-                  source: '_value * 0.092903'
+                  source: `_value * ${sqFtToSqMt}`
                 }
               },
             },
