@@ -1,7 +1,7 @@
 import { BASE_PATH, createApp, DESCRIPTION } from './apps/lookups';
 import { createCurrencyService, CurrencyService } from './services/currency';
 import { createDataTypeService, DataTypeService } from './services/data-type';
-import {createRentableAreaService, RentableAreaService} from "./services/rentable-area";
+import { createRentableAreaService, RentableAreaService } from "./services/rentable-area";
 
 type LookupsFeatureInputs = {
   readonly currencyService: CurrencyService;

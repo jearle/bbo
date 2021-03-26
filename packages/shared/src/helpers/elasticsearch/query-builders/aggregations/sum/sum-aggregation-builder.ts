@@ -1,7 +1,7 @@
 import { Aggregation, AggregationType } from '../../../../types';
 import { SumType, rentableAreaSumTypes } from './index';
 import { Currency, isValidCurrency } from '../../../../types/currency';
-import { RentableArea } from '../../../../types/rentable-area';
+import { RentableArea, sqFtToSqMt } from '../../../../types/rentable-area';
 
 const currencyMapper = (currency: Currency): string => {
   if (currency.toUpperCase() === 'LOC') {
@@ -166,7 +166,7 @@ const generateMetricAggregation = (
     agg = {
       field,
       script: {
-        source: `_value * 0.092903`,
+        source: `_value * ${sqFtToSqMt}`,
       },
     };
   } else {

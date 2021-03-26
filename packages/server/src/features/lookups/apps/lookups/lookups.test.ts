@@ -3,7 +3,7 @@ import { fetchJSONOnRandomPort } from 'shared/dist/helpers/express/listen-fetch'
 import { createApp } from './';
 import { createCurrencyService } from '../../services/currency';
 import { createDataTypeService } from '../../services/data-type';
-import {createRentableAreaService} from "../../services/rentable-area";
+import { createRentableAreaService } from '../../services/rentable-area';
 
 describe('lookups app', () => {
   let app = null;
