@@ -23,6 +23,10 @@ export const createApp = ({
    *
    * /healthcheck:
    *   get:
+   *     tags: 
+   *      - Transactions Search
+   *     servers:
+   *      - url: /api/transactions-search/v0
    *     description: Gets health of app
    *     produces:
    *       - application/json
@@ -39,6 +43,10 @@ export const createApp = ({
    *
    * /transactions:
    *   get:
+   *     tags: 
+   *      - Transactions Search
+   *     servers:
+   *      - url: /api/transactions-search/v0
    *     description: Search property transactions
    *     produces:
    *       - application/json
@@ -69,6 +77,10 @@ export const createApp = ({
    *
    * /trends:
    *   post:
+   *     tags: 
+   *      - Transactions Search
+   *     servers:
+   *      - url: /api/transactions-search/v0
    *     description: Search property transactions to return trends aggregates
    *     produces:
    *       - application/json

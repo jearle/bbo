@@ -18,6 +18,10 @@ export const createApp = ({ authenticationService }: Options): Application => {
    *
    * /healthcheck:
    *   get:
+   *     tags: 
+   *      - Authentication
+   *     servers:
+   *      - url: /api/authentication/v0
    *     description: Gets health of app
    *     produces:
    *       - application/json
@@ -34,6 +38,10 @@ export const createApp = ({ authenticationService }: Options): Application => {
    *
    * /login:
    *   post:
+   *     tags: 
+   *      - Authentication
+   *     servers: 
+   *      - url: /api/authentication/v0
    *     summary: Retrieves access token
    *     requestBody:
    *       content:
@@ -91,6 +99,10 @@ export const createApp = ({ authenticationService }: Options): Application => {
    *
    * /logout:
    *   post:
+   *     tags: 
+   *      - Authentication
+   *     servers:
+   *      - url: /api/authentication/v0
    *     summary: Log out the user
    *     responses:
    *       200:
