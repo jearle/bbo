@@ -1,5 +1,5 @@
 import * as express from 'express';
-import { createApp } from './apps/documentation';
+import { BASE_PATH, createApp } from './apps/documentation';
 
 const documentationConfigurations: Array<string> = [
   `authentication`,
@@ -18,11 +18,13 @@ const createApiPath = ({ feature }: CreateApiPathInput): string => {
 };
 
 const documentationFeature = () => ({
+  documentationBasePath: BASE_PATH,
+
   documentationApp() {
     const app = express();
 
     app.use(
-      '/documentation/v0',
+      '/',
       createApp({
         title: `Product API title`,
         description: `Product API description`,
