@@ -32,8 +32,9 @@ export const createApp = ({
    *         description: PropertyTypeMenuResponse
    */
   app.get(`/property-type`, async (req, res) => {
-    const result = await propertyTypeService.fetchPropertyTypesMenu();
-    res.json(result);
+    const data = await propertyTypeService.fetchPropertyTypesMenu();
+
+    res.json({ data });
   });
 
   return app;
