@@ -1,8 +1,6 @@
-import {rentableAreas} from "shared/dist/helpers/types/rentable-area";
-
 const rentableAreaService = () => ({
   getRentableAreas: () => {
-    return rentableAreas;
+    return ['SQFT', 'SQMT'];
   }
 });
 export type RentableAreaService = ReturnType<typeof rentableAreaService>;

@@ -1,7 +1,9 @@
 import { Aggregation, AggregationType } from '../../../../types';
 import { SumType, rentableAreaSumTypes } from './index';
 import { Currency, isValidCurrency } from '../../../../types/currency';
-import { RentableArea, sqFtToSqMt } from '../../../../types/rentable-area';
+import { RentableArea } from '../../../../types/rentable-area';
+
+const sqFtToSqMt = 0.092903;
 
 const currencyMapper = (currency: Currency): string => {
   if (currency.toUpperCase() === 'LOC') {
