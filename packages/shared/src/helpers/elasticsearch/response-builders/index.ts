@@ -30,7 +30,7 @@ const getDataFromElasticBucket = (
   minObservability: number = 0) => {
   return response.body.aggregations[bucketKey]?.buckets.map(
     (bucket) => {
-      const dateStringYYYYMMDD = bucket.from_as_string.substring(0,10);
+      const dateStringYYYYMMDD = bucket.to_as_string.substring(0,10);
       return {
         date: dateStringYYYYMMDD,
         value: bucketValueGetter(bucket, minObservability)
