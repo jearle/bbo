@@ -23,6 +23,10 @@ export const createApp = ({
    *
    * /currency:
    *  get:
+   *    tags: 
+   *      - Lookups
+   *    servers:
+   *      - url: /api/lookups/v0
    *    description: Gets currency lookup values
    *    produces:
    *      - application/json
@@ -40,6 +44,10 @@ export const createApp = ({
    *
    * /data-type:
    *  get:
+   *    tags: 
+   *      - Lookups
+   *    servers:
+   *      - url: /api/lookups/v0
    *    description: Gets data type lookup values
    *    produces:
    *      - application/json
