@@ -40,8 +40,8 @@ export const slugToId = (slug: string): SlugToIDResult => {
   const [parentId, subId] = SLUG_TO_ID[slug].split(`-`);
 
   return {
-    id: subId ? subId : parentId,
-    parentId: subId ? parentId : null,
+    id: parseInt(subId ? subId : parentId),
+    parentId: subId ? parseInt(parentId) : null,
   };
 };
 export const idToSlug = (id: string): string => ID_TO_SLUG[id];
