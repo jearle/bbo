@@ -31,7 +31,7 @@ export const fetchResponseOnRandomPort = async (
     { method, headers, body }
   );
 
-  server.close();
+  await server.close();
 
   return response;
 };

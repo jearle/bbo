@@ -71,10 +71,6 @@ describe(`transactions app`, () => {
     transactionsSearchApp = createApp({ transactionsSearchService });
   });
 
-  afterEach(() => {
-    server.close();
-  });
-
   afterAll(async () => {
     await permissionsService.close();
   });
