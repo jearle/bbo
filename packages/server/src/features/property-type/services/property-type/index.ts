@@ -1,71 +1,71 @@
+import { PropertyType } from '../../types';
+import { toPropertyTypes } from '../../helpers/to-property-types';
 import { MSSQLProvider } from '../../../../providers/mssql';
-import {
-  createPropertyTypeMenu,
-  PropertyTypeMenu,
-} from '../../helpers/property-menu-builder';
 
-const DATABASE = `dbRCAAnalyticsData`;
-const STORED_PROCEDURE = `[${DATABASE}].[dbo].[ReturnTrendtrackerData_PropertyTypes]`;
+const DATABASE = `dbRCAWeb`;
+const STORED_PROCEDURE = `[${DATABASE}].[dbo].[ReturnPropertyTypeMenu_PTS]`;
+const CACHED_PROPERTY_TYPES_KEY = `cachedPropertyTypesKey`;
 
 type CreatePropertyTypeServiceInput = {
   readonly mssqlProvider: MSSQLProvider;
   readonly redisProvider;
 };
 
-type UpdateCacheWithPropertyTypeMenu = {
+type SetCachedPropertyTypesInput = {
   readonly redisProvider;
-  propertyTypeMenu: PropertyTypeMenu;
+  readonly propertyTypes: PropertyType[];
 };
 
-type CheckCacheForPropertyTypeMenu = {
+type GetCachedPropertyTypesInput = {
   readonly redisProvider;
 };
 
-const propertyTypeMenuCacheKey = 'propertyTypeMenu';
-
-const checkCacheForPropertyTypeMenu = async ({
-  redisProvider,
-}: CheckCacheForPropertyTypeMenu) => {
-  const cachedPropertyTypeMenu = await redisProvider.get(
-    propertyTypeMenuCacheKey
-  );
-  if (cachedPropertyTypeMenu) return JSON.parse(cachedPropertyTypeMenu);
-
-  return null;
+type GetCachedPropertyTypesResult = {
+  readonly cachedPropertyTypes: PropertyType[] | null;
 };
 
-
-const updateCacheWithPropertyTypeMenu = async ({
+const getCachedPropertyTypes = async ({
   redisProvider,
-  propertyTypeMenu,
-}: UpdateCacheWithPropertyTypeMenu) => {
-  await redisProvider.set(
-    propertyTypeMenuCacheKey,
-    JSON.stringify(propertyTypeMenu)
-  );
+}: GetCachedPropertyTypesInput): Promise<GetCachedPropertyTypesResult> => {
+  const cachedPropertyTypes =
+    (await redisProvider.get(CACHED_PROPERTY_TYPES_KEY)) || null;
+
+  return { cachedPropertyTypes };
+};
+
+const setCachedPropertyTypes = async ({
+  redisProvider,
+  propertyTypes,
+}: SetCachedPropertyTypesInput): Promise<void> => {
+  const propertyTypesString = JSON.stringify(propertyTypes);
+
+  await redisProvider.set(CACHED_PROPERTY_TYPES_KEY, propertyTypesString);
 };
 
 const propertyTypeService = ({
   rcaAnalyticsDataConnection,
   redisProvider,
 }) => ({
-  async fetchPropertyTypesMenu() {
-    const cachedPropertyTypeMenu = await checkCacheForPropertyTypeMenu({
+  async fetchPropertyTypes() {
+    const { cachedPropertyTypes } = await getCachedPropertyTypes({
       redisProvider,
     });
 
-    if (cachedPropertyTypeMenu) return cachedPropertyTypeMenu;
+    if (cachedPropertyTypes !== null) return cachedPropertyTypes;
 
-    const result = await rcaAnalyticsDataConnection
-      .request()
-      .execute(STORED_PROCEDURE);
-    const propertyTypeMenu = createPropertyTypeMenu(result.recordsets[0]);
-    await updateCacheWithPropertyTypeMenu({ redisProvider, propertyTypeMenu });
-    return propertyTypeMenu;
+    const {
+      recordsets: [rawPropertyTypes],
+    } = await rcaAnalyticsDataConnection.request().execute(STORED_PROCEDURE);
+
+    const propertyTypes = toPropertyTypes({ rawPropertyTypes });
+
+    await setCachedPropertyTypes({ redisProvider, propertyTypes });
+
+    return propertyTypes;
   },
 
-  async clearCachedPropertyTypeMenu() {
-    await redisProvider.del(propertyTypeMenuCacheKey);
+  async clearCachedPropertyTypes() {
+    await redisProvider.del(CACHED_PROPERTY_TYPES_KEY);
   },
 
   async close() {

@@ -3,7 +3,7 @@ import { Application } from 'express';
 import { body, validationResult } from 'express-validator';
 
 import { TransactionsSearchService } from '../../services/transactions-search';
-import { currencyValidator } from '../../middlewares/validation';
+import { currencyValidator } from '../../validators/currency';
 import { slugToId } from '../../../property-type/helpers/property-type-slugs';
 
 export const VERSION = `v0`;
@@ -24,7 +24,7 @@ export const createApp = ({
    *
    * /healthcheck:
    *   get:
-   *     tags: 
+   *     tags:
    *      - Transactions Search
    *     servers:
    *      - url: /api/transactions-search/v0
@@ -44,7 +44,7 @@ export const createApp = ({
    *
    * /transactions:
    *   get:
-   *     tags: 
+   *     tags:
    *      - Transactions Search
    *     servers:
    *      - url: /api/transactions-search/v0
@@ -78,7 +78,7 @@ export const createApp = ({
    *
    * /trends:
    *   post:
-   *     tags: 
+   *     tags:
    *      - Transactions Search
    *     servers:
    *      - url: /api/transactions-search/v0
@@ -134,8 +134,11 @@ export const createApp = ({
   app.post(
     `/trends`,
     body('aggregation').custom(currencyValidator),
+    body(`geographyFilter`).exists({ checkNull: true }),
+    body(`propertyType`).exists({ checkNull: true }),
     async (req, res) => {
       const validationErrors = validationResult(req);
+
       if (!validationErrors.isEmpty()) {
         return res.status(400).json({ errors: validationErrors.array() });
       }
@@ -161,22 +164,27 @@ export const createApp = ({
       const { debug } = req.query;
       const { permissionsFilter } = req;
 
-      const {
-        data,
-        index,
-        request,
-        response,
-      } = await transactionsSearchService.searchTrends({
-        geographyFilter,
-        propertyTypeFilter,
-        aggregation,
-        permissionsFilter,
-      });
+      let trends = null;
 
-      if (debug === 'true') {
-        res.json({ data, index, request, response });
-      } else {
-        res.json({ data });
+      try {
+        trends = await transactionsSearchService.searchTrends({
+          geographyFilter,
+          propertyTypeFilter,
+          aggregation,
+          permissionsFilter,
+        });
+
+        const { data } = trends;
+        const json = debug === `true` ? trends : { data };
+
+        res.json(json);
+      } catch (error) {
+        const { message } = error;
+
+        res.status(500).json({
+          error: message,
+          data: {},
+        });
       }
     }
   );

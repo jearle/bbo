@@ -83,6 +83,7 @@ const transactionsSearchService = ({
       index: TRANSACTIONS_INDEX,
       body: esQuery,
     });
+
     return {
       data: getTrendsDataFromElasticResponse(
         result,

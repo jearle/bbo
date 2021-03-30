@@ -106,25 +106,50 @@ const createParentSubRelationship = (
 
 export type PropertyTypeMenu = PropertyTypeOption[];
 
+// export const createPropertyTypeMenu = (
+//   propertyTypes: PropertyType[]
+// ): PropertyTypeMenu => {
+//   const parentPropertyTypes = filterParentPropertyTypes(propertyTypes);
+//   const parentPropertyTypeOptions = toPropertyTypeOptions(
+//     parentPropertyTypes,
+//     `propertyType_id`
+//   );
+
+//   const subPropertyTypes = filterSubPropertyTypes(propertyTypes);
+//   const subPropertyTypeOptions = toPropertyTypeOptions(
+//     subPropertyTypes,
+//     `propertySubType_id`
+//   );
+
+//   const propertyTypeOptions = createParentSubRelationship(
+//     parentPropertyTypeOptions,
+//     subPropertyTypeOptions
+//   );
+
+//   return propertyTypeOptions;
+// };
+
 export const createPropertyTypeMenu = (
   propertyTypes: PropertyType[]
 ): PropertyTypeMenu => {
-  const parentPropertyTypes = filterParentPropertyTypes(propertyTypes);
-  const parentPropertyTypeOptions = toPropertyTypeOptions(
-    parentPropertyTypes,
-    `propertyType_id`
-  );
+  // const parentPropertyTypes = filterParentPropertyTypes(propertyTypes);
+  // const parentPropertyTypeOptions = toPropertyTypeOptions(
+  //   parentPropertyTypes,
+  //   `propertyType_id`
+  // );
 
-  const subPropertyTypes = filterSubPropertyTypes(propertyTypes);
-  const subPropertyTypeOptions = toPropertyTypeOptions(
-    subPropertyTypes,
-    `propertySubType_id`
-  );
+  // const subPropertyTypes = filterSubPropertyTypes(propertyTypes);
+  // const subPropertyTypeOptions = toPropertyTypeOptions(
+  //   subPropertyTypes,
+  //   `propertySubType_id`
+  // );
 
-  const propertyTypeOptions = createParentSubRelationship(
-    parentPropertyTypeOptions,
-    subPropertyTypeOptions
-  );
+  // const propertyTypeOptions = createParentSubRelationship(
+  //   parentPropertyTypeOptions,
+  //   subPropertyTypeOptions
+  // );
 
-  return propertyTypeOptions;
+  // return propertyTypeOptions;
+  console.log(propertyTypes);
+  return [];
 };
