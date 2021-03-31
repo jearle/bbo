@@ -20,6 +20,10 @@ export const createApp = ({
    *
    * /property-type:
    *   get:
+   *     tags: 
+   *      - Property Type
+   *     servers:
+   *      - url: /api/property-type/v0
    *     summary: Get list of property types
    *     produces:
    *       - application/json

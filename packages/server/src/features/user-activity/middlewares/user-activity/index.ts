@@ -22,7 +22,11 @@ const afterSendIdentity = ({
   oldBody,
   userActivityService,
 }: AfterSendIdentityInputs): void => {
-  const token = decode(JSON.parse(oldBody).accessToken) || {
+  const {
+    data: { accessToken },
+  } = JSON.parse(oldBody);
+
+  const token = decode(accessToken) || {
     sub: `unknown`,
     username: `unknown`,
   };

@@ -17,7 +17,7 @@ import {
   fetchJSONOnRandomPort,
   fetchResponseOnRandomPort,
 } from 'shared/dist/helpers/express/listen-fetch';
-import {currencies, Currency} from "shared/dist/helpers/types/currency";
+import { currencies, Currency } from 'shared/dist/helpers/types/currency';
 
 const {
   MSSQL_URI,
@@ -25,6 +25,7 @@ const {
   ELASTICSEARCH_NODE,
   ELASTICSEARCH_USERNAME,
   ELASTICSEARCH_PASSWORD,
+  TRANSACTIONS_INDEX,
 } = process.env;
 
 describe(`transactions app`, () => {
@@ -68,10 +69,6 @@ describe(`transactions app`, () => {
       next();
     });
     transactionsSearchApp = createApp({ transactionsSearchService });
-  });
-
-  afterEach(() => {
-    server.close();
   });
 
   afterAll(async () => {
@@ -155,7 +152,7 @@ describe(`transactions app`, () => {
           expect(data[0]).toHaveProperty('date');
           expect(data.length).toBeGreaterThanOrEqual(1);
         });
-      })
+      });
     });
 
     it(`searches trends with a units aggregation filter, ATL, apt, qtr, qtr totals, TT match`, async () => {
@@ -359,7 +356,9 @@ describe(`transactions app`, () => {
         },
       });
       const { errors } = await response.json();
-      expect(errors.map(err => err.msg)).toContain('Must supply currency for aggregation type: price')
+      expect(errors.map((err) => err.msg)).toContain(
+        'Must supply currency for aggregation type: price'
+      );
       expect(response.status).toBe(400);
     });
 
@@ -486,7 +485,7 @@ describe(`transactions app`, () => {
       expect(data[0]).toHaveProperty('value');
       expect(data[0]).toHaveProperty('date');
       expect(data.length).toBeGreaterThanOrEqual(1);
-      expect(index).toEqual(expect.stringContaining('multi_pst'));
+      expect(index).toEqual(TRANSACTIONS_INDEX);
       expect(request).toHaveProperty('query');
       expect(response).toHaveProperty('hits');
     });

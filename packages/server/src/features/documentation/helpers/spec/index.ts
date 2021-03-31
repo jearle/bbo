@@ -4,8 +4,7 @@ type CreateSpecInputs = {
   readonly title: string;
   readonly description: string;
   readonly version: string;
-  readonly basePath: string;
-  readonly apiPath: string;
+  readonly apiPaths: string[];
 };
 
 type CreateSpecResult = unknown & {
@@ -16,20 +15,11 @@ export const createSpec = ({
   title,
   description,
   version,
-  basePath,
-  apiPath,
+  apiPaths,
 }: CreateSpecInputs): CreateSpecResult => {
   return swaggerJSDoc({
     definition: {
       openapi: `3.0.0`,
-      servers: [
-        {
-          url: `{basePath}`,
-          variables: {
-            basePath: { default: basePath },
-          },
-        },
-      ],
       info: {
         title,
         description: description,
@@ -51,6 +41,6 @@ export const createSpec = ({
         },
       ],
     },
-    apis: [apiPath],
+    apis: [...apiPaths],
   });
 };

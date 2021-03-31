@@ -1,50 +1,12 @@
 import * as express from 'express';
-import { createApp } from './apps/documentation';
+import { BASE_PATH, createApp } from './apps/documentation';
 
-import * as AuthenticationApp from '../authentication/apps/authentication';
-import * as GeographyApp from '../geography/apps/geography';
-import * as PropertyTypeApp from '../property-type/apps/property-type';
-import * as TransactionsSearchApp from '../transactions-search/apps/transactions-search';
-import * as LookupsApp from '../lookups/apps/lookups';
-
-type FeatureApp = {
-  readonly DESCRIPTION: string;
-  readonly BASE_PATH: string;
-  readonly VERSION: string;
-};
-
-type DocumentationConfiguration = {
-  readonly title: string;
-  readonly feature: string;
-  readonly featureApp: FeatureApp;
-};
-
-const documentationConfigurations: Array<DocumentationConfiguration> = [
-  {
-    title: `Authentication API`,
-    feature: `authentication`,
-    featureApp: AuthenticationApp,
-  },
-  {
-    title: `Geography API`,
-    feature: `geography`,
-    featureApp: GeographyApp,
-  },
-  {
-    title: `Property Type API`,
-    feature: `property-type`,
-    featureApp: PropertyTypeApp,
-  },
-  {
-    title: `Transactions Search API`,
-    feature: `transactions-search`,
-    featureApp: TransactionsSearchApp,
-  },
-  {
-    title: `Lookups API`,
-    feature: `lookups`,
-    featureApp: LookupsApp
-  },
+const documentationConfigurations: Array<string> = [
+  `authentication`,
+  `geography`,
+  `property-type`,
+  `transactions-search`,
+  `lookups`,
 ];
 
 type CreateApiPathInput = {
@@ -56,21 +18,22 @@ const createApiPath = ({ feature }: CreateApiPathInput): string => {
 };
 
 const documentationFeature = () => ({
+  documentationBasePath: BASE_PATH,
+
   documentationApp() {
     const app = express();
 
-    documentationConfigurations.forEach(({ title, feature, featureApp }) => {
-      app.use(
-        `/documentation/${feature}`,
-        createApp({
-          title,
-          description: featureApp.DESCRIPTION,
-          basePath: featureApp.BASE_PATH,
-          version: featureApp.VERSION,
-          apiPath: createApiPath({ feature }),
-        })
-      );
-    });
+    app.use(
+      '/',
+      createApp({
+        title: `Product API title`,
+        description: `Product API description`,
+        version: 'v0',
+        apiPaths: documentationConfigurations.map((feature) =>
+          createApiPath({ feature })
+        ),
+      })
+    );
 
     return app;
   },

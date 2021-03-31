@@ -20,6 +20,10 @@ export const createApp = ({
    *
    * /geography:
    *   get:
+   *     tags: 
+   *      - Geography
+   *     servers: 
+   *      - url: /api/geography/v0
    *     summary: Get list of geographies
    *     produces:
    *       - application/json
