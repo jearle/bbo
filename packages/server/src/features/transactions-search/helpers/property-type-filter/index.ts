@@ -49,12 +49,19 @@ const createAllPropertyTypeFilter = async ({
   return filter;
 };
 
+type CreateSubPropertyTypeFilterInput = {
+  readonly propertyTypeService: PropertyTypeService;
+  readonly slugs: string[];
+};
+
 export const createSubPropertyTypeFilter = async ({
   propertyTypeService,
   slugs,
-}): Promise<Filter> => {
+}: CreateSubPropertyTypeFilterInput): Promise<Filter> => {
   const filter = await slugs.reduce(
-    async (acc, nextSlug) => {
+    async (accPromise, nextSlug) => {
+      const acc = await accPromise;
+
       const parentSlug = await propertyTypeService.slugForParentSlug({
         slug: nextSlug,
       });
@@ -77,11 +84,11 @@ export const createSubPropertyTypeFilter = async ({
         propertySubTypeIds: [...acc.propertySubTypeIds, childId],
       };
     },
-    {
+    Promise.resolve({
       propertyTypeId: null,
       allPropertySubTypes: false,
       propertySubTypeIds: [],
-    }
+    })
   );
 
   return filter;
@@ -94,13 +101,13 @@ export const createPropertyTypeFilter = async ({
   const slug = propertyTypes[0];
 
   const parentSlug = await propertyTypeService.slugForParentSlug({
-    slug: propertyTypes[0],
+    slug,
   });
 
   if (!parentSlug) {
     return await createAllPropertyTypeFilter({
       propertyTypeService,
-      slug: propertyTypes[0],
+      slug,
     });
   }
 

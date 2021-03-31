@@ -34,17 +34,6 @@ describe(`transactionsSearchService`, () => {
     type: 6,
     name: 'Atlanta',
   };
-  const austinFilter = {
-    id: 23,
-    type: 6,
-    name: 'Austin',
-  };
-
-  // const officeFilter = {
-  //   propertyTypeId: 96,
-  //   allPropertySubTypes: true,
-  //   propertySubTypeIds: [102, 107],
-  // };
 
   beforeAll(async () => {
     const redisProvider = await createRedisProvider({ uri: REDIS_URI });
@@ -74,6 +63,7 @@ describe(`transactionsSearchService`, () => {
 
       expect(result).toHaveLength(10);
     });
+
     test(`searchTransactions with permissions`, async () => {
       const result = await transactionsSearchService.searchTransactions({
         permissionsFilter,
@@ -91,51 +81,17 @@ describe(`transactionsSearchService`, () => {
         aggregation: { aggregationType: 'PRICE', currency: 'USD' },
       });
 
-      console.log(data.length);
-
       expect(data.length).toBeGreaterThan(0);
     });
 
-    test(`bar`, async () => {
+    test(`receives results with sub property type set`, async () => {
       const { data } = await transactionsSearchService.searchTrends({
         geographyFilter: atlantaFilter,
         propertyTypes: [`office-cbd-102`],
         aggregation: { aggregationType: 'PRICE', currency: 'USD' },
       });
 
-      console.log(data.length);
-
       expect(data.length).toBeGreaterThan(0);
     });
   });
-
-  // describe(`searchTrends`, () => {
-  //   test(`searchTrends returns results`, async () => {
-  //     const results = await transactionsSearchService.searchTrends({
-  //       geographyFilter: atlantaFilter,
-  //       propertyTypeFilter: officeFilter,
-  //       aggregation: { aggregationType: 'PRICE', currency: 'USD' },
-  //     });
-  //     expect(results.data.length).toBeGreaterThan(0);
-  //   });
-  //   test(`searchTrends returns results with permissions`, async () => {
-  //     const results = await transactionsSearchService.searchTrends({
-  //       geographyFilter: atlantaFilter,
-  //       propertyTypeFilter: officeFilter,
-  //       permissionsFilter: permissionsFilter,
-  //       aggregation: { aggregationType: 'PRICE', currency: 'USD' },
-  //     });
-  //     expect(results.data.length).toBeGreaterThan(0);
-  //   });
-
-  //   test(`searchTrends returns no results without correct permissions`, async () => {
-  //     const results = await transactionsSearchService.searchTrends({
-  //       geographyFilter: austinFilter,
-  //       propertyTypeFilter: officeFilter,
-  //       permissionsFilter: permissionsFilter,
-  //       aggregation: { aggregationType: 'PRICE', currency: 'USD' },
-  //     });
-  //     expect(results.data.length).toBe(0);
-  //   });
-  // });
 });

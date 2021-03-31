@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { UserActivityService } from '../../services/user-activity';
 import { decode } from 'jsonwebtoken';
 import * as interceptor from 'express-interceptor';
+import { UserActivityService } from '../../services/user-activity';
 
 type UserMiddlewareInputs = {
   userActivityService: UserActivityService;

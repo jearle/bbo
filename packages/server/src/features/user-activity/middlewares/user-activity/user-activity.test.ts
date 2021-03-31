@@ -32,6 +32,7 @@ import { createRedisProvider } from '../../../../providers/redis';
 import { createRCAWebAccountsService } from '../../../permissions/services/rca-web-accounts';
 import { createPermissionsService } from '../../../permissions/services/permissions';
 import { permissionsMiddleware as createPermissionsMiddleware } from '../../../permissions/middlewares/permissions';
+import { createPropertyTypeService } from '../../../property-type/services/property-type';
 
 const {
   SEGMENT_ACCESS_KEY,
@@ -146,7 +147,13 @@ describe(`SegmentProvider`, () => {
       permissionsService,
     });
 
+    const propertyTypeService = await createPropertyTypeService({
+      mssqlProvider,
+      redisProvider,
+    });
+
     const transactionsSearchService = createTransactionsSearchService({
+      propertyTypeService,
       elasticsearchProvider,
     });
 

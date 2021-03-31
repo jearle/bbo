@@ -116,7 +116,7 @@ export const startServer = async ({
   const {
     transactionsSearchApp,
     transactionsSearchBasePath,
-  } = createTransactionsSearchFeature(transactionsSearchOptions);
+  } = await createTransactionsSearchFeature(transactionsSearchOptions);
 
   const { geographyApp, geographyBasePath } = await createGeographyFeature(
     geographyFeatureOptions

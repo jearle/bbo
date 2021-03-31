@@ -134,7 +134,7 @@ export const createApp = ({
     `/trends`,
     body('aggregation').custom(currencyValidator),
     body(`geographyFilter`).exists({ checkNull: true }),
-    body(`propertyType`).exists({ checkNull: true }),
+    body(`propertyTypes`).exists({ checkNull: true }),
     async (req, res) => {
       const validationErrors = validationResult(req);
 
@@ -142,36 +142,16 @@ export const createApp = ({
         return res.status(400).json({ errors: validationErrors.array() });
       }
 
-      const { propertyType } = req.body;
-
-      // TODO: Move filter code to helper
-      // determine proper implementation
-      // possibly move into searchTrends service and generate filter
-      // there
-      const id = await propertyTypeService.idForSlug({
-        slug: propertyType.slug,
-      });
-      const parentId = null;
-
-      const hasParent = parentId !== null;
-      const propertyTypeId = hasParent ? parentId : id;
-
-      const propertyTypeFilter = {
-        propertyTypeId,
-        allPropertySubTypes: parentId !== null,
-        propertySubTypeIds: parentId !== null ? [id] : [],
-      };
+      const { propertyTypes } = req.body;
 
       const { geographyFilter, aggregation } = req.body;
       const { debug } = req.query;
       const { permissionsFilter } = req;
 
-      let trends = null;
-
       try {
-        trends = await transactionsSearchService.searchTrends({
+        const trends = await transactionsSearchService.searchTrends({
           geographyFilter,
-          propertyTypeFilter,
+          propertyTypes,
           aggregation,
           permissionsFilter,
         });
