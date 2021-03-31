@@ -42,6 +42,44 @@ describe('PropertyTypeService', () => {
     expect(slug).toBe(`apartment-1`);
   });
 
+  test(`slugForParentSlug`, async () => {
+    const slug = await propertyTypeService.slugForParentSlug({
+      slug: `office-cbd-102`,
+    });
+
+    expect(slug).toBe(`office-96`);
+  });
+
+  test(`parentSlugForSlugs`, async () => {
+    const slugs = await propertyTypeService.parentSlugForSlugs({
+      slug: `apartment-1`,
+    });
+
+    slugs.forEach(async (slug) => {
+      const id = await propertyTypeService.idForSlug({ slug });
+
+      expect(typeof id).toBe(`number`);
+    });
+  });
+
+  test(`parentSlugForSubPropertyTypeSlugs`, async () => {
+    const allChildSlugs = await propertyTypeService.parentSlugForSlugs({
+      slug: `apartment-1`,
+    });
+
+    const slugs = await propertyTypeService.parentSlugForSubPropertyTypeSlugs({
+      slug: `apartment-1`,
+    });
+
+    expect(slugs.length).toBeLessThan(allChildSlugs.length);
+
+    slugs.forEach(async (slug) => {
+      const id = await propertyTypeService.idForSlug({ slug });
+
+      expect(typeof id).toBe(`number`);
+    });
+  });
+
   test(`istanbul covers slugIdMaps cache`, async () => {
     await propertyTypeService.slugForId({ id: 1 });
     await propertyTypeService.slugForId({ id: 1 });

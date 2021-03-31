@@ -35,6 +35,7 @@ export type FeatureType = {
   readonly id: string;
   readonly parentId?: string;
   readonly slug: string;
+  readonly parentSlug?: string;
   readonly label: string;
 };
 
@@ -52,6 +53,7 @@ export type SubPropertyType = {
   readonly id: string;
   readonly parentId?: string;
   readonly slug: string;
+  readonly parentSlug?: string;
   readonly label: string;
   readonly featureTypes: FeatureType[];
 };

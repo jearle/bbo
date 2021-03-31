@@ -14,33 +14,37 @@ import {
 import { cleanTransactionsSearchQuery } from '../../helpers/clean-transactions-search';
 import { createTrendSearchQuery } from '../../helpers/queries';
 import { CreatePermissionsFilterResult } from '../../../permissions/helpers/elasticsearch/permissions-filter';
+import { PropertyTypeService } from '../../../property-type/services/property-type';
 
 type CreateTransactionsSearchServiceInputs = {
-  elasticsearchProvider: ElasticsearchProvider;
+  readonly elasticsearchProvider: ElasticsearchProvider;
+  readonly propertyTypeService: PropertyTypeService;
 };
 
 type TransactionsSearchServiceInputs = {
-  elasticsearchClient: ElasticsearchClient;
+  readonly elasticsearchClient: ElasticsearchClient;
+  readonly propertyTypeService: PropertyTypeService;
 };
 
 type TransactionSearchInputs = {
-  page?: number;
-  limit?: number;
-  permissionsFilter?: CreatePermissionsFilterResult;
+  readonly page?: number;
+  readonly limit?: number;
+  readonly permissionsFilter?: CreatePermissionsFilterResult;
 };
 
 type TransactionSearchForTrendInputs = {
-  geographyFilter?: Geography.Filter;
-  propertyTypeFilter?: PropertyType.Filter;
-  aggregation?: Aggregation;
-  permissionsFilter?: CreatePermissionsFilterResult;
-  limit?: number;
+  readonly geographyFilter?: Geography.Filter;
+  readonly propertyTypeFilter?: PropertyType.Filter;
+  readonly aggregation?: Aggregation;
+  readonly permissionsFilter?: CreatePermissionsFilterResult;
+  readonly limit?: number;
 };
 
 const { TRANSACTIONS_INDEX } = process.env;
 
 const transactionsSearchService = ({
   elasticsearchClient,
+  propertyTypeService,
 }: TransactionsSearchServiceInputs) => ({
   async searchTransactions({
     page = 0,
@@ -102,8 +106,12 @@ export type TransactionsSearchService = ReturnType<
 
 export const createTransactionsSearchService = ({
   elasticsearchProvider,
+  propertyTypeService,
 }: CreateTransactionsSearchServiceInputs): TransactionsSearchService => {
   const elasticsearchClient = elasticsearchProvider.createClient();
 
-  return transactionsSearchService({ elasticsearchClient });
+  return transactionsSearchService({
+    elasticsearchClient,
+    propertyTypeService,
+  });
 };

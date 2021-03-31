@@ -38,6 +38,8 @@ const authenticationFeatureOptions = {
 };
 
 const transactionsSearchOptions = {
+  redisURI: REDIS_URI,
+  mssqlURI: ANALYTICSDATA_MSSQL_URI,
   node: ELASTICSEARCH_NODE,
   username: ELASTICSEARCH_USERNAME,
   password: ELASTICSEARCH_PASSWORD,

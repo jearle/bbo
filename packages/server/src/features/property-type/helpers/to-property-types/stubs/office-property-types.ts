@@ -30,6 +30,7 @@ export const officePropertyTypes = [
     subPropertyTypes: [
       {
         parentId: '96',
+        parentSlug: 'office-96',
         __raw_property_type__: {
           PTSMenu_id: 102,
           Type1_id: 6,
@@ -61,6 +62,7 @@ export const officePropertyTypes = [
         featureTypes: [
           {
             parentId: '102',
+            parentSlug: 'office-cbd-102',
             __raw_property_type__: {
               PTSMenu_id: 103,
               Type1_id: 6,
@@ -91,6 +93,7 @@ export const officePropertyTypes = [
           },
           {
             parentId: '102',
+            parentSlug: 'office-cbd-102',
             __raw_property_type__: {
               PTSMenu_id: 104,
               Type1_id: 6,
@@ -121,6 +124,7 @@ export const officePropertyTypes = [
           },
           {
             parentId: '102',
+            parentSlug: 'office-cbd-102',
             __raw_property_type__: {
               PTSMenu_id: 106,
               Type1_id: 6,
@@ -153,6 +157,7 @@ export const officePropertyTypes = [
       },
       {
         parentId: '96',
+        parentSlug: 'office-96',
         __raw_property_type__: {
           PTSMenu_id: 107,
           Type1_id: 6,
@@ -184,6 +189,7 @@ export const officePropertyTypes = [
         featureTypes: [
           {
             parentId: '107',
+            parentSlug: 'office-sub-107',
             __raw_property_type__: {
               PTSMenu_id: 108,
               Type1_id: 6,
@@ -214,6 +220,7 @@ export const officePropertyTypes = [
           },
           {
             parentId: '107',
+            parentSlug: 'office-sub-107',
             __raw_property_type__: {
               PTSMenu_id: 109,
               Type1_id: 6,
@@ -244,6 +251,7 @@ export const officePropertyTypes = [
           },
           {
             parentId: '107',
+            parentSlug: 'office-sub-107',
             __raw_property_type__: {
               PTSMenu_id: 110,
               Type1_id: 6,
@@ -274,6 +282,7 @@ export const officePropertyTypes = [
           },
           {
             parentId: '107',
+            parentSlug: 'office-sub-107',
             __raw_property_type__: {
               PTSMenu_id: 112,
               Type1_id: 6,
@@ -308,6 +317,7 @@ export const officePropertyTypes = [
     featureTypes: [
       {
         parentId: '96',
+        parentSlug: 'office-96',
         __raw_property_type__: {
           PTSMenu_id: 97,
           Type1_id: 6,
@@ -338,6 +348,7 @@ export const officePropertyTypes = [
       },
       {
         parentId: '96',
+        parentSlug: 'office-96',
         __raw_property_type__: {
           PTSMenu_id: 98,
           Type1_id: 6,
@@ -368,6 +379,7 @@ export const officePropertyTypes = [
       },
       {
         parentId: '96',
+        parentSlug: 'office-96',
         __raw_property_type__: {
           PTSMenu_id: 99,
           Type1_id: 6,
@@ -398,6 +410,7 @@ export const officePropertyTypes = [
       },
       {
         parentId: '96',
+        parentSlug: 'office-96',
         __raw_property_type__: {
           PTSMenu_id: 101,
           Type1_id: 6,

@@ -117,6 +117,7 @@ const createSubPropertyTypes = ({
       })
       .map((featureType) => ({
         parentId: id,
+        parentSlug: slug,
         ...featureType,
       }));
 
@@ -154,6 +155,7 @@ const createPropertyTypes = ({
       })
       .map((featureType) => ({
         parentId: id,
+        parentSlug: slug,
         ...featureType,
       }));
 
@@ -165,6 +167,7 @@ const createPropertyTypes = ({
       })
       .map((subPropertyType) => ({
         parentId: id,
+        parentSlug: slug,
         ...subPropertyType,
       }));
 

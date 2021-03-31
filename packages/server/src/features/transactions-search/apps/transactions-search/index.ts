@@ -4,7 +4,6 @@ import { body, validationResult } from 'express-validator';
 
 import { TransactionsSearchService } from '../../services/transactions-search';
 import { currencyValidator } from '../../validators/currency';
-import { slugToId } from '../../../property-type/helpers/property-type-slugs';
 
 export const VERSION = `v0`;
 export const DESCRIPTION = `Transactions Search API`;
@@ -149,7 +148,10 @@ export const createApp = ({
       // determine proper implementation
       // possibly move into searchTrends service and generate filter
       // there
-      const { id, parentId } = slugToId(propertyType.slug);
+      const id = await propertyTypeService.idForSlug({
+        slug: propertyType.slug,
+      });
+      const parentId = null;
 
       const hasParent = parentId !== null;
       const propertyTypeId = hasParent ? parentId : id;

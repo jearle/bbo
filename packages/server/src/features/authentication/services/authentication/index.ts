@@ -245,6 +245,7 @@ const authenticationService = ({
     return result;
   },
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async logout({ accessToken }: LogoutInput): Promise<void> {
     //TODO: logout from cognito
   },
