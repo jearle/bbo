@@ -26,7 +26,7 @@ export const officePropertyTypes = [
     },
     id: '96',
     label: 'Office',
-    slug: 'office',
+    slug: 'office-96',
     subPropertyTypes: [
       {
         parentId: '96',
@@ -56,7 +56,7 @@ export const officePropertyTypes = [
         },
         id: '102',
         label: 'Office - CBD',
-        slug: 'office-cbd',
+        slug: 'office-cbd-102',
         subPropertyTypes: [],
         featureTypes: [
           {
@@ -87,7 +87,7 @@ export const officePropertyTypes = [
             },
             id: '103',
             label: 'Medical',
-            slug: 'medical',
+            slug: 'medical-103',
           },
           {
             parentId: '102',
@@ -117,7 +117,7 @@ export const officePropertyTypes = [
             },
             id: '104',
             label: 'R&D',
-            slug: 'r-d',
+            slug: 'r-d-104',
           },
           {
             parentId: '102',
@@ -147,7 +147,7 @@ export const officePropertyTypes = [
             },
             id: '106',
             label: 'Tech/Telecom/Data',
-            slug: 'tech-telecom-data',
+            slug: 'tech-telecom-data-106',
           },
         ],
       },
@@ -179,7 +179,7 @@ export const officePropertyTypes = [
         },
         id: '107',
         label: 'Office - Sub',
-        slug: 'office-sub',
+        slug: 'office-sub-107',
         subPropertyTypes: [],
         featureTypes: [
           {
@@ -210,7 +210,7 @@ export const officePropertyTypes = [
             },
             id: '108',
             label: 'Medical',
-            slug: 'medical',
+            slug: 'medical-108',
           },
           {
             parentId: '107',
@@ -240,7 +240,7 @@ export const officePropertyTypes = [
             },
             id: '109',
             label: 'Park',
-            slug: 'park',
+            slug: 'park-109',
           },
           {
             parentId: '107',
@@ -270,7 +270,7 @@ export const officePropertyTypes = [
             },
             id: '110',
             label: 'R&D',
-            slug: 'r-d',
+            slug: 'r-d-110',
           },
           {
             parentId: '107',
@@ -300,7 +300,7 @@ export const officePropertyTypes = [
             },
             id: '112',
             label: 'Tech/Telecom/Data',
-            slug: 'tech-telecom-data',
+            slug: 'tech-telecom-data-112',
           },
         ],
       },
@@ -334,7 +334,7 @@ export const officePropertyTypes = [
         },
         id: '97',
         label: 'Medical',
-        slug: 'medical',
+        slug: 'medical-97',
       },
       {
         parentId: '96',
@@ -364,7 +364,7 @@ export const officePropertyTypes = [
         },
         id: '98',
         label: 'Park',
-        slug: 'park',
+        slug: 'park-98',
       },
       {
         parentId: '96',
@@ -394,7 +394,7 @@ export const officePropertyTypes = [
         },
         id: '99',
         label: 'R&D',
-        slug: 'r-d',
+        slug: 'r-d-99',
       },
       {
         parentId: '96',
@@ -424,7 +424,7 @@ export const officePropertyTypes = [
         },
         id: '101',
         label: 'Tech/Telecom/Data',
-        slug: 'tech-telecom-data',
+        slug: 'tech-telecom-data-101',
       },
     ],
   },

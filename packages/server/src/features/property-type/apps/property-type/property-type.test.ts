@@ -1,42 +1,57 @@
-import * as express from 'express';
 import { fetchJSONOnRandomPort } from 'shared/dist/helpers/express/listen-fetch';
 
 import { createMSSQLProvider } from '../../../../providers/mssql';
-import { createPropertyTypeService } from '../../services/property-type';
+import {
+  createPropertyTypeService,
+  PropertyTypeService,
+} from '../../services/property-type';
 import { createApp } from './';
 import { createRedisProvider } from '../../../../providers/redis';
 
 const { ANALYTICSDATA_MSSQL_URI, REDIS_URI } = process.env;
 
 describe('property type app', () => {
-  let app = null;
-  let propertyTypeService = null;
-  let propertyTypeApp = null;
-
-  beforeEach(async () => {
+  const fetchPropertyTypes = async ({
+    propertyTypeService: propertyTypeServiceOverride = null,
+  } = {}) => {
     const mssqlProvider = await createMSSQLProvider({
       uri: ANALYTICSDATA_MSSQL_URI,
     });
     const redisProvider = await createRedisProvider({ uri: REDIS_URI });
-    propertyTypeService = await createPropertyTypeService({
-      mssqlProvider,
-      redisProvider,
-    });
-    app = express();
-    propertyTypeApp = createApp({ propertyTypeService });
-  });
+    const propertyTypeService =
+      propertyTypeServiceOverride !== null
+        ? propertyTypeServiceOverride
+        : await createPropertyTypeService({
+            mssqlProvider,
+            redisProvider,
+          });
 
-  afterAll(() => {
-    propertyTypeService.close();
-  });
+    const app = createApp({ propertyTypeService });
 
-  test(`/property-type, returns propertyType without children`, async () => {
-    app.use(propertyTypeApp);
-
-    const { data } = await fetchJSONOnRandomPort(app, {
+    const response = await fetchJSONOnRandomPort(app, {
       path: `/property-type`,
     });
 
+    return response;
+  };
+
+  test(`/property-type, returns propertyType without children`, async () => {
+    const { data } = await fetchPropertyTypes();
+
     expect(data.length).toBeGreaterThan(0);
+  });
+
+  test(`/property-type, returns proper error payload`, async () => {
+    const errorMessage = `foobar`;
+
+    const propertyTypeService = ({
+      fetchPropertyTypes() {
+        throw new Error(errorMessage);
+      },
+    } as unknown) as PropertyTypeService;
+
+    const { error } = await fetchPropertyTypes({ propertyTypeService });
+
+    expect(error).toBe(errorMessage);
   });
 });

@@ -17,7 +17,7 @@ describe('PropertyTypeService', () => {
   });
 
   beforeEach(async () => {
-    await propertyTypeService.clearCachedPropertyTypes();
+    await propertyTypeService.clearAllCaches();
   });
 
   afterAll(async () => {
@@ -30,10 +30,20 @@ describe('PropertyTypeService', () => {
     expect(result).not.toBeUndefined();
   });
 
-  test(`fetchPermissionsModel ensure cache works`, async () => {
-    await propertyTypeService.fetchPropertyTypes();
+  test(`idForSlug`, async () => {
+    const id = await propertyTypeService.idForSlug({ slug: `apartment-1` });
 
-    // hit again to ensure caching via istanbul code coverage
-    await propertyTypeService.fetchPropertyTypes();
+    expect(id).toBe(1);
+  });
+
+  test(`slugForId`, async () => {
+    const slug = await propertyTypeService.slugForId({ id: 1 });
+
+    expect(slug).toBe(`apartment-1`);
+  });
+
+  test(`istanbul covers slugIdMaps cache`, async () => {
+    await propertyTypeService.slugForId({ id: 1 });
+    await propertyTypeService.slugForId({ id: 1 });
   });
 });

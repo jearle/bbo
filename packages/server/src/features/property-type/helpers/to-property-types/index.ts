@@ -17,11 +17,11 @@ type RawFeatureTypesInput = {
   readonly rawFeatureTypes: RawPropertyType[];
 };
 
-const createSlug = ({ label }) =>
+const createSlug = ({ id, label }) =>
   label
     .toLowerCase()
     .replace(/[^a-zA-Z0-9 \s+]/g, ' ')
-    .replace(/\s+/g, '-');
+    .replace(/\s+/g, '-') + `-${id}`;
 
 const filterRawPropertyTypeFeatures = ({
   allRawPropertyTypes,
@@ -82,7 +82,7 @@ const createFeatureTypes = ({
     const __raw_property_type__ = rawFeatureType;
     const { PTSMenu_id, Type3Full_tx: label } = rawFeatureType;
     const id = PTSMenu_id.toString();
-    const slug = createSlug({ label });
+    const slug = createSlug({ id, label });
 
     return {
       __raw_property_type__,
@@ -103,7 +103,7 @@ const createSubPropertyTypes = ({
     const __raw_property_type__ = rawSubPropertyType;
     const { PTSMenu_id, Type2Full_tx: label } = rawSubPropertyType;
     const id = PTSMenu_id.toString();
-    const slug = createSlug({ label });
+    const slug = createSlug({ id, label });
 
     const featureTypes = subPropertyFeatureTypes
       .filter((subPropertyFeatureType) => {
@@ -142,7 +142,7 @@ const createPropertyTypes = ({
     const __raw_property_type__ = rawPropertyType;
     const { PTSMenu_id, Type1Full_tx: label } = rawPropertyType;
     const id = PTSMenu_id.toString();
-    const slug = createSlug({ label });
+    const slug = createSlug({ id, label });
 
     const featureTypes = propertyFeatureTypes
       .filter((propertyFeatureType) => {
