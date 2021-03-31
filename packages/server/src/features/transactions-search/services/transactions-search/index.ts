@@ -8,13 +8,16 @@ import {
 } from 'shared/dist/helpers/elasticsearch/response-builders';
 import {
   Geography,
-  PropertyType,
+  PropertyType as FilterPropertyType,
   Aggregation,
 } from 'shared/dist/helpers/types';
 import { cleanTransactionsSearchQuery } from '../../helpers/clean-transactions-search';
 import { createTrendSearchQuery } from '../../helpers/queries';
+import { createPropertyTypeFilter } from '../../helpers/property-type-filter';
 import { CreatePermissionsFilterResult } from '../../../permissions/helpers/elasticsearch/permissions-filter';
+
 import { PropertyTypeService } from '../../../property-type/services/property-type';
+// import { PropertyType } from '../../../property-type/types';
 
 type CreateTransactionsSearchServiceInputs = {
   readonly elasticsearchProvider: ElasticsearchProvider;
@@ -34,7 +37,10 @@ type TransactionSearchInputs = {
 
 type TransactionSearchForTrendInputs = {
   readonly geographyFilter?: Geography.Filter;
-  readonly propertyTypeFilter?: PropertyType.Filter;
+  readonly propertyTypeFilter?: FilterPropertyType.Filter;
+
+  readonly propertyTypes?: string[];
+
   readonly aggregation?: Aggregation;
   readonly permissionsFilter?: CreatePermissionsFilterResult;
   readonly limit?: number;
@@ -65,23 +71,23 @@ const transactionsSearchService = ({
 
   async searchTrends({
     geographyFilter,
-    propertyTypeFilter,
+    propertyTypes,
     aggregation,
     permissionsFilter,
     limit,
   }: TransactionSearchForTrendInputs = {}) {
-    let esQuery;
-    try {
-      esQuery = createTrendSearchQuery({
-        geographyFilter,
-        propertyTypeFilter,
-        aggregation,
-        permissionsFilter,
-        limit,
-      });
-    } catch (e) {
-      console.log(e);
-    }
+    const propertyTypeFilter = await createPropertyTypeFilter({
+      propertyTypeService,
+      propertyTypes,
+    });
+
+    const esQuery = createTrendSearchQuery({
+      geographyFilter,
+      propertyTypeFilter,
+      aggregation,
+      permissionsFilter,
+      limit,
+    });
 
     const result = await elasticsearchClient.search({
       index: TRANSACTIONS_INDEX,
