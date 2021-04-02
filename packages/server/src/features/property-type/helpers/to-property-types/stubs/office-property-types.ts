@@ -27,7 +27,7 @@ export const officePropertyTypes = [
     id: '96',
     label: 'Office',
     slug: 'office-96',
-    subPropertyTypes: [
+    propertySubTypes: [
       {
         parentId: '96',
         parentSlug: 'office-96',
@@ -58,7 +58,7 @@ export const officePropertyTypes = [
         id: '102',
         label: 'Office - CBD',
         slug: 'office-cbd-102',
-        subPropertyTypes: [],
+        propertySubTypes: [],
         featureTypes: [
           {
             parentId: '102',
@@ -185,7 +185,7 @@ export const officePropertyTypes = [
         id: '107',
         label: 'Office - Sub',
         slug: 'office-sub-107',
-        subPropertyTypes: [],
+        propertySubTypes: [],
         featureTypes: [
           {
             parentId: '107',

@@ -20,7 +20,7 @@ const createAllPropertyTypeFilter = async ({
   propertyTypeService,
   slug,
 }: CreateAllPropertyTypeFilterInput): Promise<Filter> => {
-  const childSlugs = await propertyTypeService.parentSlugForSubPropertyTypeSlugs(
+  const childSlugs = await propertyTypeService.parentSlugForPropertySubTypeSlugs(
     {
       slug,
     }
@@ -49,15 +49,15 @@ const createAllPropertyTypeFilter = async ({
   return filter;
 };
 
-type CreateSubPropertyTypeFilterInput = {
+type CreatePropertySubTypeFilterInput = {
   readonly propertyTypeService: PropertyTypeService;
   readonly slugs: string[];
 };
 
-export const createSubPropertyTypeFilter = async ({
+export const createPropertySubTypeFilter = async ({
   propertyTypeService,
   slugs,
-}: CreateSubPropertyTypeFilterInput): Promise<Filter> => {
+}: CreatePropertySubTypeFilterInput): Promise<Filter> => {
   const filter = await slugs.reduce(
     async (accPromise, nextSlug) => {
       const acc = await accPromise;
@@ -111,7 +111,7 @@ export const createPropertyTypeFilter = async ({
     });
   }
 
-  return await createSubPropertyTypeFilter({
+  return await createPropertySubTypeFilter({
     propertyTypeService,
     slugs: propertyTypes,
   });

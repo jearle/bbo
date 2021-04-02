@@ -62,12 +62,12 @@ describe('PropertyTypeService', () => {
     });
   });
 
-  test(`parentSlugForSubPropertyTypeSlugs`, async () => {
+  test(`parentSlugForPropertySubTypeSlugs`, async () => {
     const allChildSlugs = await propertyTypeService.parentSlugForSlugs({
       slug: `apartment-1`,
     });
 
-    const slugs = await propertyTypeService.parentSlugForSubPropertyTypeSlugs({
+    const slugs = await propertyTypeService.parentSlugForPropertySubTypeSlugs({
       slug: `apartment-1`,
     });
 

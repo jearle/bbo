@@ -1,4 +1,4 @@
-import { PropertyType, SubPropertyType, FeatureType } from '../../types';
+import { PropertyType, PropertySubType, FeatureType } from '../../types';
 import { toPropertyTypes } from '../../helpers/to-property-types';
 import { MSSQLProvider } from '../../../../providers/mssql';
 
@@ -59,7 +59,7 @@ type ParentSlugToSlugsMap = {
   [key: string]: string[];
 };
 
-type ParentSlugToSubPropertySlugsMap = {
+type ParentSlugToPropertySubSlugsMap = {
   [key: string]: string[];
 };
 
@@ -68,7 +68,7 @@ type SlugIdMaps = {
   readonly idToSlugMap: IDToSlugMap;
   readonly slugToParentSlugMap: SlugToParentSlugMap;
   readonly parentSlugToSlugsMap: ParentSlugToSlugsMap;
-  readonly parentSlugToSubPropertySlugsMap: ParentSlugToSubPropertySlugsMap;
+  readonly parentSlugToPropertySubSlugsMap: ParentSlugToPropertySubSlugsMap;
 };
 
 type SlugForIdInput = { readonly id: number };
@@ -116,13 +116,13 @@ const setCachedSlugIdMaps = async ({
 
 type SeparateTypesResult = {
   readonly propertyTypes: PropertyType[];
-  readonly subPropertyTypes: SubPropertyType[];
+  readonly propertySubTypes: PropertySubType[];
   readonly featureTypes: FeatureType[];
 };
 
 const separateTypes = ({ propertyTypes }): SeparateTypesResult => {
   let featureTypes = [];
-  let subPropertyTypes = [];
+  let propertySubTypes = [];
 
   let queue = [...propertyTypes];
   let current = null;
@@ -133,15 +133,15 @@ const separateTypes = ({ propertyTypes }): SeparateTypesResult => {
       queue = [...queue, ...current.featureTypes];
     }
 
-    if (current?.subPropertyTypes?.length > 0) {
-      subPropertyTypes = [...subPropertyTypes, ...current.subPropertyTypes];
-      queue = [...queue, ...current.subPropertyTypes];
+    if (current?.propertySubTypes?.length > 0) {
+      propertySubTypes = [...propertySubTypes, ...current.propertySubTypes];
+      queue = [...queue, ...current.propertySubTypes];
     }
   }
 
   return {
     propertyTypes,
-    subPropertyTypes,
+    propertySubTypes,
     featureTypes,
   };
 };
@@ -149,11 +149,11 @@ const separateTypes = ({ propertyTypes }): SeparateTypesResult => {
 const createSlugIdMaps = ({
   propertyTypes,
 }: CreateSlugIdMapsInput): SlugIdMaps => {
-  const { subPropertyTypes, featureTypes } = separateTypes({ propertyTypes });
+  const { propertySubTypes, featureTypes } = separateTypes({ propertyTypes });
 
   const { slugToIdMap, idToSlugMap } = [
     ...propertyTypes,
-    ...subPropertyTypes,
+    ...propertySubTypes,
     ...featureTypes,
   ].reduce(
     (acc, next) => {
@@ -172,7 +172,7 @@ const createSlugIdMaps = ({
     }
   );
 
-  const { slugToParentSlugMap } = [...subPropertyTypes, ...featureTypes].reduce(
+  const { slugToParentSlugMap } = [...propertySubTypes, ...featureTypes].reduce(
     (acc, next) => {
       const { slugToParentSlugMap } = acc;
       const { slug, parentSlug } = next;
@@ -203,9 +203,9 @@ const createSlugIdMaps = ({
     { parentSlugToSlugsMap: {} }
   );
 
-  const parentSlugToSubPropertySlugsMap = propertyTypes.reduce((acc, next) => {
-    const { slug, subPropertyTypes } = next;
-    const slugs = subPropertyTypes.map(({ slug }) => slug);
+  const parentSlugToPropertySubSlugsMap = propertyTypes.reduce((acc, next) => {
+    const { slug, propertySubTypes } = next;
+    const slugs = propertySubTypes.map(({ slug }) => slug);
 
     return {
       ...acc,
@@ -218,7 +218,7 @@ const createSlugIdMaps = ({
     idToSlugMap,
     slugToParentSlugMap,
     parentSlugToSlugsMap,
-    parentSlugToSubPropertySlugsMap,
+    parentSlugToPropertySubSlugsMap,
   };
 };
 
@@ -279,13 +279,13 @@ const propertyTypeService = ({
     return parentSlugToSlugsMap[slug];
   },
 
-  async parentSlugForSubPropertyTypeSlugs({ slug }) {
-    const { parentSlugToSubPropertySlugsMap } = await fetchSlugIdMaps({
+  async parentSlugForPropertySubTypeSlugs({ slug }) {
+    const { parentSlugToPropertySubSlugsMap } = await fetchSlugIdMaps({
       redisProvider,
       propertyTypeService: this,
     });
 
-    return parentSlugToSubPropertySlugsMap[slug];
+    return parentSlugToPropertySubSlugsMap[slug];
   },
 
   async idForSlug({ slug }: IdForSlugInput): Promise<number> {

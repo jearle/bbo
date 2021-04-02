@@ -39,21 +39,21 @@ export type FeatureType = {
   readonly label: string;
 };
 
-export type PropertyType = {
-  readonly __raw_property_type__: RawPropertyType;
-  readonly id: string;
-  readonly slug: string;
-  readonly label: string;
-  readonly subPropertyTypes: PropertyType[];
-  readonly featureTypes: FeatureType[];
-};
-
-export type SubPropertyType = {
+export type PropertySubType = {
   readonly __raw_property_type__: RawPropertyType;
   readonly id: string;
   readonly parentId?: string;
   readonly slug: string;
   readonly parentSlug?: string;
   readonly label: string;
+  readonly featureTypes: FeatureType[];
+};
+
+export type PropertyType = {
+  readonly __raw_property_type__: RawPropertyType;
+  readonly id: string;
+  readonly slug: string;
+  readonly label: string;
+  readonly propertySubTypes: PropertySubType[];
   readonly featureTypes: FeatureType[];
 };
