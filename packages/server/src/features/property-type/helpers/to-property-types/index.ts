@@ -17,11 +17,24 @@ type RawFeatureTypesInput = {
   readonly rawFeatureTypes: RawPropertyType[];
 };
 
-const createSlug = ({ id, label }) =>
-  label
+const createSlug = ({
+  propertyTypeLabel,
+  propertySubTypeLabel,
+  featureTypeLabel,
+}) => {
+  /* istanbul ignore next */
+  const fullLabel = `${propertyTypeLabel || ``} ${propertySubTypeLabel || ``} ${
+    featureTypeLabel || ``
+  }`;
+
+  const slug = fullLabel
     .toLowerCase()
+    .trim()
     .replace(/[^a-zA-Z0-9 \s+]/g, ' ')
-    .replace(/\s+/g, '-') + `-${id}`;
+    .replace(/\s+/g, '-');
+
+  return slug;
+};
 
 const filterRawPropertyTypeFeatures = ({
   allRawPropertyTypes,
@@ -80,9 +93,18 @@ const createFeatureTypes = ({
 }: RawFeatureTypesInput): FeatureType[] => {
   const featureTypes = rawFeatureTypes.map((rawFeatureType) => {
     const __raw_property_type__ = rawFeatureType;
-    const { PTSMenu_id, Type3Full_tx: label } = rawFeatureType;
+    const {
+      PTSMenu_id,
+      Type1Full_tx: propertyTypeLabel,
+      Type2Full_tx: propertySubTypeLabel,
+      Type3Full_tx: label,
+    } = rawFeatureType;
     const id = PTSMenu_id.toString();
-    const slug = createSlug({ id, label });
+    const slug = createSlug({
+      propertyTypeLabel,
+      propertySubTypeLabel,
+      featureTypeLabel: label,
+    });
 
     return {
       __raw_property_type__,
@@ -101,9 +123,18 @@ const createPropertySubTypes = ({
 }): PropertySubType[] => {
   const propertySubTypes = rawPropertySubTypes.map((rawPropertySubType) => {
     const __raw_property_type__ = rawPropertySubType;
-    const { PTSMenu_id, Type2Full_tx: label } = rawPropertySubType;
+    const {
+      PTSMenu_id,
+      Type1Full_tx: propertyTypeLabel,
+      Type2Full_tx: label,
+      Type3Full_tx: featureTypeLabel,
+    } = rawPropertySubType;
     const id = PTSMenu_id.toString();
-    const slug = createSlug({ id, label });
+    const slug = createSlug({
+      propertyTypeLabel,
+      propertySubTypeLabel: label,
+      featureTypeLabel,
+    });
 
     const featureTypes = propertySubFeatureTypes
       .filter((propertySubFeatureType) => {
@@ -141,9 +172,18 @@ const createPropertyTypes = ({
 }): PropertyType[] => {
   return rawPropertyTypes.map((rawPropertyType) => {
     const __raw_property_type__ = rawPropertyType;
-    const { PTSMenu_id, Type1Full_tx: label } = rawPropertyType;
+    const {
+      PTSMenu_id,
+      Type1Full_tx: label,
+      Type2Full_tx: propertySubTypeLabel,
+      Type3Full_tx: featureTypeLabel,
+    } = rawPropertyType;
     const id = PTSMenu_id.toString();
-    const slug = createSlug({ id, label });
+    const slug = createSlug({
+      propertyTypeLabel: label,
+      propertySubTypeLabel,
+      featureTypeLabel,
+    });
 
     const featureTypes = propertyFeatureTypes
       .filter((propertyFeatureType) => {

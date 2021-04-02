@@ -79,7 +79,7 @@ describe(`transactions app`, () => {
       name: 'Atlanta',
     };
 
-    const propertyTypes = [`office-96`];
+    const propertyTypes = [`office`];
 
     const aggregation = { aggregationType: `price`, currency: `USD` };
 

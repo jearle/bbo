@@ -31,7 +31,7 @@ describe('PropertyTypeService', () => {
   });
 
   test(`idForSlug`, async () => {
-    const id = await propertyTypeService.idForSlug({ slug: `apartment-1` });
+    const id = await propertyTypeService.idForSlug({ slug: `apartment` });
 
     expect(id).toBe(1);
   });
@@ -39,20 +39,20 @@ describe('PropertyTypeService', () => {
   test(`slugForId`, async () => {
     const slug = await propertyTypeService.slugForId({ id: 1 });
 
-    expect(slug).toBe(`apartment-1`);
+    expect(slug).toBe(`apartment`);
   });
 
   test(`slugForParentSlug`, async () => {
     const slug = await propertyTypeService.slugForParentSlug({
-      slug: `office-cbd-102`,
+      slug: `office-office-cbd`,
     });
 
-    expect(slug).toBe(`office-96`);
+    expect(slug).toBe(`office`);
   });
 
   test(`parentSlugForSlugs`, async () => {
     const slugs = await propertyTypeService.parentSlugForSlugs({
-      slug: `apartment-1`,
+      slug: `apartment`,
     });
 
     slugs.forEach(async (slug) => {
@@ -64,11 +64,11 @@ describe('PropertyTypeService', () => {
 
   test(`parentSlugForPropertySubTypeSlugs`, async () => {
     const allChildSlugs = await propertyTypeService.parentSlugForSlugs({
-      slug: `apartment-1`,
+      slug: `apartment`,
     });
 
     const slugs = await propertyTypeService.parentSlugForPropertySubTypeSlugs({
-      slug: `apartment-1`,
+      slug: `apartment`,
     });
 
     expect(slugs.length).toBeLessThan(allChildSlugs.length);

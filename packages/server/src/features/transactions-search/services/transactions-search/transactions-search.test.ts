@@ -77,7 +77,7 @@ describe(`transactionsSearchService`, () => {
     test(`receives results with parent property type`, async () => {
       const { data } = await transactionsSearchService.searchTrends({
         geographyFilter: atlantaFilter,
-        propertyTypes: [`office-96`],
+        propertyTypes: [`office`],
         aggregation: { aggregationType: 'PRICE', currency: 'USD' },
       });
 
@@ -87,7 +87,7 @@ describe(`transactionsSearchService`, () => {
     test(`receives results with sub property type set`, async () => {
       const { data } = await transactionsSearchService.searchTrends({
         geographyFilter: atlantaFilter,
-        propertyTypes: [`office-cbd-102`],
+        propertyTypes: [`office-office-cbd`],
         aggregation: { aggregationType: 'PRICE', currency: 'USD' },
       });
 

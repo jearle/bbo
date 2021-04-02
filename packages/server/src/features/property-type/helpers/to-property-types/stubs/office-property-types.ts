@@ -26,11 +26,11 @@ export const officePropertyTypes = [
     },
     id: '96',
     label: 'Office',
-    slug: 'office-96',
+    slug: 'office',
     propertySubTypes: [
       {
         parentId: '96',
-        parentSlug: 'office-96',
+        parentSlug: 'office',
         __raw_property_type__: {
           PTSMenu_id: 102,
           Type1_id: 6,
@@ -57,12 +57,12 @@ export const officePropertyTypes = [
         },
         id: '102',
         label: 'Office - CBD',
-        slug: 'office-cbd-102',
+        slug: 'office-office-cbd',
         propertySubTypes: [],
         featureTypes: [
           {
             parentId: '102',
-            parentSlug: 'office-cbd-102',
+            parentSlug: 'office-office-cbd',
             __raw_property_type__: {
               PTSMenu_id: 103,
               Type1_id: 6,
@@ -89,11 +89,11 @@ export const officePropertyTypes = [
             },
             id: '103',
             label: 'Medical',
-            slug: 'medical-103',
+            slug: 'office-office-cbd-medical',
           },
           {
             parentId: '102',
-            parentSlug: 'office-cbd-102',
+            parentSlug: 'office-office-cbd',
             __raw_property_type__: {
               PTSMenu_id: 104,
               Type1_id: 6,
@@ -120,11 +120,11 @@ export const officePropertyTypes = [
             },
             id: '104',
             label: 'R&D',
-            slug: 'r-d-104',
+            slug: 'office-office-cbd-r-d',
           },
           {
             parentId: '102',
-            parentSlug: 'office-cbd-102',
+            parentSlug: 'office-office-cbd',
             __raw_property_type__: {
               PTSMenu_id: 106,
               Type1_id: 6,
@@ -151,13 +151,13 @@ export const officePropertyTypes = [
             },
             id: '106',
             label: 'Tech/Telecom/Data',
-            slug: 'tech-telecom-data-106',
+            slug: 'office-office-cbd-tech-telecom-data',
           },
         ],
       },
       {
         parentId: '96',
-        parentSlug: 'office-96',
+        parentSlug: 'office',
         __raw_property_type__: {
           PTSMenu_id: 107,
           Type1_id: 6,
@@ -184,12 +184,12 @@ export const officePropertyTypes = [
         },
         id: '107',
         label: 'Office - Sub',
-        slug: 'office-sub-107',
+        slug: 'office-office-sub',
         propertySubTypes: [],
         featureTypes: [
           {
             parentId: '107',
-            parentSlug: 'office-sub-107',
+            parentSlug: 'office-office-sub',
             __raw_property_type__: {
               PTSMenu_id: 108,
               Type1_id: 6,
@@ -216,11 +216,11 @@ export const officePropertyTypes = [
             },
             id: '108',
             label: 'Medical',
-            slug: 'medical-108',
+            slug: 'office-office-sub-medical',
           },
           {
             parentId: '107',
-            parentSlug: 'office-sub-107',
+            parentSlug: 'office-office-sub',
             __raw_property_type__: {
               PTSMenu_id: 109,
               Type1_id: 6,
@@ -247,11 +247,11 @@ export const officePropertyTypes = [
             },
             id: '109',
             label: 'Park',
-            slug: 'park-109',
+            slug: 'office-office-sub-park',
           },
           {
             parentId: '107',
-            parentSlug: 'office-sub-107',
+            parentSlug: 'office-office-sub',
             __raw_property_type__: {
               PTSMenu_id: 110,
               Type1_id: 6,
@@ -278,11 +278,11 @@ export const officePropertyTypes = [
             },
             id: '110',
             label: 'R&D',
-            slug: 'r-d-110',
+            slug: 'office-office-sub-r-d',
           },
           {
             parentId: '107',
-            parentSlug: 'office-sub-107',
+            parentSlug: 'office-office-sub',
             __raw_property_type__: {
               PTSMenu_id: 112,
               Type1_id: 6,
@@ -309,7 +309,7 @@ export const officePropertyTypes = [
             },
             id: '112',
             label: 'Tech/Telecom/Data',
-            slug: 'tech-telecom-data-112',
+            slug: 'office-office-sub-tech-telecom-data',
           },
         ],
       },
@@ -317,7 +317,7 @@ export const officePropertyTypes = [
     featureTypes: [
       {
         parentId: '96',
-        parentSlug: 'office-96',
+        parentSlug: 'office',
         __raw_property_type__: {
           PTSMenu_id: 97,
           Type1_id: 6,
@@ -344,11 +344,11 @@ export const officePropertyTypes = [
         },
         id: '97',
         label: 'Medical',
-        slug: 'medical-97',
+        slug: 'office-medical',
       },
       {
         parentId: '96',
-        parentSlug: 'office-96',
+        parentSlug: 'office',
         __raw_property_type__: {
           PTSMenu_id: 98,
           Type1_id: 6,
@@ -375,11 +375,11 @@ export const officePropertyTypes = [
         },
         id: '98',
         label: 'Park',
-        slug: 'park-98',
+        slug: 'office-park',
       },
       {
         parentId: '96',
-        parentSlug: 'office-96',
+        parentSlug: 'office',
         __raw_property_type__: {
           PTSMenu_id: 99,
           Type1_id: 6,
@@ -406,11 +406,11 @@ export const officePropertyTypes = [
         },
         id: '99',
         label: 'R&D',
-        slug: 'r-d-99',
+        slug: 'office-r-d',
       },
       {
         parentId: '96',
-        parentSlug: 'office-96',
+        parentSlug: 'office',
         __raw_property_type__: {
           PTSMenu_id: 101,
           Type1_id: 6,
@@ -437,7 +437,7 @@ export const officePropertyTypes = [
         },
         id: '101',
         label: 'Tech/Telecom/Data',
-        slug: 'tech-telecom-data-101',
+        slug: 'office-tech-telecom-data',
       },
     ],
   },
