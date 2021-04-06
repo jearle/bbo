@@ -1,48 +1,9 @@
-import { getElasticHits } from './index';
+import { esBucketResp, esHitsResponse } from '../stubs/responses';
+import { getElasticHits, getTrendsDataFromElasticResponse } from './index';
 describe(`response-builders`, () => {
-  const esResponse = {
-    body: {
-      took: 5,
-      timed_out: false,
-      _shards: {
-        total: 2,
-        successful: 2,
-        skipped: 0,
-        failed: 0,
-      },
-      hits: {
-        total: {
-          value: 10000,
-          relation: 'gte',
-        },
-        max_score: 1.0,
-        hits: [
-          {
-            _index: 'test_index',
-            _type: '_doc',
-            _id: 17,
-            _score: 1.0,
-            _source: {
-              field1: true,
-              field2: 'foo',
-            },
-          },
-          {
-            _index: 'test_index',
-            _type: '_doc',
-            _id: 16,
-            _score: 1.0,
-            _source: {
-              field1: false,
-              field2: 'bar',
-            },
-          },
-        ],
-      },
-    },
-  };
+
   it(`should extract the hits from an elasticsearch response`, () => {
-    const hits = getElasticHits(esResponse);
+    const hits = getElasticHits(esHitsResponse);
     expect(hits).toEqual([
       {
         field1: true,
@@ -54,4 +15,53 @@ describe(`response-builders`, () => {
       },
     ]);
   });
+  describe(`minObservability`, () => {
+
+    it(`returns trends data with nulls for pricing avg with < 2 docs`, () => {
+      const trendsCapRateResp = getTrendsDataFromElasticResponse(esBucketResp, 'CAPRATE');
+      const expected = [
+        {
+          "date": "2001-01-01",
+          "value": 0.09524021214909023
+        },
+        {
+          "date": "2001-04-01",
+          "value": 0.0885921259011541
+        },
+        {
+          "date": "2001-07-01",
+          "value": 0.09269999961058299
+        },
+        {
+          "date": "2001-10-01",
+          "value": null
+        }
+      ];
+      expect(trendsCapRateResp).toEqual(expected);
+    });
+
+    it(`returns trends data for volume metrics with no min doc count`, () => {
+      const trendsCapRateResp = getTrendsDataFromElasticResponse(esBucketResp, 'PRICE');
+      const expected = [
+        {
+          "date": "2001-01-01",
+          "value": 0.09524021214909023
+        },
+        {
+          "date": "2001-04-01",
+          "value": 0.0885921259011541
+        },
+        {
+          "date": "2001-07-01",
+          "value": 0.09269999961058299
+        },
+        {
+          "date": "2001-10-01",
+          "value": 0.08397576833764712
+        }
+      ];
+      expect(trendsCapRateResp).toEqual(expected);
+    });
+  });
+  
 });

@@ -5,29 +5,24 @@ import { createSpec } from '../../helpers/spec';
 
 export const VERSION = `v0`;
 export const DESCRIPTION = `Documentation`;
-export const BASE_PATH = `/api/documentation/${VERSION}`;
+export const BASE_PATH = `/documentation/${VERSION}`;
 
 type CreateAppInputs = {
   readonly title: string;
   readonly description: string;
-  readonly basePath: string;
   readonly version: string;
-  readonly apiPath: string;
+  readonly apiPaths: string[];
 };
 
 export const createApp = ({
   title,
   description,
-  basePath,
   version,
-  apiPath,
+  apiPaths,
 }: CreateAppInputs): Application => {
   const app = express();
 
-  app.use(
-    serve,
-    setup(createSpec({ title, description, basePath, version, apiPath }))
-  );
+  app.use(serve, setup(createSpec({ title, description, version, apiPaths })));
 
   return app;
 };

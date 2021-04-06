@@ -44,7 +44,7 @@ import {
   createPropertyTypeFeature,
   PropertyTypeFeatureOptions,
 } from './features/property-type';
-import {createLookupsFeature} from "./features/lookups";
+import { createLookupsFeature } from './features/lookups';
 
 interface ServerOptions {
   readonly port?: number;
@@ -96,7 +96,10 @@ export const startServer = async ({
   //   featureFlagOptions
   // );
 
-  const { documentationApp } = createDocumentationFeature();
+  const {
+    documentationBasePath,
+    documentationApp,
+  } = createDocumentationFeature();
 
   const {
     healthCheckApp,
@@ -144,7 +147,7 @@ export const startServer = async ({
   mounts.use(userActivityMiddleWare());
   mounts.use(json());
 
-  mounts.use(documentationApp());
+  mounts.use(documentationBasePath, documentationApp());
 
   mounts.use(healthCheckBasePath, healthCheckApp());
   mounts.use(permissionsBasePath, permissionsApp());

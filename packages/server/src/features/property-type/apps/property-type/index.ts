@@ -20,6 +20,10 @@ export const createApp = ({
    *
    * /property-type:
    *   get:
+   *     tags: 
+   *      - Property Type
+   *     servers:
+   *      - url: /api/property-type/v0
    *     summary: Get list of property types
    *     produces:
    *       - application/json
@@ -28,8 +32,9 @@ export const createApp = ({
    *         description: PropertyTypeMenuResponse
    */
   app.get(`/property-type`, async (req, res) => {
-    const result = await propertyTypeService.fetchPropertyTypesMenu();
-    res.json(result);
+    const data = await propertyTypeService.fetchPropertyTypesMenu();
+
+    res.json({ data });
   });
 
   return app;
