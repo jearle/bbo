@@ -107,25 +107,18 @@ export const createApp = ({
    *                   name:
    *                     type: string
    *                aggregation:
-   *                 type: object
-   *                 properties:
-   *                   aggregationType:
-   *                     type: string
-   *                     enum: [PRICE, PROPERTY, UNITS, SQFT, CAPRATE, PPU, PPSF, PPSM]
-   *                   currency:
-   *                     type: string
-   *                     enum: [USD, EUR, GBP, JPY, AUD, CAN, CNY, LOC]
-   *                propertyTypeFilter:
-   *                 type: object
-   *                 properties:
-   *                   propertyTypeId:
-   *                     type: integer
-   *                   allPropertySubTypes:
-   *                     type: boolean
-   *                   propertySubTypeIds:
-   *                     type: array
-   *                     items:
-   *                      type: integer
+   *                  type: object
+   *                  properties:
+   *                    aggregationType:
+   *                      type: string
+   *                      enum: [PRICE, PROPERTY, UNITS, SQFT, CAPRATE, PPU, PPSF, PPSM]
+   *                    currency:
+   *                      type: string
+   *                      enum: [USD, EUR, GBP, JPY, AUD, CAN, CNY, LOC]
+   *                propertyTypes:
+   *                  type: array
+   *                  items:
+   *                    type: string
    *     responses:
    *       200:
    *         description: TrendsAggregationResponse
