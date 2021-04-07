@@ -148,19 +148,6 @@ resource "aws_cognito_user_pool" "default" {
   }
 }
 
-//resource "aws_cognito_resource_server" default {
-//  name = "cd_product_api_${var.environment}_cognito_resource_server"
-//  // TODO: figure out what this actually is and whether it can be split out into an env-based config variable or needs to be this url
-//  identifier = "https://cd-product-api.rcanalytics.com"
-//
-//  scope {
-//    scope_name = "company.read"
-//    scope_description = "Read company details"
-//  }
-//
-//  user_pool_id = aws_cognito_user_pool.default.id
-//}
-
 resource "aws_cognito_user_pool_client" "default" {
   name = "cd_product_api_${var.environment}_cognito_user_pool_client"
 
@@ -170,7 +157,7 @@ resource "aws_cognito_user_pool_client" "default" {
   allowed_oauth_flows_user_pool_client = true
   allowed_oauth_scopes = [
     "email",
-//    "https://cd-product-api.rcanalytics.com/company.read",
+    "https://cd-product-api-${var.environment}.rcanalytics.com/company.read",
     "openid",
     "phone",
     "profile"
@@ -244,5 +231,17 @@ resource "aws_cognito_user_pool_client" "default" {
 
 resource "aws_cognito_user_pool_domain" "default" {
   domain = "rcanalytics-cd-product-api-${var.environment}"
+  user_pool_id = aws_cognito_user_pool.default.id
+}
+
+resource "aws_cognito_resource_server" "default" {
+  name = "cd_product_api_${var.environment}_cognito_resource_server"
+
+  identifier = "https://cd-product-api-${var.environment}.rcanalytics.com"
+  scope = [{
+    scope_name = "company.read"
+    scope_description = "Read company details"
+  }]
+
   user_pool_id = aws_cognito_user_pool.default.id
 }
