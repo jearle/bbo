@@ -66,6 +66,9 @@ export const createFetchDoesAuthenticate = ({
     return { doesAuthenticate };
   }
 
+  console.log(`error encounter authenticating against url ${url}`);
+  console.log(JSON.stringify(err));
+
   /* istanbul ignore next */
   const error = err && err.name ? err.name : `malformed token`;
 
