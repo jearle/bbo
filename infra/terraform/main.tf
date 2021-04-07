@@ -85,6 +85,7 @@ resource "aws_lambda_function" "cognito_user_migration" {
   environment {
     variables = {
       environment = var.environment
+      cdProxyLoginUrl = var.cdProxyLoginUrl
     }
   }
 }

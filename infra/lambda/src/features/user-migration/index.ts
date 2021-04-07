@@ -1,7 +1,12 @@
 import { createFetchDoesAuthenticate } from './services/authenticate';
 import { createUserMigrationTrigger } from './triggers/user-migration';
 
-const url = `https://test.rcanalytics.com/api/v2/authentication/login`;
+const url = process.env.cdProxyLoginUrl;
+
+if (!url) {
+  throw 'Environment variable cdProxyLoginUrl must be defined';
+}
+
 const fetchDoesAuthenticate = createFetchDoesAuthenticate({ url });
 
 const userMigrationFeature = () => ({

@@ -13,3 +13,7 @@ variable "vpcId" {
 variable "subnetId" {
   type = string
 }
+
+variable "cdProxyLoginUrl" {
+  type = string
+}
