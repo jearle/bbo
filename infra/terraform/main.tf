@@ -200,3 +200,8 @@ resource "aws_cognito_user_pool_client" "default" {
 
   generate_secret = true
 }
+
+resource "aws_cognito_user_pool_domain" "default" {
+  domain = "rcanalytics-cd-product-api-${var.environment}"
+  user_pool_id = aws_cognito_user_pool.default.id
+}
