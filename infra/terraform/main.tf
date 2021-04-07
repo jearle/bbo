@@ -238,10 +238,10 @@ resource "aws_cognito_resource_server" "default" {
   name = "cd_product_api_${var.environment}_cognito_resource_server"
 
   identifier = "https://cd-product-api-${var.environment}.rcanalytics.com"
-  scope = [{
+  scope {
     scope_name = "company.read"
     scope_description = "Read company details"
-  }]
+  }
 
   user_pool_id = aws_cognito_user_pool.default.id
 }
