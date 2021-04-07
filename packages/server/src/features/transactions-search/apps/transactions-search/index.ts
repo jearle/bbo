@@ -3,8 +3,7 @@ import { Application } from 'express';
 import { body, validationResult } from 'express-validator';
 
 import { TransactionsSearchService } from '../../services/transactions-search';
-import { currencyValidator } from '../../middlewares/validation';
-import { slugToId } from '../../../property-type/helpers/property-type-slugs';
+import { currencyValidator } from '../../validators/currency';
 
 export const VERSION = `v0`;
 export const DESCRIPTION = `Transactions Search API`;
@@ -24,7 +23,7 @@ export const createApp = ({
    *
    * /healthcheck:
    *   get:
-   *     tags: 
+   *     tags:
    *      - Transactions Search
    *     servers:
    *      - url: /api/transactions-search/v0
@@ -44,7 +43,7 @@ export const createApp = ({
    *
    * /transactions:
    *   get:
-   *     tags: 
+   *     tags:
    *      - Transactions Search
    *     servers:
    *      - url: /api/transactions-search/v0
@@ -78,7 +77,7 @@ export const createApp = ({
    *
    * /trends:
    *   post:
-   *     tags: 
+   *     tags:
    *      - Transactions Search
    *     servers:
    *      - url: /api/transactions-search/v0
@@ -108,25 +107,18 @@ export const createApp = ({
    *                   name:
    *                     type: string
    *                aggregation:
-   *                 type: object
-   *                 properties:
-   *                   aggregationType:
-   *                     type: string
-   *                     enum: [PRICE, PROPERTY, UNITS, SQFT, CAPRATE, PPU, PPSF, PPSM]
-   *                   currency:
-   *                     type: string
-   *                     enum: [USD, EUR, GBP, JPY, AUD, CAN, CNY, LOC]
-   *                propertyTypeFilter:
-   *                 type: object
-   *                 properties:
-   *                   propertyTypeId:
-   *                     type: integer
-   *                   allPropertySubTypes:
-   *                     type: boolean
-   *                   propertySubTypeIds:
-   *                     type: array
-   *                     items:
-   *                      type: integer
+   *                  type: object
+   *                  properties:
+   *                    aggregationType:
+   *                      type: string
+   *                      enum: [PRICE, PROPERTY, UNITS, SQFT, CAPRATE, PPU, PPSF, PPSM]
+   *                    currency:
+   *                      type: string
+   *                      enum: [USD, EUR, GBP, JPY, AUD, CAN, CNY, LOC]
+   *                propertyTypes:
+   *                  type: array
+   *                  items:
+   *                    type: string
    *     responses:
    *       200:
    *         description: TrendsAggregationResponse
@@ -134,49 +126,40 @@ export const createApp = ({
   app.post(
     `/trends`,
     body('aggregation').custom(currencyValidator),
+    body(`geographyFilter`).exists({ checkNull: true }),
+    body(`propertyTypes`).exists({ checkNull: true }),
     async (req, res) => {
       const validationErrors = validationResult(req);
+
       if (!validationErrors.isEmpty()) {
         return res.status(400).json({ errors: validationErrors.array() });
       }
 
-      const { propertyType } = req.body;
-
-      // TODO: Move filter code to helper
-      // determine proper implementation
-      // possibly move into searchTrends service and generate filter
-      // there
-      const { id, parentId } = slugToId(propertyType.slug);
-
-      const hasParent = parentId !== null;
-      const propertyTypeId = hasParent ? parentId : id;
-
-      const propertyTypeFilter = {
-        propertyTypeId,
-        allPropertySubTypes: parentId !== null,
-        propertySubTypeIds: parentId !== null ? [id] : [],
-      };
+      const { propertyTypes } = req.body;
 
       const { geographyFilter, aggregation } = req.body;
       const { debug } = req.query;
       const { permissionsFilter } = req;
 
-      const {
-        data,
-        index,
-        request,
-        response,
-      } = await transactionsSearchService.searchTrends({
-        geographyFilter,
-        propertyTypeFilter,
-        aggregation,
-        permissionsFilter,
-      });
+      try {
+        const trends = await transactionsSearchService.searchTrends({
+          geographyFilter,
+          propertyTypes,
+          aggregation,
+          permissionsFilter,
+        });
 
-      if (debug === 'true') {
-        res.json({ data, index, request, response });
-      } else {
-        res.json({ data });
+        const { data } = trends;
+        const json = debug === `true` ? trends : { data };
+
+        res.json(json);
+      } catch (error) {
+        const { message } = error;
+
+        res.status(500).json({
+          error: message,
+          data: {},
+        });
       }
     }
   );

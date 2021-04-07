@@ -11,6 +11,8 @@ import {
   mapGeographyToOption,
 } from '../step1';
 
+import { GeographyMenu } from '../../../types';
+
 type Option = {
   readonly id: string;
   readonly label: string;
@@ -18,13 +20,15 @@ type Option = {
   readonly options: Option[];
 };
 
-export const buildGeographyOptions = (geographies: Geography[]) => {
-  let zoneTheatreGeos: Option[] = [];
-  let countryRegionGeos: Option[] = [];
-  let metroMarketGeos: Option[] = [];
+export const buildGeographyOptions = (
+  geographies: Geography[]
+): GeographyMenu => {
+  const zoneTheatreGeos: Option[] = [];
+  const countryRegionGeos: Option[] = [];
+  const metroMarketGeos: Option[] = [];
 
+  const indentedStack: Option[] = [];
   let lastGeographyOption: Option = null;
-  let indentedStack: Option[] = [];
   let lastIndentLevel: number = null;
 
   geographies.forEach((geography: Geography) => {
@@ -72,7 +76,7 @@ export const buildGeographyOptions = (geographies: Geography[]) => {
     lastIndentLevel = geography.indent;
   });
 
-  return {
+  const geographyMenu = ({
     [AmericasZoneName]: [
       {
         id: ZoneTheatreName,
@@ -166,5 +170,7 @@ export const buildGeographyOptions = (geographies: Geography[]) => {
       );
       return mapGeographyToOption(globalGeography);
     })(),
-  };
+  } as unknown) as GeographyMenu;
+
+  return geographyMenu;
 };

@@ -10,9 +10,7 @@ export const toGeographyMenu = ({
   flatGeographies,
 }: ToGeographyMenuInput): GeographyMenu => {
   const mappedFlatGeographies = mapFlatGeographies(flatGeographies);
-  const geographyMenu = (buildGeographyOptions(
-    mappedFlatGeographies
-  ) as unknown) as GeographyMenu;
+  const geographyMenu = buildGeographyOptions(mappedFlatGeographies);
 
   return geographyMenu;
 };
