@@ -60,15 +60,12 @@ export const createFetchDoesAuthenticate = ({
   const fetchAuthenticate = createFetchAuthenticate({ url });
 
   const { token, err } = await fetchAuthenticate({ username, password });
+  console.log('fetchAuthResponse', JSON.stringify({ token, err }));
   const doesAuthenticate = err === undefined && typeof token === `string`;
 
   if (doesAuthenticate) {
     return { doesAuthenticate };
   }
-
-  console.log(`error encounter authenticating against url ${url}`);
-  console.log(JSON.stringify(err));
-
   /* istanbul ignore next */
   const error = err && err.name ? err.name : `malformed token`;
 
