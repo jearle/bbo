@@ -63,6 +63,6 @@ const getValueFromCalculatedAverage: BucketValueGetter = (
   data,
   minObservability
 ) =>
-  data.calculatedAverage.doc_count >= minObservability
+  data.calculatedAverage && data.numSum.doc_count >= minObservability
     ? data.calculatedAverage.value
     : null;
