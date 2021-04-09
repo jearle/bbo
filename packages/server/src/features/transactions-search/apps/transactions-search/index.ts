@@ -4,6 +4,7 @@ import { body, validationResult } from 'express-validator';
 
 import { TransactionsSearchService } from '../../services/transactions-search';
 import { currencyValidator } from '../../validators/currency';
+import { rentableAreaValidator } from '../../validators/rentable-area';
 
 export const VERSION = `v0`;
 export const DESCRIPTION = `Transactions Search API`;
@@ -107,25 +108,32 @@ export const createApp = ({
    *                   name:
    *                     type: string
    *                aggregation:
-   *                  type: object
-   *                  properties:
-   *                    aggregationType:
-   *                      type: string
-   *                      enum: [PRICE, PROPERTY, UNITS, SQFT, CAPRATE, PPU, PPSF, PPSM]
-   *                    currency:
-   *                      type: string
-   *                      enum: [USD, EUR, GBP, JPY, AUD, CAN, CNY, LOC]
-   *                propertyTypes:
-   *                  type: array
-   *                  items:
-   *                    type: string
+   *                 type: object
+   *                 properties:
+   *                   aggregationType:
+   *                     type: string
+   *                     enum: [PRICE, PROPERTY, UNITS, AREA, CAPRATE, PPU, PPA]
+   *                   currency:
+   *                     type: string
+   *                     enum: [USD, EUR, GBP, JPY, AUD, CAN, CNY, LOC]
+   *                propertyTypeFilter:
+   *                 type: object
+   *                 properties:
+   *                   propertyTypeId:
+   *                     type: integer
+   *                   allPropertySubTypes:
+   *                     type: boolean
+   *                   propertySubTypeIds:
+   *                     type: array
+   *                     items:
+   *                      type: integer
    *     responses:
    *       200:
    *         description: TrendsAggregationResponse
    */
   app.post(
     `/trends`,
-    body('aggregation').custom(currencyValidator),
+    body('aggregation').custom(currencyValidator).custom(rentableAreaValidator),
     body(`geographyFilter`).exists({ checkNull: true }),
     body(`propertyTypes`).exists({ checkNull: true }),
     async (req, res) => {

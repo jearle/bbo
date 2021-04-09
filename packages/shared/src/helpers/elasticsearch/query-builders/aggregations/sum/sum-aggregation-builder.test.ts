@@ -1,4 +1,4 @@
-import {createAggs, createCalculatedAverageAggs} from './sum-aggregation-builder';
+import { createAggs, createCalculatedAverageAggs } from './sum-aggregation-builder';
 
 describe('sum aggregation builder', () => {
   describe ('createAggs()', () => {
@@ -103,7 +103,40 @@ describe('sum aggregation builder', () => {
       expect(result).toEqual(expected);
     });
 
-    it('create (sum) aggregation for number of units', () => {
+    it('create (sum) aggregation for AREA, SQFT', () => {
+      const expected = {
+        filteredSum: {
+          filter: {
+            bool: {
+              must: [
+                {
+                  term: {
+                    eligibleForStats_fg: true,
+                  },
+                },
+                {
+                  term: {
+                    eligibleTTVolume_fg: true,
+                  },
+                },
+                bool,
+              ],
+            },
+          },
+          aggs: {
+            sumResult: {
+              sum: {
+                field: 'sqFt_dbl'
+              },
+            },
+          },
+        },
+      }
+      const result = createAggs({ aggregationType: 'AREA', rentableArea: 'SQFT' });
+      expect(result).toEqual(expected);
+    });
+
+    it('create (sum) aggregation for AREA, SQMT', () => {
       const expected = {
         filteredSum: {
           filter: {
@@ -127,12 +160,15 @@ describe('sum aggregation builder', () => {
             sumResult: {
               sum: {
                 field: 'sqFt_dbl',
+                script: {
+                  source: `_value * 0.092903`
+                }
               },
             },
           },
         },
       }
-      const result = createAggs({ aggregationType: 'SQFT' });
+      const result = createAggs({ aggregationType: 'AREA', rentableArea: 'SQMT' });
       expect(result).toEqual(expected);
     });
 
@@ -220,7 +256,7 @@ describe('sum aggregation builder', () => {
               num: 'numSum>sumResult',
               div: 'divSum>sumResult'
             },
-            script: `params.num / (params.div * 1)`
+            script: `params.num / params.div`
           }
         },
         numSum: {
@@ -249,7 +285,7 @@ describe('sum aggregation builder', () => {
       expect(result).toEqual(expected);
     });
 
-    it('creates calculated aggregation for ppsf', () => {
+    it('creates calculated aggregation for PPA, SQFT', () => {
       const filter = {
         bool: {
           must: [
@@ -286,7 +322,7 @@ describe('sum aggregation builder', () => {
               num: 'numSum>sumResult',
               div: 'divSum>sumResult'
             },
-            script: `params.num / (params.div * 1)`
+            script: `params.num / params.div`
           }
         },
         numSum: {
@@ -311,11 +347,15 @@ describe('sum aggregation builder', () => {
         }
       }
 
-      const result = createCalculatedAverageAggs({aggregationType: 'PPSF', currency: 'USD'});
+      const result = createCalculatedAverageAggs({
+        aggregationType: 'PPA',
+        currency: 'USD',
+        rentableArea: 'SQFT'
+      });
       expect(result).toEqual(expected);
     });
 
-    it('creates calculated aggregation for ppsm', () => {
+    it('creates calculated aggregation for PPA, SQMT', () => {
       const filter = {
         bool: {
           must: [
@@ -352,7 +392,7 @@ describe('sum aggregation builder', () => {
               num: 'numSum>sumResult',
               div: 'divSum>sumResult'
             },
-            script: `params.num / (params.div * 0.0929)`
+            script: `params.num / params.div`
           }
         },
         numSum: {
@@ -370,14 +410,21 @@ describe('sum aggregation builder', () => {
           aggs: {
             sumResult: {
               sum: {
-                field: 'sqFt_dbl'
+                field: 'sqFt_dbl',
+                script: {
+                  source: '_value * 0.092903'
+                }
               }
             }
           }
         }
       }
 
-      const result = createCalculatedAverageAggs({aggregationType: 'PPSM', currency: 'USD'});
+      const result = createCalculatedAverageAggs({
+        aggregationType: 'PPA',
+        currency: 'USD',
+        rentableArea: 'SQMT'
+      });
       expect(result).toEqual(expected);
     });
   });

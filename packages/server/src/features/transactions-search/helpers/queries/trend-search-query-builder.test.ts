@@ -132,7 +132,7 @@ describe('trends-search', () => {
                 num: 'numSum>sumResult',
                 div: 'divSum>sumResult'
               },
-              script: 'params.num / (params.div * 1)'
+              script: 'params.num / params.div'
             }
           },
           numSum: {

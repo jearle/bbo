@@ -9,11 +9,11 @@ const getVolumeOptions = (propertyType: string) => {
     case `industrial`:
     case `retail`:
     case `dev-site`: {
-      return [`Total Square Feet`];
+      return [`Total Area`];
     }
 
     case `apartment`: {
-      return [`Total Square Feet`, `Total Units`];
+      return [`Total Area`, `Total Units`];
     }
 
     case `hotel`:
@@ -35,11 +35,11 @@ const getPricingOptions = (propertyType: string) => {
     case `industrial`:
     case `retail`:
     case `dev-site`: {
-      return [`Price Per Square Foot`];
+      return [`Price Per Area`];
     }
 
     case `apartment`: {
-      return [`Price Per Square Foot`, `Price Per Unit`];
+      return [`Price Per Area`, `Price Per Unit`];
     }
 
     case `hotel`:

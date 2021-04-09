@@ -1,2 +1,15 @@
-export type SumType = 'PRICE' | 'PROPERTY' | 'UNITS' | 'SQFT'| 'CAPRATE' |
-  'PPU_PRICE' | 'PPU_UNITS' | 'PPSF_PRICE' | 'PPSF_SQFT' | 'PPSM_PRICE' | 'PPSM_SQFT'
+export type SumType =
+  | 'PRICE'
+  | 'PROPERTY'
+  | 'UNITS'
+  | 'AREA'
+  | 'CAPRATE'
+  | 'PPU_PRICE'
+  | 'PPU_UNITS'
+  | 'PPA_PRICE'
+  | 'PPA_SQFT';
+
+export const rentableAreaSumTypes: SumType[] = [
+  'AREA',
+  'PPA_SQFT',
+];

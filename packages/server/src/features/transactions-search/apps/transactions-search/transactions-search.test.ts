@@ -94,6 +94,50 @@ describe(`transactions app`, () => {
         method: `POST`,
         path: `/trends`,
         body,
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
+      expect(Array.isArray(data)).toBe(true);
+      expect(data[0]).toHaveProperty('date');
+      expect(data[0]).toHaveProperty('value');
+      expect(data.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it(`searches trends with a PPA metric aggregation, ATL, off, SQFT, qtr, qtr totals, TT match`, async () => {
+      const { data } = await fetchJSONOnRandomPort(app, {
+        method: 'POST',
+        path: `/trends`,
+        body: JSON.stringify({
+          geographyFilter,
+          propertyTypes,
+          aggregation: { aggregationType: 'PPA', currency: 'USD', rentableArea: 'SQFT' },
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
+      expect(Array.isArray(data)).toBe(true);
+      expect(data[0]).toHaveProperty('date');
+      expect(data[0]).toHaveProperty('value');
+      expect(data.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it(`searches trends with a PPA metric aggregation ATL, off, SQMT, qtr, qtr totals, TT match`, async () => {
+      const { data } = await fetchJSONOnRandomPort(app, {
+        method: 'POST',
+        path: `/trends`,
+        body: JSON.stringify({
+          geographyFilter,
+          propertyTypes,
+          aggregation: { aggregationType: 'PPA', currency: 'USD', rentableArea: 'SQMT' },
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
       });
 
       expect(data.length).toBeGreaterThan(0);
