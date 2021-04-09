@@ -5,22 +5,30 @@ type AggregationInput = {
   readonly rentableArea?: string;
 };
 
+const RENTABLE_AREA_REQUIRED_AGGREGATION_TYPES = [`AREA`, `PPA`];
+
+const missingRentableAreaError = (aggregationType: string): string => {
+  return `Must supply rentableArea for aggregation type: ${aggregationType}`;
+}
+
+const unsupportedRentableAreaError = (rentableArea: string): string => {
+  return `Rentable Area: ${rentableArea} is not supported`;
+}
 
 export const rentableAreaValidator = ({
   aggregationType,
   rentableArea
 }: AggregationInput): Promise<boolean> => {
-  switch(aggregationType?.toString().toUpperCase()) {
-    case 'SQFT':
-    case 'PPSF':
-      if (!rentableArea) {
-        return Promise.reject(`Must supply rentableArea for aggregation type: ${aggregationType}`);
-      }
-      if (!isValidRentableArea(rentableArea)) {
-        return Promise.reject(`Rentable Area: ${rentableArea} is not supported`)
-      }
-      return Promise.resolve(true);
-    default:
-      return Promise.resolve(true)
-  }
+  const hasRentableAreaRequirement = RENTABLE_AREA_REQUIRED_AGGREGATION_TYPES.includes(
+    aggregationType?.toString().toUpperCase()
+  );
+
+  if (!hasRentableAreaRequirement) return Promise.resolve(true);
+
+  if (!rentableArea) return Promise.reject(missingRentableAreaError(aggregationType));
+
+  if (!isValidRentableArea(rentableArea))
+    return Promise.reject(unsupportedRentableAreaError(rentableArea));
+
+  return Promise.resolve(true);
 }

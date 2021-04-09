@@ -20,7 +20,7 @@ export const getTrendsDataFromElasticResponse = (response: EsClientRawResponse, 
 }
 
 const isPricingMetric = (aggregationType: AggregationType): boolean => {
-  return ['PPU', 'PPSF', 'PPSM', 'CAPRATE'].includes(aggregationType);
+  return ['PPU', 'PPA', 'CAPRATE'].includes(aggregationType);
 }
 
 const getDataFromElasticBucket = (
