@@ -2,7 +2,7 @@ import * as express from 'express';
 import { Application } from 'express';
 import { CurrencyService } from '../../services/currency';
 import { DataTypeService } from '../../services/data-type';
-import { RentableAreaService } from "../../services/rentable-area";
+import { RentableAreaService } from '../../services/rentable-area';
 
 export const VERSION = `v0`;
 export const DESCRIPTION = `Lookups API`;
@@ -26,7 +26,7 @@ export const createApp = ({
    *
    * /currency:
    *  get:
-   *    tags: 
+   *    tags:
    *      - Lookups
    *    servers:
    *      - url: /api/lookups/v0
@@ -68,7 +68,7 @@ export const createApp = ({
    *
    * /data-type:
    *  get:
-   *    tags: 
+   *    tags:
    *      - Lookups
    *    servers:
    *      - url: /api/lookups/v0

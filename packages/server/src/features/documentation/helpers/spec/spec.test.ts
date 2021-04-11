@@ -21,7 +21,7 @@ test(`createSpec`, () => {
     description: `bar`,
     version: `v0`,
     apiPaths,
-    tags
+    tags,
   });
 
   expect(spec.paths[`/spec-test`]).not.toBeUndefined();

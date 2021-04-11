@@ -20,7 +20,7 @@ export const createApp = ({
   description,
   version,
   apiPaths,
-  tags
+  tags,
 }: CreateAppInputs): Application => {
   const app = express();
 
@@ -28,18 +28,34 @@ export const createApp = ({
     swaggerOptions: {
       // sort methods by method type then path
       operationsSorter: (a, b) => {
-        const methodsOrder = ["get", "post", "put", "patch", "delete", "options", "trace"];
-        let result = methodsOrder.indexOf(a.get("method")) - methodsOrder.indexOf(b.get("method"));
+        const methodsOrder = [
+          'get',
+          'post',
+          'put',
+          'patch',
+          'delete',
+          'options',
+          'trace',
+        ];
+        let result =
+          methodsOrder.indexOf(a.get('method')) -
+          methodsOrder.indexOf(b.get('method'));
 
         if (result === 0) {
-          result = a.get("path").localeCompare(b.get("path"));
+          result = a.get('path').localeCompare(b.get('path'));
         }
 
         return result;
-      }
-    }
+      },
+    },
   };
-  app.use(serve, setup(createSpec({ title, description, version, apiPaths, tags }), swaggerOptions));
+  app.use(
+    serve,
+    setup(
+      createSpec({ title, description, version, apiPaths, tags }),
+      swaggerOptions
+    )
+  );
 
   return app;
 };

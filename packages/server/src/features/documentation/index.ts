@@ -22,7 +22,7 @@ const documentationFeature = () => ({
 
   documentationApp() {
     const app = express();
-    
+
     app.use(
       '/',
       createApp({
@@ -32,12 +32,14 @@ const documentationFeature = () => ({
         apiPaths: documentationConfigurations.map((feature) =>
           createApiPath({ feature })
         ),
-        tags: documentationConfigurations.sort().map((dc) => { // sort the features and format to match the tags so that sections appear in order
+        tags: documentationConfigurations.sort().map((dc) => {
+          // sort the features and format to match the tags so that sections appear in order
           return {
-            name: dc.replace(/-/g, ' ').replace(/(\w)(\w*)/g,
-              (g0, g1, g2) => { return g1.toUpperCase() + g2.toLowerCase(); })
-          }
-        })
+            name: dc.replace(/-/g, ' ').replace(/(\w)(\w*)/g, (g0, g1, g2) => {
+              return g1.toUpperCase() + g2.toLowerCase();
+            }),
+          };
+        }),
       })
     );
 
