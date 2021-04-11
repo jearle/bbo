@@ -47,6 +47,10 @@ export const createApp = ({
    *
    * /rentable-area:
    *  get:
+   *    tags:
+   *      - Lookups
+   *    servers:
+   *      - url: /api/lookups/v0
    *    description: Gets data type lookup values
    *    produces:
    *      - application/json

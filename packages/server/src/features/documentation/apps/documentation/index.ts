@@ -1,7 +1,7 @@
 import * as express from 'express';
 import { Application } from 'express';
 import { serve, setup } from 'swagger-ui-express';
-import { createSpec } from '../../helpers/spec';
+import { createSpec, tag } from '../../helpers/spec';
 
 export const VERSION = `v0`;
 export const DESCRIPTION = `Documentation`;
@@ -12,6 +12,7 @@ type CreateAppInputs = {
   readonly description: string;
   readonly version: string;
   readonly apiPaths: string[];
+  readonly tags: tag[];
 };
 
 export const createApp = ({
@@ -19,10 +20,26 @@ export const createApp = ({
   description,
   version,
   apiPaths,
+  tags
 }: CreateAppInputs): Application => {
   const app = express();
 
-  app.use(serve, setup(createSpec({ title, description, version, apiPaths })));
+  const swaggerOptions = {
+    swaggerOptions: {
+      // sort methods by method type then path
+      operationsSorter: (a, b) => {
+        const methodsOrder = ["get", "post", "put", "patch", "delete", "options", "trace"];
+        let result = methodsOrder.indexOf(a.get("method")) - methodsOrder.indexOf(b.get("method"));
+
+        if (result === 0) {
+          result = a.get("path").localeCompare(b.get("path"));
+        }
+
+        return result;
+      }
+    }
+  };
+  app.use(serve, setup(createSpec({ title, description, version, apiPaths, tags }), swaggerOptions));
 
   return app;
 };
