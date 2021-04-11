@@ -10,6 +10,10 @@ variable "vpcId" {
   type = string
 }
 
-variable "subnet" {
+variable "subnetId" {
+  type = string
+}
+
+variable "cdProxyLoginUrl" {
   type = string
 }

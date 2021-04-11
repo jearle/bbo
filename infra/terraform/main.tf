@@ -66,29 +66,6 @@ resource "aws_security_group_rule" "lambda_egress_all" {
 }
 
 # ****** LAMBDA FUNCTIONS ******
-resource "aws_lambda_function" "cognito_pre_auth" {
-  function_name = "cd_product_api_${var.environment}_cognito_pre_auth_lambda_function"
-  role          = aws_iam_role.cognito.arn
-  handler       = "cognito.preAuthentication"
-
-  filename         = "../lambda/dist/package.zip"
-  source_code_hash = base64sha256("../lambda/dist/package.zip")
-
-  runtime = "nodejs12.x"
-  timeout = 60
-
-  vpc_config {
-    security_group_ids = [aws_security_group.lambda.id]
-    subnet_ids = [var.subnet]
-  }
-
-  environment {
-    variables = {
-      environment = var.environment
-    }
-  }
-}
-
 resource "aws_lambda_function" "cognito_user_migration" {
   function_name = "cd_product_api_${var.environment}_cognito_user_migration_lambda_function"
   role          = aws_iam_role.cognito.arn
@@ -102,12 +79,129 @@ resource "aws_lambda_function" "cognito_user_migration" {
 
   vpc_config {
     security_group_ids = [aws_security_group.lambda.id]
-    subnet_ids = [var.subnet]
+    subnet_ids = [var.subnetId]
   }
 
   environment {
     variables = {
       environment = var.environment
+      cdProxyLoginUrl = var.cdProxyLoginUrl
     }
   }
+}
+
+# ****** COGNITO ******
+resource "aws_cognito_user_pool" "default" {
+  name = "cd_product_api_${var.environment}_cognito_user_pool"
+
+  admin_create_user_config {
+    allow_admin_create_user_only = false
+    invite_message_template {
+      email_message = "Your username is {username} and temporary password is {####}. "
+      email_subject = "Your temporary password"
+      sms_message = "Your username is {username} and temporary password is {####}. "
+    }
+  }
+
+  auto_verified_attributes = ["email"]
+
+  device_configuration {
+    challenge_required_on_new_device = false
+    device_only_remembered_on_user_prompt = false
+  }
+
+  email_configuration {
+    email_sending_account = "COGNITO_DEFAULT"
+  }
+  email_verification_message = "Your verification code is {####}. "
+  email_verification_subject = "Your verification code"
+
+  lambda_config {
+    user_migration = aws_lambda_function.cognito_user_migration.arn
+  }
+
+  password_policy {
+    minimum_length = 8
+    require_numbers = true
+    require_symbols = true
+    require_uppercase = true
+    require_lowercase = true
+    temporary_password_validity_days = 7
+  }
+
+  schema {
+    attribute_data_type = "String"
+    name = "email"
+    required = true
+    developer_only_attribute = false
+    mutable = true
+    string_attribute_constraints {
+      max_length = "2048"
+      min_length = "0"
+    }
+  }
+
+  sms_authentication_message = "Your authentication code is {####}. "
+  sms_verification_message = "Your verification code is {####}. "
+
+  verification_message_template {
+    default_email_option = "CONFIRM_WITH_CODE"
+  }
+}
+
+resource "aws_cognito_user_pool_client" "default" {
+  name = "cd_product_api_${var.environment}_cognito_user_pool_client"
+
+  user_pool_id = aws_cognito_user_pool.default.id
+
+  allowed_oauth_flows = ["code", "implicit"]
+  allowed_oauth_flows_user_pool_client = true
+  allowed_oauth_scopes = [
+    "email",
+    "https://cd-product-api-${var.environment}.rcanalytics.com/company.read",
+    "openid",
+    "phone",
+    "profile"
+  ]
+  explicit_auth_flows = [
+    "ALLOW_CUSTOM_AUTH",
+    "ALLOW_REFRESH_TOKEN_AUTH",
+    "ALLOW_USER_PASSWORD_AUTH",
+    "ALLOW_USER_SRP_AUTH"
+  ]
+  callback_urls = [
+    "https://www.example.com"
+  ]
+
+  prevent_user_existence_errors = "ENABLED"
+
+  supported_identity_providers = ["COGNITO"]
+
+  access_token_validity = 60
+  id_token_validity = 60
+  refresh_token_validity = 30
+  token_validity_units {
+    access_token = "minutes"
+    id_token = "minutes"
+    refresh_token = "days"
+  }
+
+  generate_secret = true
+}
+
+resource "aws_cognito_user_pool_domain" "default" {
+  domain = "rcanalytics-cd-product-api-${var.environment}"
+  user_pool_id = aws_cognito_user_pool.default.id
+}
+
+resource "aws_cognito_resource_server" "default" {
+  name = "cd_product_api_${var.environment}_cognito_resource_server"
+
+  identifier = "https://cd-product-api-${var.environment}.rcanalytics.com"
+  scope {
+    scope_name = "company.read"
+    scope_description = "Read company details"
+  }
+
+  user_pool_id = aws_cognito_user_pool.default.id
 }

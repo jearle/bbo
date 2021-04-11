@@ -69,6 +69,9 @@ jobs:
           cd infra/terraform
           terraform init -backend-config="bucket=rca-shared-terraform" -backend-config="key=cd/product-api/${{ github.event.deployment.environment }}.tfstate" -backend-config="region=us-east-1"
           terraform apply --auto-approve
+          echo COGNITO_USER_POOL_ID=$(terraform output cognito_user_pool_id) >> $GITHUB_ENV
+          echo COGNITO_APP_CLIENT_ID=$(terraform output cognito_app_client_id) >> $GITHUB_ENV
+          echo COGNITO_APP_CLIENT_SECRET=$(terraform output cognito_app_client_secret) >> $GITHUB_ENV
 
       - name: Setup Helm Values
         uses: ./.github-actions/workflow/eval
@@ -76,6 +79,9 @@ jobs:
           inputPaths: helm/helm-values.yaml
           params: |
             image:${{ github.event.deployment.payload.image }}
+            cognitoUserPoolId:${{ env.COGNITO_USER_POOL_ID }}
+            cognitoAppClientId:${{ env.COGNITO_APP_CLIENT_ID }}
+            cognitoAppClientSecret:${{ env.COGNITO_APP_CLIENT_SECRET }}
 
       - name: Helm Install
         uses: ./.github-actions/tools/helm
