@@ -1,5 +1,17 @@
 export const officePropertyTypes = [
   {
+    slug: `all-property-types`,
+    label: `All Property Types`,
+    propertySubTypes: [],
+    featureTypes: [],
+  },
+  {
+    slug: `commerical`,
+    label: `Commerical`,
+    propertySubTypes: [],
+    featureTypes: [],
+  },
+  {
     __raw_property_type__: {
       PTSMenu_id: 96,
       Type1_id: 6,

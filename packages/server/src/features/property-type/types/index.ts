@@ -50,8 +50,8 @@ export type PropertySubType = {
 };
 
 export type PropertyType = {
-  readonly __raw_property_type__: RawPropertyType;
-  readonly id: string;
+  readonly __raw_property_type__?: RawPropertyType;
+  readonly id?: string;
   readonly slug: string;
   readonly label: string;
   readonly propertySubTypes: PropertySubType[];

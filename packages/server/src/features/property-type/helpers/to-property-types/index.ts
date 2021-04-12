@@ -222,6 +222,43 @@ const createPropertyTypes = ({
   });
 };
 
+const UNUSED_PROPERTY_TYPES = [
+  `dev-site-land-commercial`,
+  `dev-site-land-mixed`,
+  `dev-site-land-multifamily`,
+  `coop-housing`,
+  `other-general`,
+  `res-condo`,
+  `other-hospitality`,
+];
+const filterPropertyTypes = (propertyTypes: PropertyType[]): PropertyType[] => {
+  return propertyTypes.filter((propertyType) => {
+    const { slug } = propertyType;
+
+    return !UNUSED_PROPERTY_TYPES.includes(slug);
+  });
+};
+
+const addVirtualPropertyTypes = (
+  propertyTypes: PropertyType[]
+): PropertyType[] => {
+  return [
+    {
+      slug: `all-property-types`,
+      label: `All Property Types`,
+      propertySubTypes: [],
+      featureTypes: [],
+    },
+    {
+      slug: `commerical`,
+      label: `Commerical`,
+      propertySubTypes: [],
+      featureTypes: [],
+    },
+    ...propertyTypes,
+  ];
+};
+
 export const toPropertyTypes = ({
   rawPropertyTypes: allRawPropertyTypes,
 }: ToPropertyTypesInputs): PropertyType[] => {
@@ -257,5 +294,8 @@ export const toPropertyTypes = ({
     propertySubTypes,
   });
 
-  return propertyTypes;
+  const filteredPropertyTypes = filterPropertyTypes(propertyTypes);
+  const allPropertyTypes = addVirtualPropertyTypes(filteredPropertyTypes);
+
+  return allPropertyTypes;
 };
