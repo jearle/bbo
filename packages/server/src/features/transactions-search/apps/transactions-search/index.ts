@@ -103,10 +103,13 @@ export const createApp = ({
    *                 properties:
    *                   id:
    *                     type: integer
+   *                     example: 1
    *                   type:
    *                     type: integer
+   *                     example: 4
    *                   name:
    *                     type: string
+   *                     example: United States
    *                aggregation:
    *                 type: object
    *                 properties:
@@ -116,17 +119,12 @@ export const createApp = ({
    *                   currency:
    *                     type: string
    *                     enum: [USD, EUR, GBP, JPY, AUD, CAN, CNY, LOC]
-   *                propertyTypeFilter:
-   *                 type: object
-   *                 properties:
-   *                   propertyTypeId:
-   *                     type: integer
-   *                   allPropertySubTypes:
-   *                     type: boolean
-   *                   propertySubTypeIds:
+   *                propertyTypes:
    *                     type: array
    *                     items:
-   *                      type: integer
+   *                      type: string
+   *                      example: apartment
+   *                   
    *     responses:
    *       200:
    *         description: TrendsAggregationResponse

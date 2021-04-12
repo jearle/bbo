@@ -26,12 +26,20 @@ const documentationFeature = () => ({
     app.use(
       '/',
       createApp({
-        title: `Product API title`,
-        description: `Product API description`,
+        title: `RCA API`,
+        description: `Real Capital Analytics API`,
         version: 'v0',
         apiPaths: documentationConfigurations.map((feature) =>
           createApiPath({ feature })
         ),
+        tags: documentationConfigurations.sort().map((dc) => {
+          // sort the features and format to match the tags so that sections appear in order
+          return {
+            name: dc.replace(/-/g, ' ').replace(/(\w)(\w*)/g, (g0, g1, g2) => {
+              return g1.toUpperCase() + g2.toLowerCase();
+            }),
+          };
+        }),
       })
     );
 

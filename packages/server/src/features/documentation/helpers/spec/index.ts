@@ -5,7 +5,10 @@ type CreateSpecInputs = {
   readonly description: string;
   readonly version: string;
   readonly apiPaths: string[];
+  readonly tags?: tag[];
 };
+
+export type tag = { name: string; description?: string };
 
 type CreateSpecResult = unknown & {
   readonly paths?: { [key: string]: unknown };
@@ -16,6 +19,7 @@ export const createSpec = ({
   description,
   version,
   apiPaths,
+  tags,
 }: CreateSpecInputs): CreateSpecResult => {
   return swaggerJSDoc({
     definition: {
@@ -40,6 +44,7 @@ export const createSpec = ({
           ApiKeyAuth: [],
         },
       ],
+      tags: tags,
     },
     apis: [...apiPaths],
   });
