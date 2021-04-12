@@ -250,8 +250,8 @@ const addVirtualPropertyTypes = (
       featureTypes: [],
     },
     {
-      slug: `commerical`,
-      label: `Commerical`,
+      slug: `commercial`,
+      label: `Commercial`,
       propertySubTypes: [],
       featureTypes: [],
     },
