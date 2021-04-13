@@ -4,20 +4,36 @@ type GetDataTypesInputs = {
 
 const getVolumeOptions = (propertyType: string) => {
   switch (propertyType) {
-    case `commericial`:
+    case `commercial`:
     case `office`:
+    case `office-office-cbd`:
+    case `office-office-sub`:
     case `industrial`:
+    case `industrial-warehouse`:
+    case `industrial-flex`:
     case `retail`:
-    case `dev-site`: {
+    case `retail-centers`:
+    case `retail-shops`:
+    case `self-storage`:
+    case `dev-site-land`: {
       return [`Total Area`];
     }
 
-    case `apartment`: {
+    case `all-property-types`:
+    case `apartment`:
+    case `apartment-garden`:
+    case `apartment-mid-highrise`:
+    case `parking-facility`: {
       return [`Total Area`, `Total Units`];
     }
 
     case `hotel`:
-    case `seniors-housing-care`: {
+    case `hotel-limited-service`:
+    case `hotel-full-service`:
+    case `seniors-housing-care`:
+    case `seniors-housing-care-nursing-care`:
+    case `seniors-housing-care-seniors-housing`:
+    case `manufactured-housing`: {
       return [`Total Units`];
     }
 
@@ -30,20 +46,36 @@ const getVolumeOptions = (propertyType: string) => {
 
 const getPricingOptions = (propertyType: string) => {
   switch (propertyType) {
-    case `commericial`:
+    case `commercial`:
     case `office`:
+    case `office-office-cbd`:
+    case `office-office-sub`:
     case `industrial`:
+    case `industrial-warehouse`:
+    case `industrial-flex`:
     case `retail`:
-    case `dev-site`: {
+    case `retail-centers`:
+    case `retail-shops`:
+    case `self-storage`:
+    case `dev-site-land`: {
       return [`Price Per Area`];
     }
 
-    case `apartment`: {
+    case `all-property-types`:
+    case `apartment`:
+    case `apartment-garden`:
+    case `apartment-mid-highrise`:
+    case `parking-facility`: {
       return [`Price Per Area`, `Price Per Unit`];
     }
 
     case `hotel`:
-    case `seniors-housing-care`: {
+    case `hotel-limited-service`:
+    case `hotel-full-service`:
+    case `seniors-housing-care`:
+    case `seniors-housing-care-nursing-care`:
+    case `seniors-housing-care-seniors-housing`:
+    case `manufactured-housing`: {
       return [`Price Per Unit`];
     }
 
